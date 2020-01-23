@@ -1,5 +1,7 @@
 package com.bsodsoftware.abraxas;
 
+import com.bsodsoftware.abraxas.engine.ControlHandler;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -11,6 +13,7 @@ public class GamePanel extends JPanel implements Runnable {
     public static final int HEIGHT = 600;
 
     private Thread gameThread;
+    private ControlHandler controlHandler;
     private boolean running;
     private int FPS = 60;
     private long gameTime = 1000 / FPS;
@@ -27,6 +30,56 @@ public class GamePanel extends JPanel implements Runnable {
 
     @Override
     public void run() {
+        init();
+        long start;
+        long elapsed;
+        long wait;
+
+        while (running) {
+            start = System.nanoTime();
+            update();
+            draw();
+            drawToScreen();
+
+            elapsed = System.nanoTime() - start;
+
+            wait = gameTime - elapsed / 1000000;
+
+            try {
+                Thread.sleep(wait);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void drawToScreen() {
+        Graphics graphics2 = getGraphics();
+        graphics2.drawImage(image, 0, 0, null);
+        graphics2.dispose();
+    }
+
+    private void draw() {
 
     }
+
+    private void update() {
+
+    }
+
+    private void init() {
+        image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
+        graphics = (Graphics2D)graphics;
+        running = true;
+    }
+
+    public void addNotify(){
+        super.addNotify();
+        if (gameThread == null){
+            gameThread = new Thread(this);
+            addKeyListener(controlHandler);
+            gameThread.start();
+        }
+    }
 }
+;
