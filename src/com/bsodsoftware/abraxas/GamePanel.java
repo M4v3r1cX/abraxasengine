@@ -1,6 +1,7 @@
 package com.bsodsoftware.abraxas;
 
 import com.bsodsoftware.abraxas.engine.ControlHandler;
+import com.bsodsoftware.abraxas.engine.GameStateManager;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,6 +21,8 @@ public class GamePanel extends JPanel implements Runnable {
 
     private BufferedImage image;
     private Graphics2D graphics;
+
+    private GameStateManager gameStateManager;
 
     public GamePanel() {
         super();
@@ -60,17 +63,18 @@ public class GamePanel extends JPanel implements Runnable {
     }
 
     private void draw() {
-
+        gameStateManager.draw(graphics);
     }
 
     private void update() {
-
+        gameStateManager.update();
     }
 
     private void init() {
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
         graphics = (Graphics2D)graphics;
         running = true;
+        gameStateManager = new GameStateManager(controlHandler);
     }
 
     public void addNotify(){
