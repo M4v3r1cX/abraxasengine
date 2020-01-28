@@ -1,5 +1,6 @@
 package com.bsodsoftware.abraxas.engine;
 
+import com.bsodsoftware.abraxas.screens.MenuScreen;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
@@ -8,16 +9,16 @@ import java.util.ArrayList;
 public class GameStateManager {
     private ArrayList<GameState> stateList;
     private int currentState;
-    private ControlHandler controlHandler;
+    //private ControlHandler controlHandler;
 
     public static final int MENU = 0;
     public static final int LEVEL1 = 1;
 
-    public GameStateManager(ControlHandler controlHandler) {
+    public GameStateManager() {
         stateList = new ArrayList<>();
         currentState = MENU;
-        this.controlHandler = controlHandler;
-        //stateList.add(new MenuState)
+        //this.controlHandler = controlHandler;
+        stateList.add(new MenuScreen(this));
     }
 
     public void setState(int state) {
@@ -31,5 +32,13 @@ public class GameStateManager {
 
     public void draw(Graphics2D graphics) {
         stateList.get(currentState).draw(graphics);
+    }
+
+    public void keyPressed(int key) {
+        stateList.get(currentState).onKeyPressed(key);
+    }
+
+    public void keyReleased(int key) {
+        stateList.get(currentState).onKeyReleased(key);
     }
 }

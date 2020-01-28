@@ -35,8 +35,9 @@ public class Background {
     }
 
     public void update() {
-        x += deltaX;
-        y += deltaY;
+        //x += deltaX;
+        //y += deltaY;
+        // HIJO DE PUTA
     }
 
     public void draw(Graphics2D graphics2D) {
