@@ -1,7 +1,6 @@
 package com.bsodsoftware.abraxas.screens;
 
-import com.bsodsoftware.abraxas.engine.Background;
-import com.bsodsoftware.abraxas.engine.ControlHandler;
+import com.bsodsoftware.abraxas.engine.graphics.Background;
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.states.GameState;
 
@@ -90,7 +89,7 @@ public class MenuScreen extends GameState {
     private void select() {
         switch (currentChoice) {
             case 0:
-                // Start
+                gameStateManager.setState(GameStateManager.LEVEL1);
                 break;
             case 1:
                 // Help

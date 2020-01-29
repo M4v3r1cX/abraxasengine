@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine;
+package com.bsodsoftware.abraxas.engine.control;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;

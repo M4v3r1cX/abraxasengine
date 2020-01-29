@@ -1,6 +1,7 @@
 package com.bsodsoftware.abraxas.engine;
 
 import com.bsodsoftware.abraxas.screens.MenuScreen;
+import com.bsodsoftware.abraxas.screens.levels.Level1Screen;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
@@ -19,6 +20,7 @@ public class GameStateManager {
         currentState = MENU;
         //this.controlHandler = controlHandler;
         stateList.add(new MenuScreen(this));
+        stateList.add(new Level1Screen(this));
     }
 
     public void setState(int state) {

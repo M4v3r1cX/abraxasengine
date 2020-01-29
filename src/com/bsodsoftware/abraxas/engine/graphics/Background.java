@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine;
+package com.bsodsoftware.abraxas.engine.graphics;
 
 import com.bsodsoftware.abraxas.GamePanel;
 

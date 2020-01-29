@@ -1,6 +1,5 @@
 package com.bsodsoftware.abraxas;
 
-import com.bsodsoftware.abraxas.engine.ControlHandler;
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 
 import javax.swing.*;
