@@ -1,6 +1,6 @@
 package com.bsodsoftware.abraxas.screens;
 
-import com.bsodsoftware.abraxas.engine.graphics.Background;
+import com.bsodsoftware.abraxas.engine.graphics.Sprite;
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.states.GameState;
 
@@ -8,10 +8,10 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 
 public class MenuScreen extends GameState {
-    private Background background;
+    private Sprite sprite;
 
     private int currentChoice = 0;
-    private String[] options = {"Story Mode", "Arcade Mode", "Quit"};
+    private String[] options = {"New Game", "Load Game", "Quit"};
 
     private Color titleColor;
     private Font titleFont;
@@ -20,8 +20,8 @@ public class MenuScreen extends GameState {
     public MenuScreen(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
         try {
-            background = new Background("/Background/Sigil.png", 1);
-            background.setVector(-0.1, 0);;
+            sprite = new Sprite("/Background/Sigil.png", 1);
+            sprite.setVector(-0.1, 0);;
 
             titleColor = new Color(128, 0,0);
             titleFont = new Font("Century Gothic", Font.PLAIN, 28);
@@ -38,12 +38,12 @@ public class MenuScreen extends GameState {
 
     @Override
     public void update() {
-        background.update();
+        sprite.update();
     }
 
     @Override
     public void draw(Graphics2D graphics) {
-        background.draw(graphics);
+        sprite.draw(graphics);
 
         graphics.setColor(titleColor);
         graphics.setFont(titleFont);
@@ -92,7 +92,7 @@ public class MenuScreen extends GameState {
                 gameStateManager.setState(GameStateManager.LEVEL1);
                 break;
             case 1:
-                // Help
+                // Load
                 break;
             case 2:
                 System.exit(0);

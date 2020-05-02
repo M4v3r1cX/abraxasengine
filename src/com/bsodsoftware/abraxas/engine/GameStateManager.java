@@ -10,6 +10,7 @@ import java.util.ArrayList;
 public class GameStateManager {
     private ArrayList<GameState> stateList;
     private int currentState;
+    private Graphics graphics;
     //private ControlHandler controlHandler;
 
     public static final int MENU = 0;
@@ -18,7 +19,6 @@ public class GameStateManager {
     public GameStateManager() {
         stateList = new ArrayList<>();
         currentState = MENU;
-        //this.controlHandler = controlHandler;
         stateList.add(new MenuScreen(this));
         stateList.add(new Level1Screen(this));
     }

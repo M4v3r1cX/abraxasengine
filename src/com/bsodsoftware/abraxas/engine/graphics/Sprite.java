@@ -6,7 +6,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
-public class Background {
+public class Sprite {
     private BufferedImage image;
 
     private double x;
@@ -15,7 +15,7 @@ public class Background {
     private double deltaY;
     private double moveScale;
 
-    public Background(String res, double moveScale) { //
+    public Sprite(String res, double moveScale) { //
         try {
             image = ImageIO.read(getClass().getResourceAsStream(res));
             this.moveScale = moveScale;

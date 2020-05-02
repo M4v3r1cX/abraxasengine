@@ -19,7 +19,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     private long gameTime = 1000 / FPS;
 
     private BufferedImage image;
-    private Graphics2D graphics;
+    private Graphics2D graphics2d;
 
     private GameStateManager gameStateManager;
 
@@ -60,13 +60,13 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     }
 
     private void drawToScreen() {
-        Graphics graphics2 = getGraphics();
-        graphics2.drawImage(image, 0, 0, null);
-        graphics2.dispose();
+        Graphics graphics = getGraphics();
+        graphics.drawImage(image, 0, 0, null);
+        graphics.dispose();
     }
 
     private void draw() {
-        gameStateManager.draw(graphics);
+        gameStateManager.draw(graphics2d);
     }
 
     private void update() {
@@ -75,7 +75,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private void init() {
         image = new BufferedImage(WIDTH, HEIGHT, BufferedImage.TYPE_INT_RGB);
-        graphics = (Graphics2D)image.getGraphics();
+        graphics2d = (Graphics2D)image.getGraphics();
         running = true;
         gameStateManager = new GameStateManager();
     }
