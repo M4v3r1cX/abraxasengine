@@ -11,12 +11,15 @@ import java.util.ArrayList;
 public class Level1Screen extends GameState {
     private ArrayList<String> script = new ArrayList<>();
     private int currentPos = 0;
+    private int textX = 30;
+    private int textY = 490;
     private GameStateManager gameStateManager;
     private Font fontMessage;
     private Font fontCharName;
     private Sprite sprite;
     private Sprite textframe;
     private Sprite character;
+    private boolean isQuestion = false;
 
     public Level1Screen(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
@@ -39,6 +42,9 @@ public class Level1Screen extends GameState {
         script.add("Monokuma|Este es el dating sim más raro en el que he estado.");
         script.add("Monokuma|Me pregunto que pasará si es que sobrepaso el límite de caracteres \n disponibles en pantalla, onda, esta frase va a pasar de largo o va a wrapear pa abajo?");
         script.add("Monokuma|UPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPU\nPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUP\nUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPU");
+        script.add("Monokuma?|Upupupu?|Upupu?|5|UPUPU!?|6");
+        script.add("Monokuma|Escogiste opcion 1");
+        script.add("Monokuma|Escogiste opcion 2");
     }
 
     @Override
@@ -60,15 +66,15 @@ public class Level1Screen extends GameState {
         if (currentPos <= script.size()) {
             String line = script.get(currentPos);
             String[] content = line.split("\\|");
-            if (content.length > 1) {
+            if (content.length <= 2) {
                 graphics.setFont(fontCharName);
                 setCharacterName(graphics, content[0]);
                 graphics.setColor(Color.WHITE);
                 graphics.setFont(fontMessage);
-                drawString(graphics, content[1], 30, 490);
+                drawString(graphics, content[1], textX, textY);
+            } else {
+                drawQuestion(graphics, content, textX, textY);
             }
-            //drawString(graphics, , 30, 450);
-            //graphics.drawString(script.get(currentPos), 30, 450);
         }
     }
 
@@ -86,10 +92,23 @@ public class Level1Screen extends GameState {
         }
     }
 
+    private void drawQuestion(Graphics2D graphics, String[] content, int textX, int textY) {
+        isQuestion = true;
+        String question = content[1];
+        String option1 = content[2];
+        String option2 = content[4];
+        int answer1 = Integer.parseInt(content[3]);
+        int answer2 = Integer.parseInt(content[5]);
+        drawString(graphics, question, textX, textY);
+        
+    }
+
     @Override
     public void onKeyPressed(int key) {
         if (key == KeyEvent.VK_ENTER) {
-            currentPos++;
+            if (!isQuestion) {
+                currentPos++;
+            }
         }
     }
 
