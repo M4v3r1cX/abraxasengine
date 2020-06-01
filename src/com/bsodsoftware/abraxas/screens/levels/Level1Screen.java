@@ -38,13 +38,7 @@ public class Level1Screen extends GameState {
             e.printStackTrace();
         }
 
-        script.add("Monokuma|UPUPUPU... y wea");
-        script.add("Monokuma|Este es el dating sim más raro en el que he estado.");
-        script.add("Monokuma|Me pregunto que pasará si es que sobrepaso el límite de caracteres \n disponibles en pantalla, onda, esta frase va a pasar de largo o va a wrapear pa abajo?");
-        script.add("Monokuma|UPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPU\nPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUP\nUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPU");
-        script.add("Monokuma?|Upupupu?|Upupu?|5|UPUPU!?|6");
-        script.add("Monokuma|Escogiste opcion 1");
-        script.add("Monokuma|Escogiste opcion 2");
+        cargarScript();
     }
 
     @Override
@@ -115,5 +109,30 @@ public class Level1Screen extends GameState {
     @Override
     public void onKeyReleased(int key) {
 
+    }
+
+    private void cargarScript() {
+        /**
+         * Explicación del sistema de script corta:
+         * El engine entiende los textos según el index de frases separadas por pipe (|)
+         *
+         * Posiciones actuales:
+         * 0: Nombre de personaje
+         * 1: Mensaje
+         * 2: Opcion 1 pregunta
+         * 3: Valor opcion 1 pregunta
+         * 4: Opcion 2 pregunta
+         * 5: Valor opcion 2 pregunta
+         *
+         * La idea es que si escoges la opcion 1 te mande al index del script. Si escoges el valor 20, te lleva al mensaje 20, etc.
+         */
+        // TODO cargar script y preguntas desde archivo por separado
+        script.add("Monokuma|UPUPUPU... y wea");
+        script.add("Monokuma|Este es el dating sim más raro en el que he estado.");
+        script.add("Monokuma|Me pregunto que pasará si es que sobrepaso el límite de caracteres \n disponibles en pantalla, onda, esta frase va a pasar de largo o va a wrapear pa abajo?");
+        script.add("Monokuma|UPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPU\nPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUP\nUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPUUPUPUPUPU");
+        script.add("Monokuma?|Upupupu?|Upupu?|5|UPUPU!?|6");
+        script.add("Monokuma|Escogiste opcion 1");
+        script.add("Monokuma|Escogiste opcion 2");
     }
 }

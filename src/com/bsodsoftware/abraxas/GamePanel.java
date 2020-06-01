@@ -9,13 +9,13 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
-    public static final int WIDTH = 800;
+    public static final int WIDTH = 800;        // Resolución qlia del año de la corneta
     public static final int HEIGHT = 600;
 
     private Thread gameThread;
     //private ControlHandler controlHandler;
     private boolean running;
-    private int FPS = 60;
+    private int FPS = 60;                       // Corre mejor que el bayonetta de ps3
     private long gameTime = 1000 / FPS;
 
     private BufferedImage image;

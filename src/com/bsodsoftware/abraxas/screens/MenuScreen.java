@@ -62,6 +62,7 @@ public class MenuScreen extends GameState {
 
     @Override
     public void onKeyPressed(int key) {
+        // TODO esta wea debiera ir en un singleton pa no interpretar input en multithread
         switch (key) {
             case KeyEvent.VK_ENTER:
             case KeyEvent.VK_Z:
