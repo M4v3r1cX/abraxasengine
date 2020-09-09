@@ -3,12 +3,14 @@ package com.bsodsoftware.abraxas.engine.graphics;
 import com.bsodsoftware.abraxas.GamePanel;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
 public class TileMap {
+
     // posicion
     private double x,y;
     // bounds
@@ -32,67 +34,6 @@ public class TileMap {
         tween = 0.07;   // El qliao del tutorial dice que esta wea no funciona y nisiquiera se que es
     }
 
-    public int getX() {
-        return (int)x;
-    }
-    public int getY() {
-        return (int)y;
-    }
-    public int getXmin() {
-        return xmin;
-    }
-    public int getXmax() {
-        return xmax;
-    }
-    public int getYmin() {
-        return ymin;
-    }
-    public int getYmax() {
-        return ymax;
-    }
-    public double getTween() {
-        return tween;
-    }
-    public int[][] getMap() {
-        return map;
-    }
-    public int getTileSize() {
-        return tileSize;
-    }
-    public int getNumRows() {
-        return numRows;
-    }
-    public int getNumCols() {
-        return numCols;
-    }
-    public int getWidth() {
-        return width;
-    }
-    public int getHeight() {
-        return height;
-    }
-    public BufferedImage getTileset() {
-        return tileset;
-    }
-    public int getNumTilesAcross() {
-        return numTilesAcross;
-    }
-    public Tile[][] getTiles() {
-        return tiles;
-    }
-    public int getRowOffset() {
-        return rowOffset;
-    }
-    public int getColOffset() {
-        return colOffset;
-    }
-    public int getNumRowsToDraw() {
-        return numRowsToDraw;
-    }
-    public int getNumColsToDraw() {
-        return numColsToDraw;
-    }
-
     public int getType(int row, int col) {
         int rc = map[row][col];
         int r = rc / numTilesAcross;
@@ -105,6 +46,9 @@ public class TileMap {
         this.y += (y - this.y) * tween;
 
         fixBounds();
+
+        colOffset = (int)-this.x/tileSize;
+        rowOffset = (int)-this.y/tileSize;
     }
 
     private void fixBounds(){
@@ -113,8 +57,6 @@ public class TileMap {
         if (y < ymin) y = ymin;
         if (y > ymax) y = ymax;
     }
-
-    // 20:24
 
     public void loadTiles(String resource) {
         try {
@@ -140,7 +82,7 @@ public class TileMap {
             BufferedReader br = new BufferedReader(new InputStreamReader(in));
             numCols = Integer.parseInt(br.readLine());
             numRows = Integer.parseInt(br.readLine());
-            map = new int[numCols][numRows];
+            map = new int[numRows][numCols];
             width = numCols * tileSize;
             height = numCols * tileSize;
 
@@ -155,5 +97,30 @@ public class TileMap {
         } catch (Exception ex) {
             ex.printStackTrace();
         }
+    }
+
+    public void draw(Graphics2D graphics) {
+        for (int row = rowOffset; row < rowOffset + numRowsToDraw; row++) {
+            if (row >= numRows) {
+                break;
+            }
+
+            for (int col = colOffset; col < colOffset + numColsToDraw; col++) {
+                if (col > numCols) {
+                    break;
+                }
+
+                if (map[row][col] == 0) {
+                    continue;
+                }
+
+                int rc = map[row][col];
+                int r = rc / numTilesAcross;
+                int c = rc % numTilesAcross;
+
+                graphics.drawImage(tiles[r][c].getImage(), (int) x + col * tileSize, (int) y + row * tileSize, null);
+            }
+        }
+
     }
 }

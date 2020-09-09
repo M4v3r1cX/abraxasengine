@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.screens.levels;
+package com.bsodsoftware.abraxas.screens.levels.cutscenes;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.graphics.Sprite;
@@ -8,7 +8,7 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class Level1Screen extends GameState {
+public class Cutscene1Screen extends GameState {
     private ArrayList<String> script = new ArrayList<>();
     private int currentPos = 0;
     private int textX = 30;
@@ -21,7 +21,7 @@ public class Level1Screen extends GameState {
     private Sprite character;
     private boolean isQuestion = false;
 
-    public Level1Screen(GameStateManager gameStateManager) {
+    public Cutscene1Screen(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
         try {
             sprite = new Sprite("/Background/backschool.png", 1);

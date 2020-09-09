@@ -9,8 +9,9 @@ import java.awt.event.KeyListener;
 import java.awt.image.BufferedImage;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener {
-    public static final int WIDTH = 800;        // Resolución qlia del año de la corneta
-    public static final int HEIGHT = 600;
+    public static final int WIDTH = 320;        // Resolución qlia del año de la corneta
+    public static final int HEIGHT = 240;
+    public static final int SCALE = 3;
 
     private Thread gameThread;
     //private ControlHandler controlHandler;
@@ -25,7 +26,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     public GamePanel() {
         super();
-        setPreferredSize(new Dimension(WIDTH, HEIGHT));
+        setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setFocusable(true);
         requestFocus();
         //controlHandler = new ControlHandler();
@@ -61,7 +62,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
 
     private void drawToScreen() {
         Graphics graphics = getGraphics();
-        graphics.drawImage(image, 0, 0, null);
+        graphics.drawImage(image, 0, 0, WIDTH * SCALE, HEIGHT * SCALE, null);
         graphics.dispose();
     }
 

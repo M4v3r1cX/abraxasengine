@@ -1,7 +1,8 @@
 package com.bsodsoftware.abraxas.engine;
 
 import com.bsodsoftware.abraxas.screens.MenuScreen;
-import com.bsodsoftware.abraxas.screens.levels.Level1Screen;
+import com.bsodsoftware.abraxas.screens.levels.arcade.Level1Screen;
+import com.bsodsoftware.abraxas.screens.levels.cutscenes.Cutscene1Screen;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
@@ -14,12 +15,14 @@ public class GameStateManager {
     //private ControlHandler controlHandler;
 
     public static final int MENU = 0;
-    public static final int LEVEL1 = 1;
+    public static final int CUTSCENE1 = 1;
+    public static final int LEVEL1 = 2;
 
     public GameStateManager() {
         stateList = new ArrayList<>();
         currentState = MENU;
         stateList.add(new MenuScreen(this));
+        stateList.add(new Cutscene1Screen(this));
         stateList.add(new Level1Screen(this));
     }
 

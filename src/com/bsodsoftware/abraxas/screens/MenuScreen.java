@@ -11,7 +11,7 @@ public class MenuScreen extends GameState {
     private Sprite sprite;
 
     private int currentChoice = 0;
-    private String[] options = {"New Game", "Load Game", "Quit"};
+    private String[] options = {"Cutscene Mode", "Arcade Mode", "Quit"};
 
     private Color titleColor;
     private Font titleFont;
@@ -90,10 +90,10 @@ public class MenuScreen extends GameState {
     private void select() {
         switch (currentChoice) {
             case 0:
-                gameStateManager.setState(GameStateManager.LEVEL1);
+                gameStateManager.setState(GameStateManager.CUTSCENE1);
                 break;
             case 1:
-                // Load
+                gameStateManager.setState(GameStateManager.LEVEL1);
                 break;
             case 2:
                 System.exit(0);
