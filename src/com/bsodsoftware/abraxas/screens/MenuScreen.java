@@ -5,7 +5,9 @@ import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 
 public class MenuScreen extends GameState {
     private Sprite sprite;
@@ -50,14 +52,18 @@ public class MenuScreen extends GameState {
         graphics.drawString("Abraxas Engine", 80, 70);
 
         graphics.setFont(font);
-        for (int i = 0; i < options.length; i++) {
+        /*for (int i = 0; i < options.length; i++) {
             if (i == currentChoice) {
                 graphics.setColor(Color.BLACK);
             } else {
                 graphics.setColor(Color.RED);
             }
             graphics.drawString(options[i], 145, 140 + i * 15 );
-        }
+        }*/
+        graphics.setColor(Color.BLACK);
+        graphics.drawString(options[0], 145, 140);
+        graphics.drawString(options[1], 145, 170);
+        graphics.drawString(options[2], 145, 200);
     }
 
     @Override
@@ -84,6 +90,37 @@ public class MenuScreen extends GameState {
 
     @Override
     public void onKeyReleased(int key) {
+
+    }
+
+    @Override
+    public void onClick(ActionEvent e) {
+        // menu con clicks >:D
+        // tendría que ver como hago pa detectar los pixeles de la opción de menu?
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 

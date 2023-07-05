@@ -5,7 +5,9 @@ import com.bsodsoftware.abraxas.engine.graphics.Sprite;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class Cutscene1Screen extends GameState {
@@ -108,6 +110,40 @@ public class Cutscene1Screen extends GameState {
 
     @Override
     public void onKeyReleased(int key) {
+
+    }
+
+    @Override
+    public void onClick(ActionEvent e) {
+        if (!isQuestion) {
+            currentPos++;
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        if (!isQuestion) {
+            currentPos++;
+        }
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
 
     }
 

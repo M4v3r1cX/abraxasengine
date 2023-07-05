@@ -6,6 +6,8 @@ import com.bsodsoftware.abraxas.screens.levels.cutscenes.Cutscene1Screen;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class GameStateManager {
@@ -45,5 +47,9 @@ public class GameStateManager {
 
     public void keyReleased(int key) {
         stateList.get(currentState).onKeyReleased(key);
+    }
+
+    public void mouseClicked(MouseEvent e) {
+        stateList.get(currentState).mouseClicked(e);
     }
 }

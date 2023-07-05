@@ -4,14 +4,13 @@ import com.bsodsoftware.abraxas.engine.GameStateManager;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener {
-    public static final int WIDTH = 320;        // Resolución qlia del año de la corneta
-    public static final int HEIGHT = 240;
-    public static final int SCALE = 3;
+public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener {
+    public static final int WIDTH = 800;        // Resolución qlia del año de la corneta
+    public static final int HEIGHT = 600;
+    public static final int SCALE = 1;
 
     private Thread gameThread;
     //private ControlHandler controlHandler;
@@ -29,6 +28,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
         setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setFocusable(true);
         requestFocus();
+        addMouseListener(this);
         //controlHandler = new ControlHandler();
     }
 
@@ -102,6 +102,31 @@ public class GamePanel extends JPanel implements Runnable, KeyListener {
     @Override
     public void keyReleased(KeyEvent keyEvent) {
         gameStateManager.keyReleased(keyEvent.getKeyCode());
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        gameStateManager.mouseClicked(e);
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
     }
 }
 ;
