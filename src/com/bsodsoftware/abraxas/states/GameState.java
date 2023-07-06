@@ -14,7 +14,6 @@ public abstract class GameState {
     public abstract void draw(Graphics2D graphics);
     public abstract void onKeyPressed(int key);
     public abstract void onKeyReleased(int key);
-    public abstract void onClick(ActionEvent e);
     public abstract void mouseClicked(MouseEvent e);
     public abstract void mousePressed(MouseEvent e);
     public abstract void mouseReleased(MouseEvent e);

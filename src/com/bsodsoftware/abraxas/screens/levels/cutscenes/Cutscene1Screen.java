@@ -114,13 +114,6 @@ public class Cutscene1Screen extends GameState {
     }
 
     @Override
-    public void onClick(ActionEvent e) {
-        if (!isQuestion) {
-            currentPos++;
-        }
-    }
-
-    @Override
     public void mouseClicked(MouseEvent e) {
         if (!isQuestion) {
             currentPos++;

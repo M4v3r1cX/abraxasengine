@@ -51,11 +51,6 @@ public class Level1Screen extends GameState {
     }
 
     @Override
-    public void onClick(ActionEvent e) {
-        // bruh
-    }
-
-    @Override
     public void mouseClicked(MouseEvent e) {
 
     }

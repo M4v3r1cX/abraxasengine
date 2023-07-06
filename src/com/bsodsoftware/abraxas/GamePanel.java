@@ -121,7 +121,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
     }
 
     @Override

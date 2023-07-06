@@ -52,17 +52,24 @@ public class MenuScreen extends GameState {
         graphics.drawString("Abraxas Engine", 80, 70);
 
         graphics.setFont(font);
-        /*for (int i = 0; i < options.length; i++) {
-            if (i == currentChoice) {
-                graphics.setColor(Color.BLACK);
-            } else {
-                graphics.setColor(Color.RED);
-            }
-            graphics.drawString(options[i], 145, 140 + i * 15 );
-        }*/
-        graphics.setColor(Color.BLACK);
+
+        if (currentChoice == 0) {
+            graphics.setColor(Color.RED);
+        } else {
+            graphics.setColor(Color.BLACK);
+        }
         graphics.drawString(options[0], 145, 140);
+        if (currentChoice == 1) {
+            graphics.setColor(Color.RED);
+        } else {
+            graphics.setColor(Color.BLACK);
+        }
         graphics.drawString(options[1], 145, 170);
+        if (currentChoice == 2) {
+            graphics.setColor(Color.RED);
+        } else {
+            graphics.setColor(Color.BLACK);
+        }
         graphics.drawString(options[2], 145, 200);
     }
 
@@ -74,15 +81,16 @@ public class MenuScreen extends GameState {
             case KeyEvent.VK_Z:
                 select();
                 break;
-            case KeyEvent.VK_DOWN:currentChoice++;
-                if (currentChoice == options.length) {
+            case KeyEvent.VK_DOWN:
+                currentChoice++;
+                if (currentChoice > 2) {
                     currentChoice = 0;
                 }
                 break;
             case KeyEvent.VK_UP:
                 currentChoice--;
                 if (currentChoice < 0) {
-                    currentChoice = options.length - 1;
+                    currentChoice = 2;
                 }
                 break;
         }
@@ -94,14 +102,24 @@ public class MenuScreen extends GameState {
     }
 
     @Override
-    public void onClick(ActionEvent e) {
-        // menu con clicks >:D
-        // tendría que ver como hago pa detectar los pixeles de la opción de menu?
-    }
-
-    @Override
     public void mouseClicked(MouseEvent e) {
+        System.out.println("(" + e.getX() + "," + e.getY() + ")");
+        if (e.getX() > 135 && e.getX() < 245) {
+            if (e.getY() > 130 && e.getY() < 150) {
+                currentChoice = 0;
+                select();
+            }
 
+            if (e.getY() > 153 && e.getY() < 180) {
+                currentChoice = 1;
+                select();
+            }
+
+            if (e.getY() > 183 && e.getY() < 205) {
+                currentChoice = 2;
+                select();
+            }
+        }
     }
 
     @Override
@@ -116,7 +134,6 @@ public class MenuScreen extends GameState {
 
     @Override
     public void mouseEntered(MouseEvent e) {
-
     }
 
     @Override
