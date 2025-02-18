@@ -13,7 +13,7 @@ public class MenuScreen extends GameState {
     private Sprite sprite;
 
     private int currentChoice = 0;
-    private String[] options = {"Cutscene Mode", "Arcade Mode", "Quit"};
+    private String[] options = {"Start", "Quit"};
 
     private Color titleColor;
     private Font titleFont;
