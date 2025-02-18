@@ -20,6 +20,7 @@ public class GameStateManager {
     public static final int MENU = 0;
     public static final int CUTSCENE1 = 1;
     public static final int LEVEL1 = 2;
+    public static final int RAYCAST = 3;
 
     public GameStateManager() {
         stateList = new ArrayList<>();

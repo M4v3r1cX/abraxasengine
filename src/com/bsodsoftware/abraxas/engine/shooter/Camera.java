@@ -69,50 +69,60 @@ public class Camera implements KeyListener {
       System.out.println("xDir: " + this.xDir + " - yDir: " + this.yDir + " - xPos: " + this.xPos + " - yPos: " + this.yPos);
    }
 
-   public void keyPressed(KeyEvent key) {
-      if (key.getKeyCode() == 37) {
+   public void keyPressed(int key) {
+      if (key == 37) {
          this.left = true;
       }
 
-      if (key.getKeyCode() == 39) {
+      if (key == 39) {
          this.right = true;
       }
 
-      if (key.getKeyCode() == 38) {
+      if (key == 38) {
          this.forward = true;
       }
 
-      if (key.getKeyCode() == 40) {
+      if (key == 40) {
          this.back = true;
       }
       
-      if (key.getKeyCode() == 27) {
+      if (key == 27) {
     	  System.out.println("Buh bye");
     	  System.exit(0);
       }
 
    }
 
-   public void keyReleased(KeyEvent key) {
-      if (key.getKeyCode() == 37) {
+   public void keyReleased(int key) {
+      if (key == 37) {
          this.left = false;
       }
 
-      if (key.getKeyCode() == 39) {
+      if (key == 39) {
          this.right = false;
       }
 
-      if (key.getKeyCode() == 38) {
+      if (key == 38) {
          this.forward = false;
       }
 
-      if (key.getKeyCode() == 40) {
+      if (key == 40) {
          this.back = false;
       }
 
    }
 
    public void keyTyped(KeyEvent key) {
+   }
+
+   @Override
+   public void keyPressed(KeyEvent e) {
+      this.keyPressed(e.getKeyCode());
+   }
+
+   @Override
+   public void keyReleased(KeyEvent e) {
+      this.keyReleased(e.getKeyCode());
    }
 
    public class CameraValues {

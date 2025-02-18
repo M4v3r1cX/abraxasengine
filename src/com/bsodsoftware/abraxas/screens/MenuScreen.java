@@ -13,7 +13,7 @@ public class MenuScreen extends GameState {
     private Sprite sprite;
 
     private int currentChoice = 0;
-    private String[] options = {"Start", "Quit"};
+    private String[] options = {"Visual Novel", "Raycaster", "Quit"};
 
     private Color titleColor;
     private Font titleFont;
@@ -64,13 +64,13 @@ public class MenuScreen extends GameState {
         } else {
             graphics.setColor(Color.BLACK);
         }
-        /*graphics.drawString(options[1], 145, 170);
+        graphics.drawString(options[1], 145, 170);
         if (currentChoice == 2) {
             graphics.setColor(Color.RED);
         } else {
             graphics.setColor(Color.BLACK);
-        }*/
-        graphics.drawString(options[1], 145, 200);
+        }
+        graphics.drawString(options[2], 145, 200);
     }
 
     @Override
@@ -146,9 +146,9 @@ public class MenuScreen extends GameState {
             case 0:
                 gameStateManager.setState(GameStateManager.CUTSCENE1);
                 break;
-            /*case 1:
-                gameStateManager.setState(GameStateManager.LEVEL1);
-                break;*/
+            case 1:
+                gameStateManager.setState(GameStateManager.RAYCAST);
+                break;
             case 2:
                 System.exit(0);
                 break;
