@@ -13,7 +13,7 @@ public class MenuScreen extends GameState {
     private Sprite sprite;
 
     private int currentChoice = 0;
-    private String[] options = {"Cutscene Mode", "Arcade Mode", "Quit"};
+    private String[] options = {"Visual Novel", "Raycaster", "Quit"};
 
     private Color titleColor;
     private Font titleFont;
@@ -147,7 +147,7 @@ public class MenuScreen extends GameState {
                 gameStateManager.setState(GameStateManager.CUTSCENE1);
                 break;
             case 1:
-                gameStateManager.setState(GameStateManager.LEVEL1);
+                gameStateManager.setState(GameStateManager.RAYCAST);
                 break;
             case 2:
                 System.exit(0);

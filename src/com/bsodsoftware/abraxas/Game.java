@@ -4,7 +4,7 @@ import javax.swing.*;
 
 public class Game {
     public static void main(String[] args) {
-        JFrame window = new JFrame("Abraxas ][ Engine"); // Creo que era el Doom el que usaba el ][ pa no poner un 2 normal.
+        JFrame window = new JFrame("Abraxas ][");
         window.setContentPane(new GamePanel());
         window.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         window.setResizable(false);
