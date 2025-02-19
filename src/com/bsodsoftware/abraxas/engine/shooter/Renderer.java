@@ -1,5 +1,7 @@
 package com.bsodsoftware.abraxas.engine.shooter;
 
+import com.bsodsoftware.abraxas.engine.graphics.Texture;
+
 import java.awt.Color;
 import java.util.List;
 
