@@ -4,7 +4,7 @@ import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.shooter.Camera;
 import com.bsodsoftware.abraxas.engine.shooter.Maps;
 import com.bsodsoftware.abraxas.engine.shooter.Renderer;
-import com.bsodsoftware.abraxas.engine.shooter.Texture;
+import com.bsodsoftware.abraxas.engine.graphics.Texture;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;

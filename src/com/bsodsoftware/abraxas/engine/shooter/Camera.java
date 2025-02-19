@@ -3,7 +3,7 @@ package com.bsodsoftware.abraxas.engine.shooter;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
-public class Camera implements KeyListener {
+public class Camera  {
    public double xPos;
    public double yPos;
    public double xDir;
@@ -113,16 +113,6 @@ public class Camera implements KeyListener {
    }
 
    public void keyTyped(KeyEvent key) {
-   }
-
-   @Override
-   public void keyPressed(KeyEvent e) {
-      this.keyPressed(e.getKeyCode());
-   }
-
-   @Override
-   public void keyReleased(KeyEvent e) {
-      this.keyReleased(e.getKeyCode());
    }
 
    public class CameraValues {
