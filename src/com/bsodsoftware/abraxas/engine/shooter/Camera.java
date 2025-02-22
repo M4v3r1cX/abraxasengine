@@ -1,5 +1,7 @@
 package com.bsodsoftware.abraxas.engine.shooter;
 
+import com.bsodsoftware.abraxas.engine.GameStateManager;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 

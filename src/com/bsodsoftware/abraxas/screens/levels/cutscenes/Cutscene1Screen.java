@@ -106,6 +106,10 @@ public class Cutscene1Screen extends GameState {
                 currentPos++;
             }
         }
+
+        if (key == 77) {
+            gameStateManager.setState(GameStateManager.MENU);
+        }
     }
 
     @Override
