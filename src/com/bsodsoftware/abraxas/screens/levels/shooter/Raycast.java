@@ -54,6 +54,10 @@ public class Raycast extends GameState {
     @Override
     public void onKeyPressed(int key) {
         this.camera.keyPressed(key);
+
+        if (key == 77) {
+            gameStateManager.setState(GameStateManager.MENU);
+        }
     }
 
     @Override

@@ -1,5 +1,8 @@
 package com.bsodsoftware.abraxas.engine.shooter;
 
+import com.bsodsoftware.abraxas.engine.GameStateManager;
+import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
+
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
@@ -70,23 +73,23 @@ public class Camera  {
    }
 
    public void keyPressed(int key) {
-      if (key == 37) {
+      if (key == KeyInputEnum.LEFT_ARROW.getValue()) {
          this.left = true;
       }
 
-      if (key == 39) {
+      if (key == KeyInputEnum.RIGHT_ARROW.getValue()) {
          this.right = true;
       }
 
-      if (key == 38) {
+      if (key == KeyInputEnum.UP_ARROW.getValue()) {
          this.forward = true;
       }
 
-      if (key == 40) {
+      if (key == KeyInputEnum.DOWN_ARROW.getValue()) {
          this.back = true;
       }
       
-      if (key == 27) {
+      if (key == KeyInputEnum.ESC.getValue()) {
     	  System.out.println("Buh bye");
     	  System.exit(0);
       }

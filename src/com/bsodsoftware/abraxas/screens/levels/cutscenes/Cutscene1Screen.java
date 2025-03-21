@@ -1,6 +1,7 @@
 package com.bsodsoftware.abraxas.screens.levels.cutscenes;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
+import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.graphics.Sprite;
 import com.bsodsoftware.abraxas.states.GameState;
 
@@ -101,10 +102,14 @@ public class Cutscene1Screen extends GameState {
 
     @Override
     public void onKeyPressed(int key) {
-        if (key == KeyEvent.VK_ENTER) {
+        if (key == KeyInputEnum.ENTER.getValue()) {
             if (!isQuestion) {
                 currentPos++;
             }
+        }
+
+        if (key == KeyInputEnum.M.getValue()) {
+            gameStateManager.setState(GameStateManager.MENU);
         }
     }
 

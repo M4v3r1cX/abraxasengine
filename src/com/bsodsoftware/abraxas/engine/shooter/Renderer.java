@@ -33,6 +33,7 @@ public class Renderer {
       for(x = pixels.length / 2; x < pixels.length; ++x) {
          if (pixels[x] != Color.gray.getRGB()) {
             pixels[x] = Color.gray.getRGB();
+            //pixels[x] = 775024;
          }
       }
 
