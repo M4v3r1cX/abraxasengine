@@ -13,6 +13,7 @@ Abraxas Engine was originally the name of my CompSci thesis project. It was a pl
 Generally speaking
 * VN: Choices for branching paths. It's prototyped but it ain't working
 * Raycaster: navigation and collisions are done, but I need to do pickups, weapons, etc.
+
 Kanban of the project in case you'd like to know how shit is going on
 https://docs.google.com/spreadsheets/d/1Bbl4_GevFAydFfdLJlJrNKDrG97YA2vR-VFsnYhx9L4/
 # Development Screenshots
