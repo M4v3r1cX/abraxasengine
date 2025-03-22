@@ -49,7 +49,7 @@ public class MenuScreen extends GameState {
 
         graphics.setColor(titleColor);
         graphics.setFont(titleFont);
-        graphics.drawString("Abraxas Engine", 80, 70);
+        graphics.drawString("Abraxas Engine II", 80, 70);
 
         graphics.setFont(font);
 

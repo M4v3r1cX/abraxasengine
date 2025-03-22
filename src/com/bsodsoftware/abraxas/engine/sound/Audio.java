@@ -2,7 +2,7 @@ package com.bsodsoftware.abraxas.engine.sound;
 
 public class Audio {
 
-    private String location;
+    /*private String location;
     // Parece que no se va a poder hacer con esta arquitectura, asique intentemos este
     // https://www.geeksforgeeks.org/play-audio-file-using-java/
 
@@ -21,5 +21,5 @@ public class Audio {
 
     public void play() {
 
-    }
+    }*/
 }
