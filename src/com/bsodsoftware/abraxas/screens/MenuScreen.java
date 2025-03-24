@@ -2,10 +2,10 @@ package com.bsodsoftware.abraxas.screens;
 
 import com.bsodsoftware.abraxas.engine.graphics.Sprite;
 import com.bsodsoftware.abraxas.engine.GameStateManager;
+import com.bsodsoftware.abraxas.engine.sound.Audio;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 
@@ -19,6 +19,9 @@ public class MenuScreen extends GameState {
     private Font titleFont;
     private Font font;
 
+    private Audio bgm;
+    private Audio cursor;
+
     public MenuScreen(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
         try {
@@ -28,6 +31,12 @@ public class MenuScreen extends GameState {
             titleColor = new Color(128, 0,0);
             titleFont = new Font("Century Gothic", Font.PLAIN, 28);
             font = new Font("Arial", Font.PLAIN, 12);
+
+            bgm = new Audio("/Audio/title.wav", true);
+            cursor = new Audio("/Audio/smw_coin.wav", false);
+            if (this.bgm.getStatus().equals(Audio.STATUS.STOPPED)) {
+                this.bgm.play();
+            }
         } catch(Exception e) {
             e.printStackTrace();
         }
@@ -35,7 +44,6 @@ public class MenuScreen extends GameState {
 
     @Override
     public void init() {
-
     }
 
     @Override
@@ -83,11 +91,13 @@ public class MenuScreen extends GameState {
                 break;
             case KeyEvent.VK_DOWN:
                 currentChoice++;
+                this.cursor.play();
                 if (currentChoice > 2) {
                     currentChoice = 0;
                 }
                 break;
             case KeyEvent.VK_UP:
+                this.cursor.play();
                 currentChoice--;
                 if (currentChoice < 0) {
                     currentChoice = 2;
@@ -142,6 +152,8 @@ public class MenuScreen extends GameState {
     }
 
     private void select() {
+        this.cursor.stop();
+        this.bgm.stop();
         switch (currentChoice) {
             case 0:
                 gameStateManager.setState(GameStateManager.CUTSCENE1);

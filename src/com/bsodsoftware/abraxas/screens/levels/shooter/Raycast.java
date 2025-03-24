@@ -5,6 +5,7 @@ import com.bsodsoftware.abraxas.engine.shooter.Camera;
 import com.bsodsoftware.abraxas.engine.shooter.Maps;
 import com.bsodsoftware.abraxas.engine.shooter.Renderer;
 import com.bsodsoftware.abraxas.engine.graphics.Texture;
+import com.bsodsoftware.abraxas.engine.sound.Audio;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
@@ -26,6 +27,7 @@ public class Raycast extends GameState {
     public Renderer screen;
     private int WINDOW_WIDTH = 800;
     private int WINDOW_HEIGHT = 600;
+    private Audio song;
 
     public Raycast(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
@@ -38,6 +40,10 @@ public class Raycast extends GameState {
         this.textures = Texture.getAvailableTextures();
         this.camera = new Camera(4.5D, 4.5D, 1.0D, 0.0D, 0.0D, -0.66D);
         this.screen = new Renderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT);
+        this.song = new Audio("/Audio/1.wav", true);
+        if (this.song.getStatus().equals(Audio.STATUS.STOPPED)) {
+            this.song.play();
+        }
     }
 
     @Override
