@@ -9,6 +9,7 @@ Abraxas Engine was originally the name of my CompSci thesis project. It was a pl
 * Menu
 * Can advance text on the VN section
 * Raycaster works and you can navigate the farily simple map
+* 2025/03/23: We've got sounds now!
 # ToDo
 Generally speaking
 * VN: Choices for branching paths. It's prototyped but it ain't working
