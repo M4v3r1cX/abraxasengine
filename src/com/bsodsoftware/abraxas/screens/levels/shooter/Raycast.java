@@ -1,6 +1,7 @@
 package com.bsodsoftware.abraxas.screens.levels.shooter;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
+import com.bsodsoftware.abraxas.engine.graphics.Sprite;
 import com.bsodsoftware.abraxas.engine.shooter.Camera;
 import com.bsodsoftware.abraxas.engine.shooter.Maps;
 import com.bsodsoftware.abraxas.engine.shooter.Renderer;
@@ -28,6 +29,8 @@ public class Raycast extends GameState {
     private int WINDOW_WIDTH = 800;
     private int WINDOW_HEIGHT = 600;
     private Audio song;
+    private boolean loaded = false;
+    private Sprite sprite;
 
     public Raycast(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
@@ -44,17 +47,27 @@ public class Raycast extends GameState {
         if (this.song.getStatus().equals(Audio.STATUS.STOPPED)) {
             this.song.play();
         }
+        this.loaded = true;
     }
 
     @Override
     public void update() {
-        this.screen.update(this.camera, this.pixels);
-        this.camera.update(map);
+        if (loaded) {
+            this.screen.update(this.camera, this.pixels);
+            this.camera.update(map);
+        }
     }
 
     @Override
     public void draw(Graphics2D graphics) {
-        graphics.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), (ImageObserver) null);
+        if (loaded) {
+            graphics.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), (ImageObserver) null);
+        }  else {
+            if (sprite == null) {
+                sprite = new Sprite("/Background/loading.jpg", 1);
+            }
+            sprite.draw(graphics);
+        }
     }
 
     @Override

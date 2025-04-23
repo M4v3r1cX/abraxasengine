@@ -6,6 +6,8 @@ import javax.sound.sampled.Clip;
 
 public class Audio {
 
+    private final boolean MUTE = true;
+
     public enum STATUS {
         PLAYING, STOPPED
     }
@@ -17,10 +19,12 @@ public class Audio {
     private boolean loop;
 
     public Audio(String location, boolean loop) {
-        this.location = location;
-        this.loop = loop;
+        if (!MUTE) {
+            this.location = location;
+            this.loop = loop;
+            this.load();
+        }
         this.status = STATUS.STOPPED;
-        this.load();
     }
 
     private void load() {
@@ -37,13 +41,17 @@ public class Audio {
     }
 
     public void play() {
-        this.clip.start();
-        this.status = STATUS.PLAYING;
+        if (!MUTE) {
+            this.clip.start();
+            this.status = STATUS.PLAYING;
+        }
     }
 
     public void stop() {
-        this.clip.stop();
-        this.clip.close();
+        if (!MUTE) {
+            this.clip.stop();
+            this.clip.close();
+        }
     }
 
     public STATUS getStatus() {
