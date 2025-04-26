@@ -7,10 +7,10 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 public class Texture {
-   public static Texture wireframe = new Texture("/text1.png", 64);
-   public static Texture wireframe2 = new Texture("/text1.png", 64);
-   public static Texture wireframe3 = new Texture("/text1.png", 64);
-   public static Texture wireframe4 = new Texture("/text1.png", 64);
+   public static Texture wireframe = new Texture("/Sprites/Textures/brick.jpg", 64);
+   public static Texture wireframe2 = new Texture("/Sprites/Textures/brick.jpg", 64);
+   public static Texture wireframe3 = new Texture("/Sprites/Textures/brick.jpg", 64);
+   public static Texture wireframe4 = new Texture("/Sprites/Textures/brick.jpg", 64);
    public int[] pixels;
    private String location;
    public final int SIZE;

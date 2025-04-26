@@ -2,6 +2,7 @@ package com.bsodsoftware.abraxas.screens.levels.shooter;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.graphics.Sprite;
+import com.bsodsoftware.abraxas.engine.playerobjects.Player;
 import com.bsodsoftware.abraxas.engine.shooter.Camera;
 import com.bsodsoftware.abraxas.engine.shooter.Maps;
 import com.bsodsoftware.abraxas.engine.shooter.Renderer;
@@ -31,6 +32,9 @@ public class Raycast extends GameState {
     private Audio song;
     private boolean loaded = false;
     private Sprite sprite;
+    private Sprite sword;
+
+    private Player player;
 
     public Raycast(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
@@ -47,6 +51,14 @@ public class Raycast extends GameState {
         if (this.song.getStatus().equals(Audio.STATUS.STOPPED)) {
             this.song.play();
         }
+        sword = new Sprite("/Sprites/Weapons/sword.png", 1);
+        sword.setPosition(500,40);
+        player = new Player();
+        player.setArmor(100);
+        player.setHealth(100);
+        player.setName("Maverick");
+        player.setAttack(10);
+
         this.loaded = true;
     }
 
@@ -62,6 +74,8 @@ public class Raycast extends GameState {
     public void draw(Graphics2D graphics) {
         if (loaded) {
             graphics.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), (ImageObserver) null);
+            sword.draw(graphics);
+            // TODO draw hud
         }  else {
             if (sprite == null) {
                 sprite = new Sprite("/Background/loading.jpg", 1);

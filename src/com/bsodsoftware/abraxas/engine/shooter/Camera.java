@@ -17,7 +17,7 @@ public class Camera  {
    public boolean right;
    public boolean forward;
    public boolean back;
-   public final double MOVE_SPEED = 0.09D;
+   public final double MOVE_SPEED = 0.07D;
    public final double ROTATION_SPEED = 0.06D;
 
    public Camera(double x, double y, double xd, double yd, double xp, double yp) {
