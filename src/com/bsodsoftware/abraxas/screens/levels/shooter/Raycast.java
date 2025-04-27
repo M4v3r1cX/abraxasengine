@@ -27,12 +27,15 @@ public class Raycast extends GameState {
     public List<Texture> textures;
     public Camera camera;
     public Renderer screen;
-    private int WINDOW_WIDTH = 800;
-    private int WINDOW_HEIGHT = 600;
+    private final int WINDOW_WIDTH = 800;
+    private final int WINDOW_HEIGHT = 600;
     private Audio song;
     private boolean loaded = false;
     private Sprite sprite;
     private Sprite sword;
+
+    private Color hudColor;
+    private Font hudFont;
 
     private Player player;
 
@@ -42,24 +45,43 @@ public class Raycast extends GameState {
 
     @Override
     public void init() {
+        initScreen();
+        initSound();
+        initPlayer();
+        initHud();
+
+        this.loaded = true;
+    }
+
+    private void initScreen() {
         this.image = new BufferedImage(this.WINDOW_WIDTH, this.WINDOW_HEIGHT, 1);
         this.pixels = ((DataBufferInt)this.image.getRaster().getDataBuffer()).getData();
         this.textures = Texture.getAvailableTextures();
         this.camera = new Camera(4.5D, 4.5D, 1.0D, 0.0D, 0.0D, -0.66D);
         this.screen = new Renderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT);
+
+        sword = new Sprite("/Sprites/Weapons/sword.png", 1);
+        sword.setPosition(500,40);
+    }
+
+    private void initSound() {
         this.song = new Audio("/Audio/1.wav", true);
         if (this.song.getStatus().equals(Audio.STATUS.STOPPED)) {
             this.song.play();
         }
-        sword = new Sprite("/Sprites/Weapons/sword.png", 1);
-        sword.setPosition(500,40);
+    }
+
+    private void initPlayer() {
         player = new Player();
         player.setArmor(100);
         player.setHealth(100);
         player.setName("Maverick");
         player.setAttack(10);
+    }
 
-        this.loaded = true;
+    private void initHud() {
+        hudColor = new Color(128, 0,0);
+        hudFont = new Font("Century Gothic", Font.BOLD, 35);
     }
 
     @Override
@@ -73,15 +95,24 @@ public class Raycast extends GameState {
     @Override
     public void draw(Graphics2D graphics) {
         if (loaded) {
+            // Raycaster Renderer
             graphics.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), (ImageObserver) null);
+            // Weapon Renderer
             sword.draw(graphics);
-            // TODO draw hud
+            // HUD
+            graphics.setColor(hudColor);
+            graphics.setFont(hudFont);
+            graphics.drawString("HEALTH: " + player.getHealth(), 80, 70);
         }  else {
-            if (sprite == null) {
-                sprite = new Sprite("/Background/loading.jpg", 1);
-            }
-            sprite.draw(graphics);
+            showLoadingScreen(graphics);
         }
+    }
+
+    private void showLoadingScreen(Graphics2D graphics) {
+        if (sprite == null) {
+            sprite = new Sprite("/Background/loading.jpg", 1);
+        }
+        sprite.draw(graphics);
     }
 
     @Override
