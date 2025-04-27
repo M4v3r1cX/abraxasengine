@@ -1,10 +1,8 @@
 package com.bsodsoftware.abraxas.engine.shooter;
 
-import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 public class Camera  {
    private double xPos;
