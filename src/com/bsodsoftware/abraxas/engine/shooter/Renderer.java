@@ -39,10 +39,10 @@ public class Renderer {
 
       for(x = 0; x < this.width; ++x) {
          double cameraX = (double)(2 * x) / (double)this.width - 1.0D;
-         double rayDirX = camera.xDir + camera.xPlane * cameraX;
-         double rayDirY = camera.yDir + camera.yPlane * cameraX;
-         int mapX = (int)camera.xPos;
-         int mapY = (int)camera.yPos;
+         double rayDirX = camera.getxDir() + camera.getxPlane() * cameraX;
+         double rayDirY = camera.getyDir() + camera.getyPlane() * cameraX;
+         int mapX = (int)camera.getxPos();
+         int mapY = (int)camera.getyPos();
          double deltaDistX = Math.sqrt(1.0D + rayDirY * rayDirY / (rayDirX * rayDirX));
          double deltaDistY = Math.sqrt(1.0D + rayDirX * rayDirX / (rayDirY * rayDirY));
          boolean hit = false;
@@ -51,20 +51,20 @@ public class Renderer {
          byte stepX;
          if (rayDirX < 0.0D) {
             stepX = -1;
-            sideDistX = (camera.xPos - (double)mapX) * deltaDistX;
+            sideDistX = (camera.getxPos() - (double)mapX) * deltaDistX;
          } else {
             stepX = 1;
-            sideDistX = ((double)mapX + 1.0D - camera.xPos) * deltaDistX;
+            sideDistX = ((double)mapX + 1.0D - camera.getxPos()) * deltaDistX;
          }
 
          double sideDistY;
          byte stepY;
          if (rayDirY < 0.0D) {
             stepY = -1;
-            sideDistY = (camera.yPos - (double)mapY) * deltaDistY;
+            sideDistY = (camera.getyPos() - (double)mapY) * deltaDistY;
          } else {
             stepY = 1;
-            sideDistY = ((double)mapY + 1.0D - camera.yPos) * deltaDistY;
+            sideDistY = ((double)mapY + 1.0D - camera.getyPos()) * deltaDistY;
          }
 
          while(!hit) {
@@ -85,9 +85,9 @@ public class Renderer {
 
          double perpWallDist;
          if (!side) {
-            perpWallDist = Math.abs(((double)mapX - camera.xPos + (double)((1 - stepX) / 2)) / rayDirX);
+            perpWallDist = Math.abs(((double)mapX - camera.getxPos() + (double)((1 - stepX) / 2)) / rayDirX);
          } else {
-            perpWallDist = Math.abs(((double)mapY - camera.yPos + (double)((1 - stepY) / 2)) / rayDirY);
+            perpWallDist = Math.abs(((double)mapY - camera.getyPos() + (double)((1 - stepY) / 2)) / rayDirY);
          }
 
          int lineHeight;
@@ -110,9 +110,9 @@ public class Renderer {
          int textNum = this.map[mapX][mapY] - 1;
          double wallX;
          if (side) {
-            wallX = camera.xPos + ((double)mapY - camera.yPos + (double)((1 - stepY) / 2)) / rayDirY * rayDirX;
+            wallX = camera.getxPos() + ((double)mapY - camera.getyPos() + (double)((1 - stepY) / 2)) / rayDirY * rayDirX;
          } else {
-            wallX = camera.yPos + ((double)mapX - camera.xPos + (double)((1 - stepX) / 2)) / rayDirX * rayDirY;
+            wallX = camera.getyPos() + ((double)mapX - camera.getxPos() + (double)((1 - stepX) / 2)) / rayDirX * rayDirY;
          }
 
          wallX -= Math.floor(wallX);

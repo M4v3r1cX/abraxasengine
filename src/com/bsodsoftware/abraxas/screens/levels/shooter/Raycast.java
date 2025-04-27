@@ -103,6 +103,7 @@ public class Raycast extends GameState {
             graphics.setColor(hudColor);
             graphics.setFont(hudFont);
             graphics.drawString("HEALTH: " + player.getHealth(), 80, 70);
+            weaponBob(graphics);
         }  else {
             showLoadingScreen(graphics);
         }
@@ -152,5 +153,13 @@ public class Raycast extends GameState {
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    // intento de animación pa hacer la wea tipo Doom
+    private void weaponBob(Graphics2D graphics) {
+        int frames = 10;    // ?
+        if (camera.isForward()) {
+
+        }
     }
 }
