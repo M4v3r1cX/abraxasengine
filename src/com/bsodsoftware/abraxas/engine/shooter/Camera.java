@@ -211,4 +211,8 @@ public class Camera  {
    public double getROTATION_SPEED() {
       return ROTATION_SPEED;
    }
+
+   public boolean isMoving() {
+      return isForward() || isBack() || isLeft() || isRight();
+   }
 }

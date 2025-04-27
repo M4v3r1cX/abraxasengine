@@ -33,6 +33,11 @@ public class Raycast extends GameState {
     private boolean loaded = false;
     private Sprite sprite;
     private Sprite sword;
+    int currentFrame = 0;
+    int initialPosX = 500;
+    int initialPosY = 40;
+    int currentPosX = initialPosX;
+    int currentPosY = initialPosY;
 
     private Color hudColor;
     private Font hudFont;
@@ -61,7 +66,7 @@ public class Raycast extends GameState {
         this.screen = new Renderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT);
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
-        sword.setPosition(500,40);
+        sword.setPosition(initialPosX, initialPosY);
     }
 
     private void initSound() {
@@ -98,12 +103,12 @@ public class Raycast extends GameState {
             // Raycaster Renderer
             graphics.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), (ImageObserver) null);
             // Weapon Renderer
+            weaponBob();
             sword.draw(graphics);
             // HUD
             graphics.setColor(hudColor);
             graphics.setFont(hudFont);
             graphics.drawString("HEALTH: " + player.getHealth(), 80, 70);
-            weaponBob(graphics);
         }  else {
             showLoadingScreen(graphics);
         }
@@ -156,10 +161,39 @@ public class Raycast extends GameState {
     }
 
     // intento de animación pa hacer la wea tipo Doom
-    private void weaponBob(Graphics2D graphics) {
-        int frames = 10;    // ?
-        if (camera.isForward()) {
+    private void weaponBob() {
+        if (camera.isMoving()) {
+            if (currentFrame < 20) {
+                currentPosX-= 1;
+                currentPosY+= 1;
+            } else if (currentFrame < 40) {
+                currentPosX -= 1;
+                currentPosY -= 1;
+            } else if (currentFrame < 60) {
+                currentPosX+= 1;
+                currentPosY+= 1;
+            } else if (currentFrame < 80) {
+                currentPosX += 1;
+                currentPosY -= 1;
+            } else {
+                currentFrame = 0;
+            }
 
+            currentFrame = currentFrame + 1;
+        } else {
+            if (currentFrame > 0) {
+                if (currentPosX > initialPosX) {
+                    currentPosX-= 1;
+                } else {
+                    currentPosX+= 1;
+                }
+                if (currentPosY > initialPosY) {
+                    currentPosY-= 1;
+                } else {
+                    currentPosY+= 1;
+                }
+            }
         }
+        sword.setPosition(currentPosX, currentPosY);
     }
 }
