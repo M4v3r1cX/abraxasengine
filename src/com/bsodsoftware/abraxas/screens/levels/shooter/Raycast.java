@@ -2,7 +2,7 @@ package com.bsodsoftware.abraxas.screens.levels.shooter;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.graphics.Sprite;
-import com.bsodsoftware.abraxas.engine.playerobjects.Player;
+import com.bsodsoftware.abraxas.engine.player.Player;
 import com.bsodsoftware.abraxas.engine.shooter.Camera;
 import com.bsodsoftware.abraxas.engine.shooter.Maps;
 import com.bsodsoftware.abraxas.engine.shooter.Renderer;
@@ -50,9 +50,9 @@ public class Raycast extends GameState {
 
     @Override
     public void init() {
+        initPlayer();
         initScreen();
         initSound();
-        initPlayer();
         initHud();
 
         this.loaded = true;
@@ -62,7 +62,7 @@ public class Raycast extends GameState {
         this.image = new BufferedImage(this.WINDOW_WIDTH, this.WINDOW_HEIGHT, 1);
         this.pixels = ((DataBufferInt)this.image.getRaster().getDataBuffer()).getData();
         this.textures = Texture.getAvailableTextures();
-        this.camera = new Camera(4.5D, 4.5D, 1.0D, 0.0D, 0.0D, -0.66D);
+        this.camera = new Camera(4.5D, 4.5D, 1.0D, 0.0D, 0.0D, -0.66D, this.player);
         this.screen = new Renderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT);
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
@@ -79,9 +79,11 @@ public class Raycast extends GameState {
     private void initPlayer() {
         player = new Player();
         player.setArmor(100);
+        player.setStamina(3);
         player.setHealth(100);
         player.setName("Maverick");
         player.setAttack(10);
+        player.setState(Player.STATE.STANDING);
     }
 
     private void initHud() {
@@ -106,9 +108,13 @@ public class Raycast extends GameState {
             weaponBob();
             sword.draw(graphics);
             // HUD
-            graphics.setColor(hudColor);
             graphics.setFont(hudFont);
+            hudColor = new Color(128, 0,0);
+            graphics.setColor(hudColor);
             graphics.drawString("HEALTH: " + player.getHealth(), 80, 70);
+            hudColor = new Color(0, 128,0);
+            graphics.setColor(hudColor);
+            graphics.drawString("Stamina: " + player.getStamina(), 80, 110);
         }  else {
             showLoadingScreen(graphics);
         }
@@ -161,8 +167,9 @@ public class Raycast extends GameState {
     }
 
     // intento de animación pa hacer la wea tipo Doom
+    // TODO hacer un engine de animaciones porque lo vamos a usar pa todo
     private void weaponBob() {
-        if (camera.isMoving()) {
+        if (this.player.getState().equals(Player.STATE.WALKING)) {
             if (currentFrame < 20) {
                 currentPosX-= 1;
                 currentPosY+= 1;

@@ -1,6 +1,7 @@
 package com.bsodsoftware.abraxas.engine.shooter;
 
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
+import com.bsodsoftware.abraxas.engine.player.Player;
 
 import java.awt.event.KeyEvent;
 
@@ -17,14 +18,16 @@ public class Camera  {
    private boolean back;
    private final double MOVE_SPEED = 0.07D;
    private final double ROTATION_SPEED = 0.06D;
+   private Player player;
 
-   public Camera(double x, double y, double xd, double yd, double xp, double yp) {
+   public Camera(double x, double y, double xd, double yd, double xp, double yp, Player player) {
       this.xPos = x;
       this.yPos = y;
       this.xDir = xd;
       this.yDir = yd;
       this.xPlane = xp;
       this.yPlane = yp;
+      this.player = player;
    }
 
    public void update(int[][] map) {
@@ -73,18 +76,22 @@ public class Camera  {
    public void keyPressed(int key) {
       if (key == KeyInputEnum.LEFT_ARROW.getValue()) {
          this.left = true;
+         this.player.setState(Player.STATE.WALKING);
       }
 
       if (key == KeyInputEnum.RIGHT_ARROW.getValue()) {
          this.right = true;
+         this.player.setState(Player.STATE.WALKING);
       }
 
       if (key == KeyInputEnum.UP_ARROW.getValue()) {
          this.forward = true;
+         this.player.setState(Player.STATE.WALKING);
       }
 
       if (key == KeyInputEnum.DOWN_ARROW.getValue()) {
          this.back = true;
+         this.player.setState(Player.STATE.WALKING);
       }
       
       if (key == KeyInputEnum.ESC.getValue()) {
@@ -109,6 +116,10 @@ public class Camera  {
 
       if (key == 40) {
          this.back = false;
+      }
+
+      if (!isRight() && !isLeft() && !isForward() && !isBack()) {
+         this.player.setState(Player.STATE.STANDING);
       }
 
    }
@@ -208,9 +219,5 @@ public class Camera  {
 
    public double getROTATION_SPEED() {
       return ROTATION_SPEED;
-   }
-
-   public boolean isMoving() {
-      return isForward() || isBack() || isLeft() || isRight();
    }
 }
