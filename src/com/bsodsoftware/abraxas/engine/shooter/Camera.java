@@ -16,6 +16,8 @@ public class Camera  {
    private boolean right;
    private boolean forward;
    private boolean back;
+   private boolean strafeRight;
+   private boolean strafeLeft;
    private final double MOVE_SPEED = 0.07D;
    private final double ROTATION_SPEED = 0.06D;
    private Player player;
@@ -84,13 +86,23 @@ public class Camera  {
          this.player.setState(Player.STATE.WALKING);
       }
 
-      if (key == KeyInputEnum.UP_ARROW.getValue()) {
+      if (key == KeyInputEnum.UP_ARROW.getValue() || key == KeyInputEnum.W.getValue()) {
          this.forward = true;
          this.player.setState(Player.STATE.WALKING);
       }
 
-      if (key == KeyInputEnum.DOWN_ARROW.getValue()) {
+      if (key == KeyInputEnum.DOWN_ARROW.getValue() || key == KeyInputEnum.S.getValue()) {
          this.back = true;
+         this.player.setState(Player.STATE.WALKING);
+      }
+
+      if (key == KeyInputEnum.A.getValue()) {
+         this.strafeLeft = true;
+         this.player.setState(Player.STATE.WALKING);
+      }
+
+      if (key == KeyInputEnum.D.getValue()) {
+         this.strafeRight = true;
          this.player.setState(Player.STATE.WALKING);
       }
       
@@ -102,20 +114,28 @@ public class Camera  {
    }
 
    public void keyReleased(int key) {
-      if (key == 37) {
+      if (key == KeyInputEnum.LEFT_ARROW.getValue()) {
          this.left = false;
       }
 
-      if (key == 39) {
+      if (key == KeyInputEnum.RIGHT_ARROW.getValue()) {
          this.right = false;
       }
 
-      if (key == 38) {
+      if (key == KeyInputEnum.UP_ARROW.getValue() || key == KeyInputEnum.W.getValue()) {
          this.forward = false;
       }
 
-      if (key == 40) {
+      if (key == KeyInputEnum.DOWN_ARROW.getValue() || key == KeyInputEnum.S.getValue()) {
          this.back = false;
+      }
+
+      if (key == KeyInputEnum.A.getValue()) {
+         this.strafeLeft = false;
+      }
+
+      if (key == KeyInputEnum.D.getValue()) {
+         this.strafeRight = false;
       }
 
       if (!isRight() && !isLeft() && !isForward() && !isBack()) {
@@ -219,5 +239,21 @@ public class Camera  {
 
    public double getROTATION_SPEED() {
       return ROTATION_SPEED;
+   }
+
+   public boolean isStrafeRight() {
+      return strafeRight;
+   }
+
+   public void setStrafeRight(boolean strafeRight) {
+      this.strafeRight = strafeRight;
+   }
+
+   public boolean isStrafeLeft() {
+      return strafeLeft;
+   }
+
+   public void setStrafeLeft(boolean strafeLeft) {
+      this.strafeLeft = strafeLeft;
    }
 }

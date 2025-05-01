@@ -18,26 +18,27 @@ import java.awt.image.ImageObserver;
 import java.util.List;
 
 public class Raycast extends GameState {
+    private Maps.MAPS currentMap;
     private GameStateManager gameStateManager;
-    public int mapWidth = 15;
-    public int mapHeight = 15;
+    private int mapWidth = 15;
+    private int mapHeight = 15;
     private BufferedImage image;
-    public int[] pixels;
-    public static int[][] map = Maps.getE1M1();
-    public List<Texture> textures;
-    public Camera camera;
-    public Renderer screen;
+    private int[] pixels;
+    private int[][] map;
+    private List<Texture> textures;
+    private Camera camera;
+    private Renderer screen;
     private final int WINDOW_WIDTH = 800;
     private final int WINDOW_HEIGHT = 600;
     private Audio song;
     private boolean loaded = false;
     private Sprite sprite;
     private Sprite sword;
-    int currentFrame = 0;
-    int initialPosX = 500;
-    int initialPosY = 40;
-    int currentPosX = initialPosX;
-    int currentPosY = initialPosY;
+    private int currentFrame = 0;
+    private int initialPosX = 500;
+    private int initialPosY = 40;
+    private int currentPosX = initialPosX;
+    private int currentPosY = initialPosY;
 
     private Color hudColor;
     private Font hudFont;
@@ -50,6 +51,7 @@ public class Raycast extends GameState {
 
     @Override
     public void init() {
+        initMap();
         initPlayer();
         initScreen();
         initSound();
@@ -62,7 +64,7 @@ public class Raycast extends GameState {
         this.image = new BufferedImage(this.WINDOW_WIDTH, this.WINDOW_HEIGHT, 1);
         this.pixels = ((DataBufferInt)this.image.getRaster().getDataBuffer()).getData();
         this.textures = Texture.getAvailableTextures();
-        this.camera = new Camera(4.5D, 4.5D, 1.0D, 0.0D, 0.0D, -0.66D, this.player);
+        this.camera = new Camera(3.1D, 3.1D, 1.0D, 0.0D, 0.0D, -0.66D, this.player);
         this.screen = new Renderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT);
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
@@ -89,6 +91,11 @@ public class Raycast extends GameState {
     private void initHud() {
         hudColor = new Color(128, 0,0);
         hudFont = new Font("Century Gothic", Font.BOLD, 35);
+    }
+
+    private void initMap() {
+        this.map = Maps.getE1M1();
+        this.currentMap = Maps.MAPS.E1M1;
     }
 
     @Override
@@ -202,5 +209,101 @@ public class Raycast extends GameState {
             }
         }
         sword.setPosition(currentPosX, currentPosY);
+    }
+
+    public Maps.MAPS getCurrentMap() {
+        return currentMap;
+    }
+
+    public GameStateManager getGameStateManager() {
+        return gameStateManager;
+    }
+
+    public int getMapWidth() {
+        return mapWidth;
+    }
+
+    public int getMapHeight() {
+        return mapHeight;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public int[] getPixels() {
+        return pixels;
+    }
+
+    public int[][] getMap() {
+        return map;
+    }
+
+    public List<Texture> getTextures() {
+        return textures;
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public Renderer getScreen() {
+        return screen;
+    }
+
+    public int getWINDOW_WIDTH() {
+        return WINDOW_WIDTH;
+    }
+
+    public int getWINDOW_HEIGHT() {
+        return WINDOW_HEIGHT;
+    }
+
+    public Audio getSong() {
+        return song;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public Sprite getSprite() {
+        return sprite;
+    }
+
+    public Sprite getSword() {
+        return sword;
+    }
+
+    public int getCurrentFrame() {
+        return currentFrame;
+    }
+
+    public int getInitialPosX() {
+        return initialPosX;
+    }
+
+    public int getInitialPosY() {
+        return initialPosY;
+    }
+
+    public int getCurrentPosX() {
+        return currentPosX;
+    }
+
+    public int getCurrentPosY() {
+        return currentPosY;
+    }
+
+    public Color getHudColor() {
+        return hudColor;
+    }
+
+    public Font getHudFont() {
+        return hudFont;
+    }
+
+    public Player getPlayer() {
+        return player;
     }
 }

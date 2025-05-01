@@ -10,10 +10,8 @@ import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 
 public class GameStateManager {
-    private ArrayList<GameState> stateList;
+    private final ArrayList<GameState> stateList;
     private int currentState;
-    private Graphics graphics;
-    //private ControlHandler controlHandler;
 
     public static final int MENU = 0;
     public static final int CUTSCENE1 = 1;
