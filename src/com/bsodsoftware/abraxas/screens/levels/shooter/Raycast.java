@@ -1,6 +1,8 @@
 package com.bsodsoftware.abraxas.screens.levels.shooter;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
+import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
+import com.bsodsoftware.abraxas.engine.events.Event;
 import com.bsodsoftware.abraxas.engine.graphics.Sprite;
 import com.bsodsoftware.abraxas.engine.player.Player;
 import com.bsodsoftware.abraxas.engine.shooter.Camera;
@@ -15,6 +17,8 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.ImageObserver;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Raycast extends GameState {
@@ -45,6 +49,11 @@ public class Raycast extends GameState {
 
     private Player player;
 
+    HashMap<Maps.MAPS, ArrayList<com.bsodsoftware.abraxas.engine.events.Event>> eventsByLevel;
+    ArrayList<Event> events;
+    boolean event1active = false;
+    private CollisionEngine collisionEngine;
+
     public Raycast(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
     }
@@ -56,6 +65,8 @@ public class Raycast extends GameState {
         initScreen();
         initSound();
         initHud();
+        initEvents();
+        initCollisionEngine();
 
         this.loaded = true;
     }
@@ -93,6 +104,18 @@ public class Raycast extends GameState {
         hudFont = new Font("Century Gothic", Font.BOLD, 35);
     }
 
+    private void initEvents() {
+        events = new ArrayList<>();
+        eventsByLevel = new HashMap<>();
+        Event e = new Event(1L, 3.0D, 4.0D, 4.0D, 5.0D, true);
+        events.add(e);
+        eventsByLevel.put(Maps.MAPS.E1M1, events);
+    }
+
+    private void initCollisionEngine() {
+        this.collisionEngine = new CollisionEngine(currentMap, eventsByLevel);
+    }
+
     private void initMap() {
         this.map = Maps.getE1M1();
         this.currentMap = Maps.MAPS.E1M1;
@@ -108,6 +131,7 @@ public class Raycast extends GameState {
 
     @Override
     public void draw(Graphics2D graphics) {
+        // TODO quizás separar estas weas en métodos
         if (loaded) {
             // Raycaster Renderer
             graphics.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), (ImageObserver) null);
@@ -122,9 +146,17 @@ public class Raycast extends GameState {
             hudColor = new Color(0, 128,0);
             graphics.setColor(hudColor);
             graphics.drawString("Stamina: " + player.getStamina(), 80, 110);
+
+            if (event1active) {
+                executeEvent1(graphics);
+            }
         }  else {
             showLoadingScreen(graphics);
         }
+    }
+
+    private void executeEvent1(Graphics2D graphics) {
+
     }
 
     private void showLoadingScreen(Graphics2D graphics) {
