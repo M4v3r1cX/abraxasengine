@@ -48,10 +48,8 @@ public class Raycast extends GameState {
     private Font hudFont;
 
     private Player player;
-
-    HashMap<Maps.MAPS, ArrayList<com.bsodsoftware.abraxas.engine.events.Event>> eventsByLevel;
     ArrayList<Event> events;
-    boolean event1active = false;
+    private boolean eventInProgress = false;
     private CollisionEngine collisionEngine;
 
     public Raycast(GameStateManager gameStateManager) {
@@ -106,14 +104,12 @@ public class Raycast extends GameState {
 
     private void initEvents() {
         events = new ArrayList<>();
-        eventsByLevel = new HashMap<>();
         Event e = new Event(1L, 3.0D, 4.0D, 4.0D, 5.0D, true);
         events.add(e);
-        eventsByLevel.put(Maps.MAPS.E1M1, events);
     }
 
     private void initCollisionEngine() {
-        this.collisionEngine = new CollisionEngine(currentMap, eventsByLevel);
+        this.collisionEngine = new CollisionEngine(events);
     }
 
     private void initMap() {
@@ -126,6 +122,8 @@ public class Raycast extends GameState {
         if (loaded) {
             this.screen.update(this.camera, this.pixels);
             this.camera.update(map);
+            this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
+            this.checkForEvents();
         }
     }
 
@@ -146,17 +144,28 @@ public class Raycast extends GameState {
             hudColor = new Color(0, 128,0);
             graphics.setColor(hudColor);
             graphics.drawString("Stamina: " + player.getStamina(), 80, 110);
-
-            if (event1active) {
-                executeEvent1(graphics);
-            }
         }  else {
             showLoadingScreen(graphics);
         }
     }
 
-    private void executeEvent1(Graphics2D graphics) {
+    private void checkForEvents() {
+        for (Event e : events) {
+            if (e.isActive()) {
+                eventInProgress = true;
+                executeEvent(e.getId());
+            }
+        }
+    }
 
+    private void executeEvent(Long id) {
+        switch (id.intValue()) {
+            case 1:
+                System.out.println("Evento 1 en proceso");
+                break;
+            default:
+                break;
+        }
     }
 
     private void showLoadingScreen(Graphics2D graphics) {
@@ -168,7 +177,9 @@ public class Raycast extends GameState {
 
     @Override
     public void onKeyPressed(int key) {
-        this.camera.keyPressed(key);
+        if (!eventInProgress) {
+            this.camera.keyPressed(key);
+        }
 
         if (key == 77) {
             gameStateManager.setState(GameStateManager.MENU);
@@ -177,7 +188,9 @@ public class Raycast extends GameState {
 
     @Override
     public void onKeyReleased(int key) {
-        this.camera.keyReleased(key);
+        if (!eventInProgress) {
+            this.camera.keyReleased(key);
+        }
     }
 
     @Override
@@ -337,5 +350,13 @@ public class Raycast extends GameState {
 
     public Player getPlayer() {
         return player;
+    }
+
+    public boolean isEventInProgress() {
+        return eventInProgress;
+    }
+
+    public void setEventInProgress(boolean eventInProgress) {
+        this.eventInProgress = eventInProgress;
     }
 }

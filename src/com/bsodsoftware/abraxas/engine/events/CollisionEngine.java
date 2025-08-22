@@ -4,17 +4,24 @@ import com.bsodsoftware.abraxas.engine.shooter.Maps;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class CollisionEngine {
-    HashMap<Maps.MAPS, ArrayList<Event>> eventsByLevel;
-    private Maps.MAPS currentMap;
+    List<Event> eventsByLevel;
+    //Event e = new Event(1L, 3.0D, 4.0D, 4.0D, 5.0D, true);
 
-    public CollisionEngine(Maps.MAPS currentMap, HashMap<Maps.MAPS, ArrayList<com.bsodsoftware.abraxas.engine.events.Event>> eventsByLevel) {
-        this.currentMap = currentMap;
+    public CollisionEngine(List<Event> eventsByLevel) {
         this.eventsByLevel = eventsByLevel;
     }
 
-    private void checkForCollission(double playerPosX, double playerPosY) {
-        ArrayList<Event> events = eventsByLevel.get(currentMap);
+    public void checkForCollission(double playerPosX, double playerPosY) {
+        for (Event e : eventsByLevel) {
+            if (playerPosX >= e.getxStart() && playerPosX <= e.getxEnd() && playerPosY >= e.getyStart()
+                    && playerPosY <= e.getyEnd()) {
+                if (e.isRepeatable() && !e.isActive()) {
+                    e.setActive(true);
+                }
+            }
+        }
     }
 }
