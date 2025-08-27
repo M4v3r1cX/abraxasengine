@@ -3,7 +3,8 @@ package com.bsodsoftware.abraxas.engine.player;
 public class Player {
 
     public enum STATE {
-        IN_COMBAT, WALKING, IN_MENU, PAUSE, STANDING    // ON THE EDGE OF THE CRATER WHERE THE PROFETS ONCE SAID
+        IN_COMBAT, WALKING, IN_MENU, PAUSE, STANDING,    // ON THE EDGE OF THE CRATER WHERE THE PROFETS ONCE SAID
+        IN_EVENT
     }
 
     private int health;

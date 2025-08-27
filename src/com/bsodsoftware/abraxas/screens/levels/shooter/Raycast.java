@@ -154,9 +154,11 @@ public class Raycast extends GameState {
         for (Event e : events) {
             if (e.isActive()) {
                 eventInProgress = true;
+                player.setState(Player.STATE.IN_EVENT);
                 executeEvent(e.getId());
             } else {
                 if (eventInProgress) {
+                    player.setState(Player.STATE.STANDING);
                     eventInProgress = false;
                 }
             }
