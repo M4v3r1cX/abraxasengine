@@ -13,6 +13,7 @@ import com.bsodsoftware.abraxas.engine.sound.Audio;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -104,7 +105,7 @@ public class Raycast extends GameState {
 
     private void initEvents() {
         events = new ArrayList<>();
-        Event e = new Event(1L, 3.0D, 4.0D, 4.0D, 5.0D, true);
+        Event e = new Event(1L, 3.0D, 4.0D, 4.0D, 5.0D, false);
         events.add(e);
     }
 
@@ -154,6 +155,10 @@ public class Raycast extends GameState {
             if (e.isActive()) {
                 eventInProgress = true;
                 executeEvent(e.getId());
+            } else {
+                if (eventInProgress) {
+                    eventInProgress = false;
+                }
             }
         }
     }
@@ -181,6 +186,12 @@ public class Raycast extends GameState {
             this.camera.keyPressed(key);
         }
 
+        if (events.get(0).isActive()) {
+            if (key == KeyEvent.VK_D) {
+                this.events.get(0).setActive(false);
+            }
+        }
+
         if (key == 77) {
             gameStateManager.setState(GameStateManager.MENU);
         }
@@ -188,9 +199,7 @@ public class Raycast extends GameState {
 
     @Override
     public void onKeyReleased(int key) {
-        if (!eventInProgress) {
-            this.camera.keyReleased(key);
-        }
+        this.camera.keyReleased(key);
     }
 
     @Override

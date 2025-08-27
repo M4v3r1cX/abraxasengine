@@ -18,8 +18,9 @@ public class CollisionEngine {
         for (Event e : eventsByLevel) {
             if (playerPosX >= e.getxStart() && playerPosX <= e.getxEnd() && playerPosY >= e.getyStart()
                     && playerPosY <= e.getyEnd()) {
-                if (e.isRepeatable() && !e.isActive()) {
+                if ((!e.isHasBeenActivated() || e.isRepeatable()) && !e.isActive()) {
                     e.setActive(true);
+                    e.setHasBeenActivated(true);
                 }
             }
         }

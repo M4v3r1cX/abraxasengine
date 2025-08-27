@@ -10,6 +10,7 @@ public class Event {
     private double xEnd;
     private double yEnd;
     private boolean active;
+    private boolean hasBeenActivated;
     private boolean repeatable;
 
     public Event(Long id, double xStart, double yStart, double xEnd, double yEnd, boolean repeatable) {
@@ -19,6 +20,7 @@ public class Event {
         this.xEnd = xEnd;
         this.yEnd = yEnd;
         this.repeatable = repeatable;
+        this.hasBeenActivated = false;
     }
 
     public boolean isActive() {
@@ -75,5 +77,13 @@ public class Event {
 
     public void setyEnd(double yEnd) {
         this.yEnd = yEnd;
+    }
+
+    public boolean isHasBeenActivated() {
+        return hasBeenActivated;
+    }
+
+    public void setHasBeenActivated(boolean hasBeenActivated) {
+        this.hasBeenActivated = hasBeenActivated;
     }
 }
