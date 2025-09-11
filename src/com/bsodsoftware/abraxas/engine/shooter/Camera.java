@@ -144,6 +144,16 @@ public class Camera  {
 
    }
 
+   public void stopPlayerMovement(Player.STATE state){
+      this.forward = false;
+      this.back = false;
+      this.left = false;
+      this.right = false;
+      this.strafeLeft = false;
+      this.strafeRight = false;
+      this.player.setState(state);
+   }
+
    public void keyTyped(KeyEvent key) {
    }
 

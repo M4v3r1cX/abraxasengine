@@ -1,6 +1,7 @@
 package com.bsodsoftware.abraxas.screens.levels.shooter;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
+import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.events.Event;
 import com.bsodsoftware.abraxas.engine.graphics.Sprite;
@@ -40,8 +41,8 @@ public class Raycast extends GameState {
     private Sprite sprite;
     private Sprite sword;
     private int currentFrame = 0;
-    private int initialPosX = 500;
-    private int initialPosY = 40;
+    private final int initialPosX = 500;
+    private final int initialPosY = 40;
     private int currentPosX = initialPosX;
     private int currentPosY = initialPosY;
 
@@ -50,7 +51,7 @@ public class Raycast extends GameState {
 
     private Player player;
     ArrayList<Event> events;
-    private boolean eventInProgress = false;
+    //private boolean eventInProgress = false;
     private CollisionEngine collisionEngine;
 
     public Raycast(GameStateManager gameStateManager) {
@@ -153,19 +154,20 @@ public class Raycast extends GameState {
     private void checkForEvents() {
         for (Event e : events) {
             if (e.isActive()) {
-                eventInProgress = true;
+                //eventInProgress = true;
                 player.setState(Player.STATE.IN_EVENT);
                 executeEvent(e.getId());
             } else {
-                if (eventInProgress) {
+                if (player.getState().equals(Player.STATE.IN_EVENT)) {
                     player.setState(Player.STATE.STANDING);
-                    eventInProgress = false;
+                    //eventInProgress = false;
                 }
             }
         }
     }
 
     private void executeEvent(Long id) {
+        this.camera.stopPlayerMovement(Player.STATE.IN_EVENT);
         switch (id.intValue()) {
             case 1:
                 System.out.println("Evento 1 en proceso");
@@ -184,7 +186,7 @@ public class Raycast extends GameState {
 
     @Override
     public void onKeyPressed(int key) {
-        if (!eventInProgress) {
+        if (!player.getState().equals(Player.STATE.IN_EVENT) || key == KeyInputEnum.ESC.getValue()) {
             this.camera.keyPressed(key);
         }
 
@@ -361,13 +363,5 @@ public class Raycast extends GameState {
 
     public Player getPlayer() {
         return player;
-    }
-
-    public boolean isEventInProgress() {
-        return eventInProgress;
-    }
-
-    public void setEventInProgress(boolean eventInProgress) {
-        this.eventInProgress = eventInProgress;
     }
 }
