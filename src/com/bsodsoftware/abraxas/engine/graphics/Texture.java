@@ -7,10 +7,15 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 public class Texture {
-   public static Texture wireframe = new Texture("/Sprites/Textures/brick1.jpg", 64);
+   /*public static Texture wireframe = new Texture("/Sprites/Textures/brick1.jpg", 64);
    public static Texture wireframe2 = new Texture("/Sprites/Textures/brick2.jpg", 64);
    public static Texture wireframe3 = new Texture("/Sprites/Textures/brick3.jpg", 64);
-   public static Texture wireframe4 = new Texture("/Sprites/Textures/brick4.jpg", 64);
+   public static Texture wireframe4 = new Texture("/Sprites/Textures/brick4.jpg", 64);*/
+    public static Texture bluestone = new Texture("/Sprites/Textures/wolfenstein/bluestone.png", 64);
+    public static Texture greystone = new Texture("/Sprites/Textures/wolfenstein/greystone.png", 64);
+    public static Texture redbrick = new Texture("/Sprites/Textures/wolfenstein/redbrick.png", 64);
+    public static Texture wood = new Texture("/Sprites/Textures/wolfenstein/wood.png", 64);
+
    public int[] pixels;
    private final String location;
    public final int SIZE;
@@ -37,10 +42,14 @@ public class Texture {
 
    public static List<Texture> getAvailableTextures() {
       List<Texture> ret = new ArrayList();
-      ret.add(wireframe);
+      /*ret.add(wireframe);
       ret.add(wireframe2);
       ret.add(wireframe3);
-      ret.add(wireframe4);
-      return ret;
+      ret.add(wireframe4);*/
+       ret.add(bluestone);
+       ret.add(greystone);
+       ret.add(redbrick);
+       ret.add(wood);
+       return ret;
    }
 }
