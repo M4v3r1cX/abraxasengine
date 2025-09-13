@@ -13,7 +13,6 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     public static final int SCALE = 1;
 
     private Thread gameThread;
-    //private ControlHandler controlHandler;
     private boolean running;
     private int maxFPS = 60;                       // Corre mejor que el bayonetta de ps3
     private long lastFPS = 0;
