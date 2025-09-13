@@ -20,7 +20,6 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class Raycast extends GameState {
@@ -51,7 +50,6 @@ public class Raycast extends GameState {
 
     private Player player;
     ArrayList<Event> events;
-    //private boolean eventInProgress = false;
     private CollisionEngine collisionEngine;
 
     public Raycast(GameStateManager gameStateManager) {
@@ -146,6 +144,7 @@ public class Raycast extends GameState {
             hudColor = new Color(0, 128,0);
             graphics.setColor(hudColor);
             graphics.drawString("Stamina: " + player.getStamina(), 80, 110);
+            //graphics.drawString("FPS: " + String.format("%.0f", frameCounter.getFPS()), 20, 40);
         }  else {
             showLoadingScreen(graphics);
         }

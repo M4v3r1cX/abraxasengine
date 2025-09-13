@@ -72,7 +72,6 @@ public class Camera  {
          this.xPlane = this.xPlane * Math.cos(ROTATION_SPEED) - this.yPlane * Math.sin(ROTATION_SPEED);
          this.yPlane = oldxPlane * Math.sin(ROTATION_SPEED) + this.yPlane * Math.cos(ROTATION_SPEED);
       }
-      System.out.println("xDir: " + this.xDir + " - yDir: " + this.yDir + " - xPos: " + this.xPos + " - yPos: " + this.yPos);
    }
 
    public void keyPressed(int key) {

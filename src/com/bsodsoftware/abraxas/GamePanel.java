@@ -15,8 +15,8 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     private Thread gameThread;
     //private ControlHandler controlHandler;
     private boolean running;
-    private int FPS = 60;                       // Corre mejor que el bayonetta de ps3
-    private long gameTime = 1000 / FPS;
+    private int maxFPS = 60;                       // Corre mejor que el bayonetta de ps3
+    private long lastFPS = 0;
 
     private BufferedImage image;
     private Graphics2D graphics2d;
@@ -29,31 +29,28 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         setFocusable(true);
         requestFocus();
         addMouseListener(this);
-        //controlHandler = new ControlHandler();
     }
 
     @Override
     public void run() {
         init();
-        long start;
-        long elapsed;
-        long wait;
 
         while (running) {
-            start = System.nanoTime();
+            long time = System.currentTimeMillis();
             update();
             draw();
             drawToScreen();
 
-            elapsed = System.nanoTime() - start;
-
-            wait = gameTime - elapsed / 1000000;
-            if (wait < 0) {
-                wait = 5;
-            }
-
+            long now = System.currentTimeMillis();
+            long elapsed = (now - time);
+            long sleepTime = 1000 / maxFPS - elapsed;
             try {
-                Thread.sleep(wait);
+                if (sleepTime > 0) {
+                    Thread.sleep(sleepTime);
+                    this.lastFPS = maxFPS;
+                } else {
+                    this.lastFPS = 1000 / elapsed;
+                }
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -68,6 +65,9 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     private void draw() {
         gameStateManager.draw(graphics2d);
+        graphics2d.setFont(new Font("Century Gothic", Font.PLAIN, 20));
+        graphics2d.setColor(new Color(255, 255,255));
+        graphics2d.drawString("FPS: " + lastFPS, 15, 25);
     }
 
     private void update() {
@@ -128,4 +128,3 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
 
     }
 }
-;
