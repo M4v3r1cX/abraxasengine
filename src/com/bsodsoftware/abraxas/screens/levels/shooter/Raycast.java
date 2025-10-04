@@ -129,22 +129,11 @@ public class Raycast extends GameState {
 
     @Override
     public void draw(Graphics2D graphics) {
-        // TODO quizás separar estas weas en métodos
+        // Este es el método principal pa dibujar renderizar
         if (loaded) {
-            // Raycaster Renderer
-            graphics.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), (ImageObserver) null);
-            // Weapon Renderer
-            weaponBob();
-            sword.draw(graphics);
-            // HUD
-            graphics.setFont(hudFont);
-            hudColor = new Color(128, 0,0);
-            graphics.setColor(hudColor);
-            graphics.drawString("HEALTH: " + player.getHealth(), 80, 70);
-            hudColor = new Color(0, 128,0);
-            graphics.setColor(hudColor);
-            graphics.drawString("Stamina: " + player.getStamina(), 80, 110);
-            //graphics.drawString("FPS: " + String.format("%.0f", frameCounter.getFPS()), 20, 40);
+            renderRaycast(graphics);
+            drawWeapon(graphics);
+            drawHud(graphics);
         }  else {
             showLoadingScreen(graphics);
         }
@@ -170,10 +159,20 @@ public class Raycast extends GameState {
         switch (id.intValue()) {
             case 1:
                 System.out.println("Evento 1 en proceso");
+
                 break;
             default:
                 break;
         }
+    }
+
+    private void renderRaycast(Graphics2D graphics) {
+        graphics.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), (ImageObserver) null);
+    }
+
+    private void drawWeapon(Graphics2D graphics) {
+        weaponBob();
+        sword.draw(graphics);
     }
 
     private void showLoadingScreen(Graphics2D graphics) {
@@ -181,6 +180,16 @@ public class Raycast extends GameState {
             sprite = new Sprite("/Background/loading.jpg", 1);
         }
         sprite.draw(graphics);
+    }
+
+    private void drawHud(Graphics2D graphics) {
+        graphics.setFont(hudFont);
+        hudColor = new Color(128, 0,0);
+        graphics.setColor(hudColor);
+        graphics.drawString("HEALTH: " + player.getHealth(), 80, 70);
+        hudColor = new Color(0, 128,0);
+        graphics.setColor(hudColor);
+        graphics.drawString("Stamina: " + player.getStamina(), 80, 110);
     }
 
     @Override
