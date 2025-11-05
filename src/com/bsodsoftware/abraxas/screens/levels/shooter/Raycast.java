@@ -124,6 +124,9 @@ public class Raycast extends GameState {
             this.camera.update(map);
             this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
             this.checkForEvents();
+            if (this.player.getState().equals(Player.STATE.STANDING)) {
+                this.camera.setVieneDePausa(false);
+            }
         }
     }
 
@@ -147,7 +150,7 @@ public class Raycast extends GameState {
                 executeEvent(e.getId());
             } else {
                 if (player.getState().equals(Player.STATE.IN_EVENT)) {
-                    player.setState(Player.STATE.STANDING);
+                    //player.setState(Player.STATE.STANDING);
                     //eventInProgress = false;
                 }
             }
@@ -190,11 +193,17 @@ public class Raycast extends GameState {
         hudColor = new Color(0, 128,0);
         graphics.setColor(hudColor);
         graphics.drawString("Stamina: " + player.getStamina(), 80, 110);
+        if (player.getState().equals(Player.STATE.PAUSE)) {
+            Rectangle menu = new Rectangle(((800 / 2) - (120 / 2)), ((600 / 2) - (60 / 2)), 120, 60);
+            graphics.setColor(Color.BLACK);
+            graphics.fillRect(((800 / 2) - (120 / 2)), ((600 / 2) - (60 / 2)),120,60);
+            graphics.draw(menu);
+        }
     }
 
     @Override
     public void onKeyPressed(int key) {
-        if (!player.getState().equals(Player.STATE.IN_EVENT) || key == KeyInputEnum.ESC.getValue()) {
+        if (!player.getState().equals(Player.STATE.IN_EVENT)) {
             this.camera.keyPressed(key);
         }
 

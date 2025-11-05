@@ -21,6 +21,7 @@ public class Camera  {
    private final double MOVE_SPEED = 0.07D;
    private final double ROTATION_SPEED = 0.06D;
    private Player player;
+   private boolean vieneDePausa;
 
    public Camera(double x, double y, double xd, double yd, double xp, double yp, Player player) {
       this.xPos = x;
@@ -75,41 +76,55 @@ public class Camera  {
    }
 
    public void keyPressed(int key) {
-      if (key == KeyInputEnum.LEFT_ARROW.getValue()) {
-         this.left = true;
-         this.player.setState(Player.STATE.WALKING);
+      System.out.println("tecla apretada: " + key);
+      if (this.player.getState().equals(Player.STATE.PAUSE)) {
+         // Moverse por menú de pausa
+
+         if (key == KeyInputEnum.ESC.getValue()) {
+            this.player.setState(Player.STATE.STANDING);
+            vieneDePausa = true;
+         }
       }
 
-      if (key == KeyInputEnum.RIGHT_ARROW.getValue()) {
-         this.right = true;
-         this.player.setState(Player.STATE.WALKING);
-      }
+      if (!this.player.getState().equals(Player.STATE.PAUSE) && !this.player.getState().equals(Player.STATE.IN_EVENT)) {
+         System.out.println("Ni en pausa ni en evento");
+         if (key == KeyInputEnum.LEFT_ARROW.getValue()) {
+            this.left = true;
+            this.player.setState(Player.STATE.WALKING);
+         }
 
-      if (key == KeyInputEnum.UP_ARROW.getValue() || key == KeyInputEnum.W.getValue()) {
-         this.forward = true;
-         this.player.setState(Player.STATE.WALKING);
-      }
+         if (key == KeyInputEnum.RIGHT_ARROW.getValue()) {
+            this.right = true;
+            this.player.setState(Player.STATE.WALKING);
+         }
 
-      if (key == KeyInputEnum.DOWN_ARROW.getValue() || key == KeyInputEnum.S.getValue()) {
-         this.back = true;
-         this.player.setState(Player.STATE.WALKING);
-      }
+         if (key == KeyInputEnum.UP_ARROW.getValue() || key == KeyInputEnum.W.getValue()) {
+            this.forward = true;
+            this.player.setState(Player.STATE.WALKING);
+         }
 
-      if (key == KeyInputEnum.A.getValue()) {
-         this.strafeLeft = true;
-         this.player.setState(Player.STATE.WALKING);
-      }
+         if (key == KeyInputEnum.DOWN_ARROW.getValue() || key == KeyInputEnum.S.getValue()) {
+            this.back = true;
+            this.player.setState(Player.STATE.WALKING);
+         }
 
-      if (key == KeyInputEnum.D.getValue()) {
-         this.strafeRight = true;
-         this.player.setState(Player.STATE.WALKING);
-      }
-      
-      if (key == KeyInputEnum.ESC.getValue()) {
-    	  System.out.println("Buh bye");
-    	  System.exit(0);
-      }
+         if (key == KeyInputEnum.A.getValue()) {
+            this.strafeLeft = true;
+            this.player.setState(Player.STATE.WALKING);
+         }
 
+         if (key == KeyInputEnum.D.getValue()) {
+            this.strafeRight = true;
+            this.player.setState(Player.STATE.WALKING);
+         }
+
+         if (!vieneDePausa) {
+            if (key == KeyInputEnum.ESC.getValue()) {
+               this.player.setState(Player.STATE.PAUSE);
+               vieneDePausa = false;
+            }
+         }
+      }
    }
 
    public void keyReleased(int key) {
@@ -137,9 +152,9 @@ public class Camera  {
          this.strafeRight = false;
       }
 
-      if (!isRight() && !isLeft() && !isForward() && !isBack()) {
+      /*if (!isRight() && !isLeft() && !isForward() && !isBack() && !this.player.getState().equals(Player.STATE.PAUSE)) {
          this.player.setState(Player.STATE.STANDING);
-      }
+      }*/
 
    }
 
@@ -264,5 +279,13 @@ public class Camera  {
 
    public void setStrafeLeft(boolean strafeLeft) {
       this.strafeLeft = strafeLeft;
+   }
+
+   public boolean isVieneDePausa() {
+      return vieneDePausa;
+   }
+
+   public void setVieneDePausa(boolean vieneDePausa) {
+      this.vieneDePausa = vieneDePausa;
    }
 }
