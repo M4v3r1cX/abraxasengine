@@ -162,7 +162,10 @@ public class Raycast extends GameState {
         switch (id.intValue()) {
             case 1:
                 System.out.println("Evento 1 en proceso");
-
+                this.map = Maps.getE1M2();
+                initScreen();
+                this.events.get(0).setActive(false);
+                this.player.setState(Player.STATE.STANDING);
                 break;
             default:
                 break;
@@ -203,15 +206,17 @@ public class Raycast extends GameState {
 
     @Override
     public void onKeyPressed(int key) {
+
         if (!player.getState().equals(Player.STATE.IN_EVENT)) {
             this.camera.keyPressed(key);
+            System.out.println("Key " + key + " pressed");
         }
 
-        if (events.get(0).isActive()) {
+        /*if (!events.get(0).isActive()) {
             if (key == KeyEvent.VK_D) {
-                this.events.get(0).setActive(false);
+                events.get(0).setActive(true);
             }
-        }
+        }*/
 
         if (key == 77) {
             gameStateManager.setState(GameStateManager.MENU);

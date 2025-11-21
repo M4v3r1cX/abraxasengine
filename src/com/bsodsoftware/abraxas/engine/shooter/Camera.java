@@ -108,16 +108,6 @@ public class Camera  {
             this.player.setState(Player.STATE.WALKING);
          }
 
-         if (key == KeyInputEnum.A.getValue()) {
-            this.strafeLeft = true;
-            this.player.setState(Player.STATE.WALKING);
-         }
-
-         if (key == KeyInputEnum.D.getValue()) {
-            this.strafeRight = true;
-            this.player.setState(Player.STATE.WALKING);
-         }
-
          if (!vieneDePausa) {
             if (key == KeyInputEnum.ESC.getValue()) {
                this.player.setState(Player.STATE.PAUSE);
