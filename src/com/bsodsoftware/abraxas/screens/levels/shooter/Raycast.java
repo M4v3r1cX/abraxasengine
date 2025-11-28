@@ -52,6 +52,9 @@ public class Raycast extends GameState {
     ArrayList<Event> events;
     private CollisionEngine collisionEngine;
 
+    private int currentChoice = 0;
+    private String[] options = {"Continuar", "Salir"};
+
     public Raycast(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
     }
@@ -197,29 +200,72 @@ public class Raycast extends GameState {
         graphics.setColor(hudColor);
         graphics.drawString("Stamina: " + player.getStamina(), 80, 110);
         if (player.getState().equals(Player.STATE.PAUSE)) {
-            Rectangle menu = new Rectangle(((800 / 2) - (120 / 2)), ((600 / 2) - (60 / 2)), 120, 60);
-            graphics.setColor(Color.BLACK);
-            graphics.fillRect(((800 / 2) - (120 / 2)), ((600 / 2) - (60 / 2)),120,60);
-            graphics.draw(menu);
+            drawPause(graphics);
         }
+    }
+
+    private void drawPause(Graphics2D graphics) {
+        Color c = new Color(0,0,0,150);
+        graphics.setColor(c);
+        graphics.fillRect(0,0,800,600);
+        graphics.setColor(Color.WHITE);
+        Font pauseFont = new Font("Century Gothic", Font.BOLD, 40);
+        graphics.setFont(pauseFont);
+        graphics.drawString("Pausa", 340, 200);
+
+        Font font = new Font("Arial", Font.PLAIN, 25);
+        graphics.setFont(font);
+
+        if (currentChoice == 0) {
+            graphics.setColor(Color.RED);
+        } else {
+            graphics.setColor(Color.WHITE);
+        }
+        graphics.drawString(options[0], 346, 280);
+        if (currentChoice == 1) {
+            graphics.setColor(Color.RED);
+        } else {
+            graphics.setColor(Color.white);
+        }
+        graphics.drawString(options[1], 373, 310);
     }
 
     @Override
     public void onKeyPressed(int key) {
-
         if (!player.getState().equals(Player.STATE.IN_EVENT)) {
             this.camera.keyPressed(key);
             System.out.println("Key " + key + " pressed");
         }
 
-        /*if (!events.get(0).isActive()) {
-            if (key == KeyEvent.VK_D) {
-                events.get(0).setActive(true);
-            }
-        }*/
-
         if (key == 77) {
             gameStateManager.setState(GameStateManager.MENU);
+        }
+
+        // Voy a ser bien honesto, voy a poner el código pa manejar el menú de pausa desde acá porque no se como más
+        // hacerlo y tengo mucho sueño pa inventar algo más
+
+        if (key == KeyInputEnum.UP_ARROW.getValue() || key == KeyInputEnum.W.getValue()) {
+            currentChoice++;
+            // this.cursor.play(); efecto de sonido
+            if (currentChoice > 1) {
+                currentChoice = 0;
+            }
+        }
+
+        if (key == KeyInputEnum.DOWN_ARROW.getValue() || key == KeyInputEnum.S.getValue()) {
+            // this.cursor.play(); efecto de sonido
+            currentChoice--;
+            if (currentChoice < 0) {
+                currentChoice = 1;
+            }
+        }
+
+        if (key == KeyInputEnum.ENTER.getValue()) {
+            if (currentChoice == 1) {
+                System.exit(0);
+            } else {
+                this.camera.keyPressed(KeyInputEnum.ESC.getValue());
+            }
         }
     }
 
