@@ -1,0 +1,20 @@
+--- Maverick
+
+[Done]
+* Implementación menu de pausa
+
+[Todo]
+- Mover todos los menus a su propia cosa que maneje el input porque en estos momentos está por state y no me gusta eso
+- Entidades
+- Renderizado de entidades
+- agregar textura pal piso y pal techo, o hacer un skybox
+- combate
+- inventario
+- stats
+
+[Bugs]
+Nada so far porque nada funciona
+
+[Meta]
+Decidí implementar una especie de log o .plan como lo hacía john carmack pa poder llevar un catastro de las weas que llevo y las weas que faltan.
+Y falta mucho. Al menos pa tener una idea de lo que tengo en mente mientras avanzo.
