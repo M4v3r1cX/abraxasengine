@@ -1,0 +1,11 @@
+Este log va a ser más sencillo que nada. Es pa dejar un respaldo.
+
+Al parecer el BufferedImage de java solo permite un array unidimensional para guardar pixeles y por ende se dibuja
+exlusivamente hacia la derecha, lo que significa que solo puedo dibujar de manera horizontal.
+
+Si quiero dibujar de manera vertical para hacer los techos y pisos, parece que no se puede :(
+Voy a pensar en alternativas pero si no se me ocurre nada, parece que mejor voy a re escribir el proyecto en C++.
+Al final es un renderer, no es pa tanto, pero he trabajado tanto en este proyecto que me da un poco de pena.
+Si no hacer la idea tipo zelda no más. No se, me da lata. Quería hacer un raycaster :(
+
+Maverick
