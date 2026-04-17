@@ -25,10 +25,10 @@ public class Renderer {
    }
 
    public int[] update(Camera camera, int[] pixels) {
-      /*int x;
+      int x;
       for(x = 0; x < pixels.length / 2; ++x) {
-         if (pixels[x] != Color.BLACK.getRGB()) {  // ceiling
-            pixels[x] = Color.BLACK.getRGB();
+         if (pixels[x] != Color.DARK_GRAY.getRGB()) {  // ceiling
+            pixels[x] = Color.DARK_GRAY.getRGB();
          }
       }
 
@@ -37,10 +37,10 @@ public class Renderer {
             pixels[x] = Color.gray.getRGB();
             //pixels[x] = 775024;
          }
-      }*/
+      }
 
       // Floor casting
-      for(int y = screenHeight / 2 + 1; y < screenHeight; ++y) {
+      /*for(int y = screenHeight / 2 + 1; y < screenHeight; ++y) {
          // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
          double rayDirX0 = camera.getxDir() - camera.getxPlane();
          double rayDirY0 = camera.getyDir() - camera.getyPlane();
@@ -106,9 +106,9 @@ public class Renderer {
             }
             //pixels[screenHeight - y - 1][x] = color;
          }
-      }
+      }*/
 
-      for(int x = 0; x < this.width; ++x) {
+      for(x = 0; x < this.width; ++x) {
          double cameraX = (double)(2 * x) / (double)this.width - 1.0D;
          double rayDirX = camera.getxDir() + camera.getxPlane() * cameraX;
          double rayDirY = camera.getyDir() + camera.getyPlane() * cameraX;
