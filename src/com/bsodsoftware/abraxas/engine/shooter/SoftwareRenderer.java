@@ -5,7 +5,7 @@ import com.bsodsoftware.abraxas.engine.graphics.Texture;
 import java.awt.Color;
 import java.util.List;
 
-public class Renderer {
+public class SoftwareRenderer {
    public int[][] map;
    public int mapWidth;
    public int mapHeight;
@@ -15,7 +15,7 @@ public class Renderer {
    private final int screenHeight = 600;
    private final int screenWidth = 800;
 
-   public Renderer(int[][] map, List<Texture> textures, int mapWidth, int mapHeight, int width, int height) {
+   public SoftwareRenderer(int[][] map, List<Texture> textures, int mapWidth, int mapHeight, int width, int height) {
       this.map = map;
       this.textures = textures;
       this.mapWidth = mapWidth;

@@ -8,13 +8,12 @@ import com.bsodsoftware.abraxas.engine.graphics.Sprite;
 import com.bsodsoftware.abraxas.engine.player.Player;
 import com.bsodsoftware.abraxas.engine.shooter.Camera;
 import com.bsodsoftware.abraxas.engine.shooter.Maps;
-import com.bsodsoftware.abraxas.engine.shooter.Renderer;
+import com.bsodsoftware.abraxas.engine.shooter.SoftwareRenderer;
 import com.bsodsoftware.abraxas.engine.graphics.Texture;
 import com.bsodsoftware.abraxas.engine.sound.Audio;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
@@ -32,7 +31,7 @@ public class Raycast extends GameState {
     private int[][] map;
     private List<Texture> textures;
     private Camera camera;
-    private Renderer screen;
+    private SoftwareRenderer screen;
     private final int WINDOW_WIDTH = 800;
     private final int WINDOW_HEIGHT = 600;
     private Audio song;
@@ -77,7 +76,7 @@ public class Raycast extends GameState {
         this.pixels = ((DataBufferInt)this.image.getRaster().getDataBuffer()).getData();
         this.textures = Texture.getAvailableTextures();
         this.camera = new Camera(3.1D, 3.1D, 1.0D, 0.0D, 0.0D, -0.66D, this.player);
-        this.screen = new Renderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT);
+        this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT);
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
         sword.setPosition(initialPosX, initialPosY);
@@ -373,7 +372,7 @@ public class Raycast extends GameState {
         return camera;
     }
 
-    public Renderer getScreen() {
+    public SoftwareRenderer getScreen() {
         return screen;
     }
 
