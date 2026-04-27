@@ -14,6 +14,7 @@ public class SoftwareRenderer {
    public List<Texture> textures;
    private final int screenHeight = 600;
    private final int screenWidth = 800;
+   private int numSprites;
 
    public SoftwareRenderer(int[][] map, List<Texture> textures, int mapWidth, int mapHeight, int width, int height) {
       this.map = map;
@@ -22,6 +23,7 @@ public class SoftwareRenderer {
       this.mapHeight = mapHeight;
       this.width = width;
       this.height = height;
+      this.numSprites = 19;
    }
 
    public int[] update(Camera camera, int[] pixels) {
@@ -187,22 +189,22 @@ public class SoftwareRenderer {
          }
 
          wallX -= Math.floor(wallX);
-         int texX = (int)(wallX * (double)((Texture)this.textures.get(textNum)).SIZE);
+         int texX = (int)(wallX * (double)((Texture)this.textures.get(textNum)).getSIZE());
          if (!side && rayDirX > 0.0D) {
-            texX = ((Texture)this.textures.get(textNum)).SIZE - texX - 1;
+            texX = ((Texture)this.textures.get(textNum)).getSIZE() - texX - 1;
          }
 
          if (side && rayDirY < 0.0D) {
-            texX = ((Texture)this.textures.get(textNum)).SIZE - texX - 1;
+            texX = ((Texture)this.textures.get(textNum)).getSIZE() - texX - 1;
          }
 
          for(int y = drawStart; y < drawEnd; ++y) {
             int texY = (y * 2 - this.height + lineHeight << 6) / lineHeight / 2;
             int color;
             if (!side) {
-               color = ((Texture)this.textures.get(textNum)).pixels[texX + texY * ((Texture)this.textures.get(textNum)).SIZE];
+               color = ((Texture)this.textures.get(textNum)).getPixels()[texX + texY * ((Texture)this.textures.get(textNum)).getSIZE()];
             } else {
-               color = ((Texture)this.textures.get(textNum)).pixels[texX + texY * ((Texture)this.textures.get(textNum)).SIZE] >> 1 & 8355711;
+               color = ((Texture)this.textures.get(textNum)).getPixels()[texX + texY * ((Texture)this.textures.get(textNum)).getSIZE()] >> 1 & 8355711;
             }
 
             pixels[x + y * this.width] = color;

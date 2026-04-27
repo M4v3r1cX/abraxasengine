@@ -7,18 +7,21 @@ import java.util.List;
 import javax.imageio.ImageIO;
 
 public class Texture {
-   /*public static Texture wireframe = new Texture("/Sprites/Textures/brick1.jpg", 64);
-   public static Texture wireframe2 = new Texture("/Sprites/Textures/brick2.jpg", 64);
-   public static Texture wireframe3 = new Texture("/Sprites/Textures/brick3.jpg", 64);
-   public static Texture wireframe4 = new Texture("/Sprites/Textures/brick4.jpg", 64);*/
     public static Texture bluestone = new Texture("/Sprites/Textures/wolfenstein/bluestone.png", 64);
     public static Texture greystone = new Texture("/Sprites/Textures/wolfenstein/greystone.png", 64);
     public static Texture redbrick = new Texture("/Sprites/Textures/wolfenstein/redbrick.png", 64);
     public static Texture wood = new Texture("/Sprites/Textures/wolfenstein/wood.png", 64);
 
-   public int[] pixels;
+    public static Texture barrel = new Texture("/Sprites/Textures/wolfenstein/barrel.png", 64, 3.0, 4.0);
+
+    // Esta wea está re mala, hay que arreglarlo. En algún futuro. TODO arregla esta wea.
+
+
+   private int[] pixels;
    private final String location;
-   public final int SIZE;
+   private final int SIZE;
+   private double posX;
+   private double posY;
 
    public Texture(String location, int size) {
       this.location = location;
@@ -26,6 +29,15 @@ public class Texture {
       this.pixels = new int[this.SIZE * this.SIZE];
       this.load();
    }
+
+    public Texture(String location, int size, double posX, double posY) {
+        this.location = location;
+        this.SIZE = size;
+        this.pixels = new int[this.SIZE * this.SIZE];
+        this.posX = posX;
+        this.posY = posY;
+        this.load();
+    }
 
    private void load() {
       try {
@@ -52,4 +64,44 @@ public class Texture {
        ret.add(wood);
        return ret;
    }
+
+   public static List<Texture> getAvailableSprites() {
+       List<Texture> ret = new ArrayList();
+
+       ret.add(barrel);
+
+       return ret;
+   }
+
+    public int[] getPixels() {
+        return pixels;
+    }
+
+    public void setPixels(int[] pixels) {
+        this.pixels = pixels;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public int getSIZE() {
+        return SIZE;
+    }
+
+    public double getPosX() {
+        return posX;
+    }
+
+    public void setPosX(double posX) {
+        this.posX = posX;
+    }
+
+    public double getPosY() {
+        return posY;
+    }
+
+    public void setPosY(double posY) {
+        this.posY = posY;
+    }
 }
