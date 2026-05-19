@@ -150,7 +150,7 @@ public class MenuScreen extends GameState {
         this.bgm.stop();
         switch (currentChoice) {
             case 0:
-                gameStateManager.setState(GameStateManager.CUTSCENE1);
+                gameStateManager.setState(GameStateManager.LUDO);
                 break;
             case 1:
                 System.exit(0);
