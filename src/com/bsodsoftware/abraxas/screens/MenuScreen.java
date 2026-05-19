@@ -13,7 +13,7 @@ public class MenuScreen extends GameState {
     private Sprite sprite;
 
     private int currentChoice = 0;
-    private String[] options = {"Visual Novel", "Raycaster", "Quit"};
+    private String[] options = {"Start", "Quit"};
 
     private Color titleColor;
     private Font titleFont;
@@ -57,7 +57,7 @@ public class MenuScreen extends GameState {
 
         graphics.setColor(titleColor);
         graphics.setFont(titleFont);
-        graphics.drawString("Abraxas Engine II", 80, 70);
+        graphics.drawString("Ludopath", 80, 70);
 
         graphics.setFont(font);
 
@@ -73,12 +73,6 @@ public class MenuScreen extends GameState {
             graphics.setColor(Color.BLACK);
         }
         graphics.drawString(options[1], 145, 170);
-        if (currentChoice == 2) {
-            graphics.setColor(Color.RED);
-        } else {
-            graphics.setColor(Color.BLACK);
-        }
-        graphics.drawString(options[2], 145, 200);
     }
 
     @Override
@@ -92,7 +86,7 @@ public class MenuScreen extends GameState {
             case KeyEvent.VK_DOWN:
                 currentChoice++;
                 this.cursor.play();
-                if (currentChoice > 2) {
+                if (currentChoice > options.length - 1) {
                     currentChoice = 0;
                 }
                 break;
@@ -100,7 +94,7 @@ public class MenuScreen extends GameState {
                 this.cursor.play();
                 currentChoice--;
                 if (currentChoice < 0) {
-                    currentChoice = 2;
+                    currentChoice = options.length - 1;
                 }
                 break;
         }
@@ -159,9 +153,6 @@ public class MenuScreen extends GameState {
                 gameStateManager.setState(GameStateManager.CUTSCENE1);
                 break;
             case 1:
-                gameStateManager.setState(GameStateManager.RAYCAST);
-                break;
-            case 2:
                 System.exit(0);
                 break;
         }

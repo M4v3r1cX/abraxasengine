@@ -2,7 +2,6 @@ package com.bsodsoftware.abraxas.engine;
 
 import com.bsodsoftware.abraxas.screens.MenuScreen;
 import com.bsodsoftware.abraxas.screens.levels.cutscenes.Cutscene1Screen;
-import com.bsodsoftware.abraxas.screens.levels.shooter.Raycast;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
@@ -22,7 +21,6 @@ public class GameStateManager {
         currentState = MENU;
         stateList.add(new MenuScreen(this));
         stateList.add(new Cutscene1Screen(this));
-        stateList.add(new Raycast(this));
     }
 
     public void setState(int state) {
