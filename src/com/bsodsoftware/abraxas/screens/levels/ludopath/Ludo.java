@@ -102,7 +102,7 @@ public class Ludo extends GameState {
         if (isWin || isLose) {
             graphics.setFont(txtFont);
             graphics.setColor(new Color(255,0,0));
-            graphics.drawString((isWin ? "GANASTE" : (isLose ? "PERDISTE" : "")) + " PERRA", 200, 320);
+            graphics.drawString((isWin ? "GANASTE" : (isLose ? "PERDISTE" : "")) + " PERRA", 190, 320);
         }
     }
 

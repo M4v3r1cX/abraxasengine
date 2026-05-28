@@ -8,8 +8,8 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
 public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener {
-    public static final int WIDTH = 800;        // Resolución qlia del año de la corneta
-    public static final int HEIGHT = 600;
+    public static final int WIDTH = 1200;        // Resolución qlia del año de la corneta
+    public static final int HEIGHT = 800;
     public static final int SCALE = 1;
 
     private Thread gameThread;
