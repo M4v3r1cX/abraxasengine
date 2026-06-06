@@ -142,9 +142,9 @@ public class Camera  {
          this.strafeRight = false;
       }
 
-      /*if (!isRight() && !isLeft() && !isForward() && !isBack() && !this.player.getState().equals(Player.STATE.PAUSE)) {
+      if (!isRight() && !isLeft() && !isForward() && !isBack() && !this.player.getState().equals(Player.STATE.PAUSE)) {
          this.player.setState(Player.STATE.STANDING);
-      }*/
+      }
 
    }
 

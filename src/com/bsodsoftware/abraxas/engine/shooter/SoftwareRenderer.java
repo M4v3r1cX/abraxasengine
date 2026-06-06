@@ -12,8 +12,6 @@ public class SoftwareRenderer {
    public int width;
    public int height;
    public List<Texture> textures;
-   private final int screenHeight = 600;
-   private final int screenWidth = 800;
 
    public SoftwareRenderer(int[][] map, List<Texture> textures, int mapWidth, int mapHeight, int width, int height) {
       this.map = map;
@@ -38,75 +36,6 @@ public class SoftwareRenderer {
             //pixels[x] = 775024;
          }
       }
-
-      // Floor casting
-      /*for(int y = screenHeight / 2 + 1; y < screenHeight; ++y) {
-         // rayDir for leftmost ray (x = 0) and rightmost ray (x = w)
-         double rayDirX0 = camera.getxDir() - camera.getxPlane();
-         double rayDirY0 = camera.getyDir() - camera.getyPlane();
-         double rayDirX1 = camera.getxDir() + camera.getxPlane();
-         double rayDirY1 = camera.getyDir() + camera.getyPlane();
-
-         // Current y position compared to the center of the screen (the horizon)
-         int p = y - screenHeight / 2;
-         double posZ = 0.5 * screenHeight;
-
-         double rowDistance = posZ / p;
-
-         double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / screenWidth;
-         double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / screenWidth;
-
-         double floorX = camera.getxPos() + rowDistance * rayDirX0;
-         double floorY = camera.getyPos() + rowDistance * rayDirY0;
-
-         //int mapX = (int)camera.getxPos();
-         //int mapY = (int)camera.getyPos();
-         //int textNum = this.map[mapX][mapY] - 1;
-
-         for(int x = 0; x < screenWidth; ++x)
-         {
-            // the cell coord is simply got from the integer parts of floorX and floorY
-            int cellX = (int)(floorX);
-            int cellY = (int)(floorY);
-
-            // get the texture coordinate from the fractional part
-            int tx = (int)(64 * (floorX - cellX)) & (64 - 1);
-            int ty = (int)(64 * (floorY - cellY)) & (64 - 1);
-
-            floorX += floorStepX;
-            floorY += floorStepY;
-
-            // choose texture and draw the pixel
-            int floorTexture = 3;
-            int ceilingTexture = 1;
-            int color;
-
-            // floor
-            // ((Texture)this.textures.get(textNum)).pixels[texX + texY * ((Texture)this.textures.get(textNum)).SIZE];
-            //color = texture[floorTexture][width * ty + tx];
-            color = this.textures.get(floorTexture).pixels[tx + ty * 64];
-            //color = (color >> 1) & 8355711; // make a bit darker
-            for(x = 0; x < pixels.length / 2; ++x) {
-               if (pixels[x] != color) {  // ceiling
-                  pixels[x] = color;
-               }
-            }
-
-
-            //pixels[y][x] = color;
-
-            //ceiling (symmetrical, at screenHeight - y - 1 instead of y)
-            color = ((Texture)this.textures.get(ceilingTexture)).pixels[64 * ty + tx];
-            //color = (color >> 1) & 8355711; // make a bit darker
-            for(x = pixels.length / 2; x < pixels.length; ++x) {
-               if (pixels[x] != color) { // floor
-                  pixels[x] = color;
-                  //pixels[x] = 775024;
-               }
-            }
-            //pixels[screenHeight - y - 1][x] = color;
-         }
-      }*/
 
       for(x = 0; x < this.width; ++x) {
          double cameraX = (double)(2 * x) / (double)this.width - 1.0D;

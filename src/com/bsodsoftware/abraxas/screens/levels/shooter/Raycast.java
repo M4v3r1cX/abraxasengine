@@ -32,20 +32,23 @@ public class Raycast extends GameState {
     private List<Texture> textures;
     private Camera camera;
     private SoftwareRenderer screen;
-    private final int WINDOW_WIDTH = 800;
-    private final int WINDOW_HEIGHT = 600;
+    private final int WINDOW_WIDTH = 1280;
+    private final int WINDOW_HEIGHT = 800;
     private Audio song;
     private boolean loaded = false;
     private Sprite sprite;
     private Sprite sword;
     private int currentFrame = 0;
-    private final int initialPosX = 500;
-    private final int initialPosY = 40;
+    private final int initialPosX = 1000;
+    private final int initialPosY = 250;
     private int currentPosX = initialPosX;
     private int currentPosY = initialPosY;
 
     private Color hudColor;
     private Font hudFont;
+    private Font pauseFont;
+    private Font pauseMenuFont;
+    private Color maskColor;
 
     private Player player;
     ArrayList<Event> events;
@@ -102,6 +105,10 @@ public class Raycast extends GameState {
     private void initHud() {
         hudColor = new Color(128, 0,0);
         hudFont = new Font("Century Gothic", Font.BOLD, 35);
+
+        pauseFont = new Font("Century Gothic", Font.BOLD, 40);
+        maskColor = new Color(0,0,0,150);
+        pauseMenuFont = new Font("Arial", Font.PLAIN, 25);
     }
 
     private void initEvents() {
@@ -204,29 +211,27 @@ public class Raycast extends GameState {
     }
 
     private void drawPause(Graphics2D graphics) {
-        Color c = new Color(0,0,0,150);
-        graphics.setColor(c);
-        graphics.fillRect(0,0,800,600);
+        graphics.setColor(maskColor);
+        graphics.fillRect(0,0,this.WINDOW_WIDTH,this.WINDOW_HEIGHT);
         graphics.setColor(Color.WHITE);
-        Font pauseFont = new Font("Century Gothic", Font.BOLD, 40);
         graphics.setFont(pauseFont);
-        graphics.drawString("Pausa", 340, 200);
+        graphics.drawString("Pausa", getCenteredXString("Pausa", graphics, pauseFont), 200);
 
-        Font font = new Font("Arial", Font.PLAIN, 25);
-        graphics.setFont(font);
+
+        graphics.setFont(pauseMenuFont);
 
         if (currentChoice == 0) {
             graphics.setColor(Color.RED);
         } else {
             graphics.setColor(Color.WHITE);
         }
-        graphics.drawString(options[0], 346, 280);
+        graphics.drawString(options[0], getCenteredXString(options[0], graphics, pauseMenuFont), 280);
         if (currentChoice == 1) {
             graphics.setColor(Color.RED);
         } else {
             graphics.setColor(Color.white);
         }
-        graphics.drawString(options[1], 373, 310);
+        graphics.drawString(options[1], getCenteredXString(options[1], graphics, pauseMenuFont), 310);
     }
 
     @Override
@@ -266,6 +271,16 @@ public class Raycast extends GameState {
                 this.camera.keyPressed(KeyInputEnum.ESC.getValue());
             }
         }
+    }
+
+    private int getCenteredXString(String s, Graphics2D graphics, Font f) {
+        int pos = 0;
+
+        FontMetrics metrics = graphics.getFontMetrics(f);
+        int width = metrics.stringWidth(s);
+        pos = (this.WINDOW_WIDTH / 2) - (width / 2);
+
+        return pos;
     }
 
     @Override
