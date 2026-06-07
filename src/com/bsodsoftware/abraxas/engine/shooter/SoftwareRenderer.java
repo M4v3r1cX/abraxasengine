@@ -26,19 +26,22 @@ public class SoftwareRenderer {
    public int[] update(Camera camera, int[] pixels, List<SpriteRaycaster> sprites) {
       double[] zBuffer = new double[this.width];
       int x;
+
+      // Ceiling
       for(x = 0; x < pixels.length / 2; ++x) {
-         if (pixels[x] != Color.DARK_GRAY.getRGB()) {  // ceiling
+         if (pixels[x] != Color.DARK_GRAY.getRGB()) {
             pixels[x] = Color.DARK_GRAY.getRGB();
          }
       }
 
+      // Floor
       for(x = pixels.length / 2; x < pixels.length; ++x) {
-         if (pixels[x] != Color.gray.getRGB()) { // floor
+         if (pixels[x] != Color.gray.getRGB()) {
             pixels[x] = Color.gray.getRGB();
-            //pixels[x] = 775024;
          }
       }
 
+      // Wall loop
       for(x = 0; x < this.width; ++x) {
          double cameraX = (double)(2 * x) / (double)this.width - 1.0D;
          double rayDirX = camera.getxDir() + camera.getxPlane() * cameraX;
@@ -137,11 +140,12 @@ public class SoftwareRenderer {
                color = ((Texture)this.textures.get(textNum)).pixels[texX + texY * ((Texture)this.textures.get(textNum)).SIZE] >> 1 & 8355711;
             }
 
+            color = shadeColor(color, perpWallDist);
             pixels[x + y * this.width] = color;
          }
       }
 
-
+      // Sprite loop
       for (SpriteRaycaster sprite : sprites) {
          double spriteX = sprite.getX() - camera.getxPos();
          double spriteY = sprite.getY() - camera.getyPos();
@@ -179,6 +183,7 @@ public class SoftwareRenderer {
                   int texY = ((d * texture.SIZE) / spriteHeight) / 256;
                   int color = texture.pixels[texX + texY * texture.SIZE];
                   if ((color & 0x00FFFFFF) != 0) {
+                     color = shadeColor(color, transformY);
                      pixels[stripe + y * this.width] = color;
                   }
                }
@@ -187,5 +192,15 @@ public class SoftwareRenderer {
       }
 
       return pixels;
+   }
+
+   private int shadeColor(int color, double distance) {
+      double strength = 0.15;
+      double shade = 1.0 / (1.0 + distance * strength);
+      int r = (int)(((color >> 16) & 0xFF) * shade);
+      int g = (int)(((color >> 8) & 0xFF) * shade);
+      int b = (int)((color & 0xFF) * shade);
+
+      return (r << 16) | (g << 8) | b;
    }
 }
