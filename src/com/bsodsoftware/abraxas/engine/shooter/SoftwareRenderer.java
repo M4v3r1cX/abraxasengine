@@ -1,6 +1,7 @@
 package com.bsodsoftware.abraxas.engine.shooter;
 
 import com.bsodsoftware.abraxas.engine.graphics.Texture;
+import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
 
 import java.awt.Color;
 import java.util.List;
@@ -22,7 +23,8 @@ public class SoftwareRenderer {
       this.height = height;
    }
 
-   public int[] update(Camera camera, int[] pixels) {
+   public int[] update(Camera camera, int[] pixels, List<SpriteRaycaster> sprites) {
+      double[] zBuffer = new double[this.width];
       int x;
       for(x = 0; x < pixels.length / 2; ++x) {
          if (pixels[x] != Color.DARK_GRAY.getRGB()) {  // ceiling
@@ -89,6 +91,7 @@ public class SoftwareRenderer {
          } else {
             perpWallDist = Math.abs(((double)mapY - camera.getyPos() + (double)((1 - stepY) / 2)) / rayDirY);
          }
+         zBuffer[x] = perpWallDist;
 
          int lineHeight;
          if (perpWallDist > 0.0D) {
@@ -135,6 +138,51 @@ public class SoftwareRenderer {
             }
 
             pixels[x + y * this.width] = color;
+         }
+      }
+
+
+      for (SpriteRaycaster sprite : sprites) {
+         double spriteX = sprite.getX() - camera.getxPos();
+         double spriteY = sprite.getY() - camera.getyPos();
+
+         double invDet = 1.0 / (camera.getxPlane() * camera.getyDir() - camera.getxDir() * camera.getyPlane());
+
+         double transformX = invDet * (camera.getyDir() * spriteX - camera.getxDir() * spriteY);
+         double transformY = invDet * (-camera.getyPlane() * spriteX + camera.getxPlane() * spriteY);
+
+         int spriteScreenX = (int)((this.width / 2) * (1 + transformX / transformY));
+
+         int spriteHeight = Math.abs((int)(this.height / transformY));
+         int drawStartY = -spriteHeight / 2 + this.height / 2;
+         if (drawStartY < 0) drawStartY = 0;
+
+         int drawEndY = spriteHeight / 2 + this.height / 2;
+         if (drawEndY >= this.height) drawEndY = this.height - 1;
+
+         int spriteWidth = Math.abs((int)(this.height / transformY));
+         int drawStartX = -spriteWidth / 2 + spriteScreenX;
+         if (drawStartX < 0) drawStartX = 0;
+
+         int drawEndX = spriteWidth / 2 + spriteScreenX;
+         if (drawEndX >= this.width) drawEndX = this.width - 1;
+
+         Texture texture = (Texture)this.textures.get(sprite.getTexture() - 1);
+
+         for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
+
+            int texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texture.SIZE / spriteWidth) / 256;
+
+            if (transformY > 0 && stripe >= 0 && stripe < this.width && transformY < zBuffer[stripe]) {
+               for (int y = drawStartY; y < drawEndY; y++) {
+                  int d = (y) * 256 - this.height * 128 + spriteHeight * 128;
+                  int texY = ((d * texture.SIZE) / spriteHeight) / 256;
+                  int color = texture.pixels[texX + texY * texture.SIZE];
+                  if ((color & 0x00FFFFFF) != 0) {
+                     pixels[stripe + y * this.width] = color;
+                  }
+               }
+            }
          }
       }
 

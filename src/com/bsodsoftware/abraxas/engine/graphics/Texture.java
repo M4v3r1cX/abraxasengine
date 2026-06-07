@@ -15,6 +15,7 @@ public class Texture {
     public static Texture greystone = new Texture("/Sprites/Textures/wolfenstein/greystone.png", 64);
     public static Texture redbrick = new Texture("/Sprites/Textures/wolfenstein/redbrick.png", 64);
     public static Texture wood = new Texture("/Sprites/Textures/wolfenstein/wood.png", 64);
+    public static Texture barrel = new Texture("/Sprites/Textures/wolfenstein/barrel.png", 64);
 
    public int[] pixels;
    private final String location;
@@ -50,6 +51,7 @@ public class Texture {
        ret.add(greystone);
        ret.add(redbrick);
        ret.add(wood);
+       ret.add(barrel);
        return ret;
    }
 }

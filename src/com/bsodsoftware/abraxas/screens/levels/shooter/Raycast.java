@@ -5,6 +5,7 @@ import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.events.Event;
 import com.bsodsoftware.abraxas.engine.graphics.Sprite;
+import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.player.Player;
 import com.bsodsoftware.abraxas.engine.shooter.Camera;
 import com.bsodsoftware.abraxas.engine.shooter.Maps;
@@ -30,6 +31,7 @@ public class Raycast extends GameState {
     private int[] pixels;
     private int[][] map;
     private List<Texture> textures;
+    private List<SpriteRaycaster> sprites;
     private Camera camera;
     private SoftwareRenderer screen;
     private final int WINDOW_WIDTH = 1280;
@@ -80,9 +82,19 @@ public class Raycast extends GameState {
         this.textures = Texture.getAvailableTextures();
         this.camera = new Camera(3.1D, 3.1D, 1.0D, 0.0D, 0.0D, -0.66D, this.player);
         this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT);
+        this.sprites = getSprites();
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
         sword.setPosition(initialPosX, initialPosY);
+    }
+
+    private List<SpriteRaycaster> getSprites() {
+        List<SpriteRaycaster> sprites = new ArrayList<>();
+
+        sprites.add(new SpriteRaycaster(3.5, 2.5, 5));
+        sprites.add(new SpriteRaycaster(6.5, 4.5, 5));
+
+        return sprites;
     }
 
     private void initSound() {
@@ -129,7 +141,8 @@ public class Raycast extends GameState {
     @Override
     public void update() {
         if (loaded) {
-            this.screen.update(this.camera, this.pixels);
+            this.sortSprites();
+            this.screen.update(this.camera, this.pixels, this.sprites);
             this.camera.update(map);
             this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
             this.checkForEvents();
@@ -232,6 +245,14 @@ public class Raycast extends GameState {
             graphics.setColor(Color.white);
         }
         graphics.drawString(options[1], getCenteredXString(options[1], graphics, pauseMenuFont), 310);
+    }
+
+    private void sortSprites() {
+        sprites.sort((a, b) -> {
+            double distA = (camera.getxPos() - a.getX())*(camera.getxPos() - a.getX()) + (camera.getyPos() - a.getY())*(camera.getyPos() - a.getY());
+            double distB = (camera.getxPos() - b.getX())*(camera.getxPos() - b.getX()) + (camera.getyPos() - b.getY())*(camera.getyPos() - b.getY());
+            return Double.compare(distB, distA);
+        });
     }
 
     @Override
