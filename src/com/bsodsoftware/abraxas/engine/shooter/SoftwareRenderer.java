@@ -33,20 +33,6 @@ public class SoftwareRenderer {
          }
       }
 
-      /*// Ceiling
-      for(x = 0; x < pixels.length / 2; ++x) {
-         if (pixels[x] != Color.DARK_GRAY.getRGB()) {
-            pixels[x] = Color.DARK_GRAY.getRGB();
-         }
-      }
-
-      // Floor
-      for(x = pixels.length / 2; x < pixels.length; ++x) {
-         if (pixels[x] != Color.gray.getRGB()) {
-            pixels[x] = Color.gray.getRGB();
-         }
-      }*/
-
       // Ceiling/Floor casting
       for (int y = this.height / 2 + 1; y < this.height; y++) {
          double rayDirX0 = camera.getxDir() - camera.getxPlane();
@@ -86,7 +72,6 @@ public class SoftwareRenderer {
             Texture ceilTex = this.textures.get(7);
             int ceilColor = ceilTex.getPixels()[tx + ty * ceilTex.getSize()];
             ceilColor = shadeColor(ceilColor, rowDistance);
-
 
             pixels[z + (this.height - y) * this.width] = ceilColor;
          }
