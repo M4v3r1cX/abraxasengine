@@ -27,7 +27,13 @@ public class SoftwareRenderer {
       double[] zBuffer = new double[this.width];
       int x;
 
-      // Ceiling
+      for(x = 0; x < pixels.length / 2; ++x) {
+         if (pixels[x] != Color.DARK_GRAY.getRGB()) {
+            pixels[x] = Color.DARK_GRAY.getRGB();
+         }
+      }
+
+      /*// Ceiling
       for(x = 0; x < pixels.length / 2; ++x) {
          if (pixels[x] != Color.DARK_GRAY.getRGB()) {
             pixels[x] = Color.DARK_GRAY.getRGB();
@@ -39,9 +45,54 @@ public class SoftwareRenderer {
          if (pixels[x] != Color.gray.getRGB()) {
             pixels[x] = Color.gray.getRGB();
          }
+      }*/
+
+      // Ceiling/Floor casting
+      for (int y = this.height / 2 + 1; y < this.height; y++) {
+         double rayDirX0 = camera.getxDir() - camera.getxPlane();
+         double rayDirY0 = camera.getyDir() - camera.getyPlane();
+         double rayDirX1 = camera.getxDir() + camera.getxPlane();
+         double rayDirY1 = camera.getyDir() + camera.getyPlane();
+
+         int p = y - this.height / 2;
+         double posZ = 0.5 * this.height;
+
+         double rowDistance = posZ / p;
+
+         double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / this.width;
+         double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / this.width;
+
+         double floorX = camera.getxPos() + rowDistance * rayDirX0;
+         double floorY = camera.getyPos() + rowDistance * rayDirY0;
+
+         for (int z = 0; z < this.width; ++z) {
+            int cellX = (int)(floorX);
+            int cellY = (int)(floorY);
+
+            int tx = (int)(64 * (floorX - cellX)) & 63;
+            int ty = (int)(64 * (floorY - cellY)) & 63;
+
+            floorX += floorStepX;
+            floorY += floorStepY;
+
+            // Floor
+            Texture floorTex = this.textures.get(5);
+            int color = floorTex.getPixels()[tx + ty * floorTex.getSize()];
+
+            color = shadeColor(color, rowDistance);
+            pixels[z + y * this.width] = color;
+
+            // Ceiling
+            Texture ceilTex = this.textures.get(7);
+            int ceilColor = ceilTex.getPixels()[tx + ty * ceilTex.getSize()];
+            ceilColor = shadeColor(ceilColor, rowDistance);
+
+
+            pixels[z + (this.height - y) * this.width] = ceilColor;
+         }
       }
 
-      // Wall loop
+      // Wall casting
       for(x = 0; x < this.width; ++x) {
          double cameraX = (double)(2 * x) / (double)this.width - 1.0D;
          double rayDirX = camera.getxDir() + camera.getxPlane() * cameraX;
@@ -114,6 +165,7 @@ public class SoftwareRenderer {
          }
 
          int textNum = this.map[mapX][mapY] - 1;
+         int textureSize = this.textures.get(textNum).getSize();
          double wallX;
          if (side) {
             wallX = camera.getxPos() + ((double)mapY - camera.getyPos() + (double)((1 - stepY) / 2)) / rayDirY * rayDirX;
@@ -122,22 +174,22 @@ public class SoftwareRenderer {
          }
 
          wallX -= Math.floor(wallX);
-         int texX = (int)(wallX * (double)((Texture)this.textures.get(textNum)).SIZE);
+         int texX = (int)(wallX * (double)textureSize);
          if (!side && rayDirX > 0.0D) {
-            texX = ((Texture)this.textures.get(textNum)).SIZE - texX - 1;
+            texX = textureSize - texX - 1;
          }
 
          if (side && rayDirY < 0.0D) {
-            texX = ((Texture)this.textures.get(textNum)).SIZE - texX - 1;
+            texX = textureSize - texX - 1;
          }
 
          for(int y = drawStart; y < drawEnd; ++y) {
             int texY = (y * 2 - this.height + lineHeight << 6) / lineHeight / 2;
             int color;
             if (!side) {
-               color = ((Texture)this.textures.get(textNum)).pixels[texX + texY * ((Texture)this.textures.get(textNum)).SIZE];
+               color = this.textures.get(textNum).getPixels()[texX + texY * textureSize];
             } else {
-               color = ((Texture)this.textures.get(textNum)).pixels[texX + texY * ((Texture)this.textures.get(textNum)).SIZE] >> 1 & 8355711;
+               color = this.textures.get(textNum).getPixels()[texX + texY * textureSize] >> 1 & 8355711;
             }
 
             color = shadeColor(color, perpWallDist);
@@ -145,7 +197,7 @@ public class SoftwareRenderer {
          }
       }
 
-      // Sprite loop
+      // Sprite Casting
       for (SpriteRaycaster sprite : sprites) {
          double spriteX = sprite.getX() - camera.getxPos();
          double spriteY = sprite.getY() - camera.getyPos();
@@ -155,7 +207,7 @@ public class SoftwareRenderer {
          double transformX = invDet * (camera.getyDir() * spriteX - camera.getxDir() * spriteY);
          double transformY = invDet * (-camera.getyPlane() * spriteX + camera.getxPlane() * spriteY);
 
-         int spriteScreenX = (int)((this.width / 2) * (1 + transformX / transformY));
+         int spriteScreenX = (int)(((double) this.width / 2) * (1 + transformX / transformY));
 
          int spriteHeight = Math.abs((int)(this.height / transformY));
          int drawStartY = -spriteHeight / 2 + this.height / 2;
@@ -171,17 +223,17 @@ public class SoftwareRenderer {
          int drawEndX = spriteWidth / 2 + spriteScreenX;
          if (drawEndX >= this.width) drawEndX = this.width - 1;
 
-         Texture texture = (Texture)this.textures.get(sprite.getTexture() - 1);
+         Texture texture = this.textures.get(sprite.getTexture() - 1);
 
          for (int stripe = drawStartX; stripe < drawEndX; stripe++) {
 
-            int texX = (int)(256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texture.SIZE / spriteWidth) / 256;
+            int texX = (256 * (stripe - (-spriteWidth / 2 + spriteScreenX)) * texture.getSize() / spriteWidth) / 256;
 
-            if (transformY > 0 && stripe >= 0 && stripe < this.width && transformY < zBuffer[stripe]) {
+            if (transformY > 0 && stripe < this.width && transformY < zBuffer[stripe]) {
                for (int y = drawStartY; y < drawEndY; y++) {
                   int d = (y) * 256 - this.height * 128 + spriteHeight * 128;
-                  int texY = ((d * texture.SIZE) / spriteHeight) / 256;
-                  int color = texture.pixels[texX + texY * texture.SIZE];
+                  int texY = ((d * texture.getSize()) / spriteHeight) / 256;
+                  int color = texture.getPixels()[texX + texY * texture.getSize()];
                   if ((color & 0x00FFFFFF) != 0) {
                      color = shadeColor(color, transformY);
                      pixels[stripe + y * this.width] = color;
