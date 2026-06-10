@@ -1,6 +1,8 @@
 package com.bsodsoftware.abraxas.engine.shooter;
 
+import com.bsodsoftware.abraxas.engine.graphics.Sprite;
 import com.bsodsoftware.abraxas.engine.graphics.Texture;
+import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
 
 import java.awt.Color;
@@ -13,14 +15,17 @@ public class SoftwareRenderer {
    public int width;
    public int height;
    public List<Texture> textures;
+   public List<LightSource> lights;
 
-   public SoftwareRenderer(int[][] map, List<Texture> textures, int mapWidth, int mapHeight, int width, int height) {
+   public SoftwareRenderer(int[][] map, List<Texture> textures, int mapWidth, int mapHeight, int width, int height,
+                           List<LightSource> lights) {
       this.map = map;
       this.textures = textures;
       this.mapWidth = mapWidth;
       this.mapHeight = mapHeight;
       this.width = width;
       this.height = height;
+      this.lights = lights;
    }
 
    public int[] update(Camera camera, int[] pixels, List<SpriteRaycaster> sprites) {
@@ -65,7 +70,7 @@ public class SoftwareRenderer {
             Texture floorTex = this.textures.get(5);
             int color = floorTex.getPixels()[tx + ty * floorTex.getSize()];
 
-            color = shadeColor(color, rowDistance);
+            color = applyLighting(color, floorX, floorY, rowDistance);
             pixels[z + y * this.width] = color;
 
             // Ceiling
@@ -157,6 +162,8 @@ public class SoftwareRenderer {
          } else {
             wallX = camera.getyPos() + ((double)mapX - camera.getxPos() + (double)((1 - stepX) / 2)) / rayDirX * rayDirY;
          }
+         double worldX = camera.getxPos() + rayDirX * perpWallDist;
+         double worldY = camera.getyPos() + rayDirY * perpWallDist;
 
          wallX -= Math.floor(wallX);
          int texX = (int)(wallX * (double)textureSize);
@@ -177,13 +184,16 @@ public class SoftwareRenderer {
                color = this.textures.get(textNum).getPixels()[texX + texY * textureSize] >> 1 & 8355711;
             }
 
-            color = shadeColor(color, perpWallDist);
+            //color = shadeColor(color, perpWallDist);
+            color = applyLighting(color, worldX, worldY, perpWallDist);
             pixels[x + y * this.width] = color;
          }
       }
 
       // Sprite Casting
       for (SpriteRaycaster sprite : sprites) {
+         double worldX = sprite.getX();
+         double worldY = sprite.getY();
          double spriteX = sprite.getX() - camera.getxPos();
          double spriteY = sprite.getY() - camera.getyPos();
 
@@ -220,7 +230,7 @@ public class SoftwareRenderer {
                   int texY = ((d * texture.getSize()) / spriteHeight) / 256;
                   int color = texture.getPixels()[texX + texY * texture.getSize()];
                   if ((color & 0x00FFFFFF) != 0) {
-                     color = shadeColor(color, transformY);
+                     color = applyLighting(color, worldX, worldY, transformY);
                      pixels[stripe + y * this.width] = color;
                   }
                }
@@ -229,6 +239,30 @@ public class SoftwareRenderer {
       }
 
       return pixels;
+   }
+
+   private int applyLighting(int color, double worldX, double worldY, double distance) {
+      double brightness = 0.2;
+
+      for (LightSource light : lights) {
+         double dx = worldX - light.getX();
+         double dy = worldY - light.getY();
+         double dist = Math.sqrt(dx * dx + dy * dy);
+
+         if (dist < light.getRadius()) {
+            double attenuation = light.getIntensity() / (1.0 + dist * dist * 0.2);
+            brightness += attenuation;
+         }
+      }
+
+      brightness *= 1.0 / (1.0 + distance * 0.1);
+      brightness = Math.min(brightness, 1.0);
+
+      int r = (int)(((color >> 16) & 0xFF) * brightness);
+      int g = (int)(((color >> 8) & 0xFF) * brightness);
+      int b = (int)((color & 0xFF) * brightness);
+
+      return (r << 16) | (g << 8) | b;
    }
 
    private int shadeColor(int color, double distance) {

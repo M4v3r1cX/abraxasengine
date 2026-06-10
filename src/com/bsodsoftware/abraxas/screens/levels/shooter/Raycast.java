@@ -5,6 +5,7 @@ import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.events.Event;
 import com.bsodsoftware.abraxas.engine.graphics.Sprite;
+import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.player.Player;
 import com.bsodsoftware.abraxas.engine.shooter.Camera;
@@ -23,7 +24,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Raycast extends GameState {
-    private Maps.MAPS currentMap;
     private GameStateManager gameStateManager;
     private int mapWidth = 15;
     private int mapHeight = 15;
@@ -81,18 +81,27 @@ public class Raycast extends GameState {
         this.pixels = ((DataBufferInt)this.image.getRaster().getDataBuffer()).getData();
         this.textures = Texture.getAvailableTextures();
         this.camera = new Camera(3.1D, 3.1D, 1.0D, 0.0D, 0.0D, -0.66D, this.player);
-        this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT);
+        this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, getLights());
         this.sprites = getSprites();
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
         sword.setPosition(initialPosX, initialPosY);
     }
 
+    private List<LightSource> getLights() {
+        List<LightSource> lights = new ArrayList<>();
+
+        lights.add(new LightSource(6.5,7.5, 2.0,2.0));
+
+        return lights;
+    }
+
     private List<SpriteRaycaster> getSprites() {
         List<SpriteRaycaster> sprites = new ArrayList<>();
 
-        sprites.add(new SpriteRaycaster(3.5, 2.5, 5));
-        sprites.add(new SpriteRaycaster(6.5, 4.5, 5));
+        sprites.add(new SpriteRaycaster(5.5, 4.5, 5));
+        sprites.add(new SpriteRaycaster(6.5, 7.5, 5));
+        sprites.add(new SpriteRaycaster(6.5, 7.5, 7));
 
         return sprites;
     }
@@ -134,8 +143,7 @@ public class Raycast extends GameState {
     }
 
     private void initMap() {
-        this.map = Maps.getE1M1();
-        this.currentMap = Maps.MAPS.E1M1;
+        this.map = Maps.getLightTest();
     }
 
     @Override
@@ -370,10 +378,6 @@ public class Raycast extends GameState {
             }
         }
         sword.setPosition(currentPosX, currentPosY);
-    }
-
-    public Maps.MAPS getCurrentMap() {
-        return currentMap;
     }
 
     public GameStateManager getGameStateManager() {
