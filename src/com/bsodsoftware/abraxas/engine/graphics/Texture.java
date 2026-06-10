@@ -15,6 +15,7 @@ public class Texture {
     public static Texture colorstone = new Texture("/Sprites/Textures/wolfenstein/colorstone.png", 64);
     public static Texture greenlight = new Texture("/Sprites/Textures/wolfenstein/greenlight.png", 64);
     public static Texture gray = new Texture("/Sprites/Textures/gray.png", 64);
+    public static Texture nightsky = new Texture("/Sprites/Textures/gray.png", 480);
 
    private int[] pixels;
    private final String location;
@@ -66,6 +67,7 @@ public class Texture {
        ret.add(colorstone);
        ret.add(greenlight);
        ret.add(gray);
+       ret.add(nightsky);
        return ret;
    }
 }

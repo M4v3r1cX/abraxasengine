@@ -248,11 +248,11 @@ public class SoftwareRenderer {
          double dx = worldX - light.getX();
          double dy = worldY - light.getY();
          double dist = Math.sqrt(dx * dx + dy * dy);
+         double attenuation = light.getIntensity() / (1.0 + dist * dist * 0.5);
+         double falloff = Math.max(0.0, 1.0 - (dist / light.getRadius()));
 
-         if (dist < light.getRadius()) {
-            double attenuation = light.getIntensity() / (1.0 + dist * dist * 0.2);
-            brightness += attenuation;
-         }
+         brightness += attenuation * falloff;
+
       }
 
       brightness *= 1.0 / (1.0 + distance * 0.1);
