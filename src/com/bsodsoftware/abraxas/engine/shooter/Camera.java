@@ -54,6 +54,32 @@ public class Camera  {
          }
       }
 
+      if (this.strafeLeft) {
+         double strafeX = -this.yDir;
+         double strafeY = this.xDir;
+
+         if (map[(int)(this.xPos + strafeX * MOVE_SPEED)][(int)this.yPos] == 0) {
+            this.xPos += strafeX * MOVE_SPEED;
+         }
+
+         if (map[(int)this.xPos][(int)(this.yPos + strafeY * MOVE_SPEED)] == 0) {
+            this.yPos += strafeY * MOVE_SPEED;
+         }
+      }
+
+      if (this.strafeRight) {
+         double strafeX = this.yDir;
+         double strafeY = -this.xDir;
+
+         if (map[(int)(this.xPos + strafeX * MOVE_SPEED)][(int)this.yPos] == 0) {
+            this.xPos += strafeX * MOVE_SPEED;
+         }
+
+         if (map[(int)this.xPos][(int)(this.yPos + strafeY * MOVE_SPEED)] == 0) {
+            this.yPos += strafeY * MOVE_SPEED;
+         }
+      }
+
       double oldxDir;
       double oldxPlane;
       if (this.right) {
@@ -105,6 +131,16 @@ public class Camera  {
 
          if (key == KeyInputEnum.DOWN_ARROW.getValue() || key == KeyInputEnum.S.getValue()) {
             this.back = true;
+            this.player.setState(Player.STATE.WALKING);
+         }
+
+         if (key == KeyInputEnum.A.getValue()) {
+            this.strafeLeft = true;
+            this.player.setState(Player.STATE.WALKING);
+         }
+
+         if (key == KeyInputEnum.D.getValue()) {
+            this.strafeRight = true;
             this.player.setState(Player.STATE.WALKING);
          }
 

@@ -143,7 +143,7 @@ public class Raycast extends GameState {
     }
 
     private void initMap() {
-        this.map = Maps.getE1M1();
+        this.map = Maps.getLightTest();
     }
 
     @Override
