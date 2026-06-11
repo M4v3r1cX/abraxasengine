@@ -151,6 +151,11 @@ public class MenuScreen extends GameState {
 
     }
 
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
+    }
+
     private void select() {
         this.cursor.stop();
         this.bgm.stop();

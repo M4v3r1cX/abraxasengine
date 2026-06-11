@@ -7,7 +7,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 
-public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener {
+public class GamePanel extends JPanel implements Runnable, KeyListener, MouseListener, MouseMotionListener {
     // Resolución del steam deck porque en mi corazón ese es el hardware objetivo
     public static final int WIDTH = 1280;
     public static final int HEIGHT = 800;
@@ -27,7 +27,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         super();
         setPreferredSize(new Dimension(WIDTH * SCALE, HEIGHT * SCALE));
         setFocusable(true);
-        requestFocus();
+        requestFocusInWindow();
         addMouseListener(this);
     }
 
@@ -86,6 +86,7 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
         if (gameThread == null){
             gameThread = new Thread(this);
             addKeyListener(this);
+            addMouseMotionListener(this);
             gameThread.start();
         }
     }
@@ -126,5 +127,15 @@ public class GamePanel extends JPanel implements Runnable, KeyListener, MouseLis
     @Override
     public void mouseExited(MouseEvent e) {
 
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        mouseMoved(e);
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        gameStateManager.mouseMoved(e);
     }
 }

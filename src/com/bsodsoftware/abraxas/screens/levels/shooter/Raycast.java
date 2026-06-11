@@ -32,8 +32,12 @@ public class Raycast extends GameState {
     private int[][] map;
     private List<Texture> textures;
     private List<SpriteRaycaster> sprites;
+
     private Camera camera;
     private SoftwareRenderer screen;
+    private int centerX;
+    private int centerY;
+
     private final int WINDOW_WIDTH = 1280;
     private final int WINDOW_HEIGHT = 800;
     private Audio song;
@@ -341,6 +345,14 @@ public class Raycast extends GameState {
     public void mouseExited(MouseEvent e) {
 
     }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        int deltaX = e.getX() - centerX;
+        this.camera.setMouseDeltaX(deltaX);
+    }
+
+
 
     // intento de animación pa hacer la wea tipo Doom
     // TODO hacer un engine de animaciones porque lo vamos a usar pa todo

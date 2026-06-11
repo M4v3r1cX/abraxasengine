@@ -145,6 +145,11 @@ public class Cutscene1Screen extends GameState {
 
     }
 
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
+    }
+
     private void cargarScript() {
         /**
          * Explicación del sistema de script corta:

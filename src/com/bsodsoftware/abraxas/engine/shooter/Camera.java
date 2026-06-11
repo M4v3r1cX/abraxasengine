@@ -4,8 +4,10 @@ import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.player.Player;
 
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseMotionListener;
 
-public class Camera  {
+public class Camera {
    private double xPos;
    private double yPos;
    private double xDir;
@@ -22,6 +24,8 @@ public class Camera  {
    private final double ROTATION_SPEED = 0.06D;
    private Player player;
    private boolean vieneDePausa;
+   private double mouseDeltaX;
+   private int lastMouseX;
 
    public Camera(double x, double y, double xd, double yd, double xp, double yp, Player player) {
       this.xPos = x;
@@ -31,6 +35,8 @@ public class Camera  {
       this.xPlane = xp;
       this.yPlane = yp;
       this.player = player;
+      this.mouseDeltaX = 0;
+      this.lastMouseX = 0;
    }
 
    public void update(int[][] map) {
@@ -59,11 +65,11 @@ public class Camera  {
          double strafeY = this.xDir;
 
          if (map[(int)(this.xPos + strafeX * MOVE_SPEED)][(int)this.yPos] == 0) {
-            this.xPos += strafeX * MOVE_SPEED;
+            this.xPos += strafeX * (MOVE_SPEED / 2);
          }
 
          if (map[(int)this.xPos][(int)(this.yPos + strafeY * MOVE_SPEED)] == 0) {
-            this.yPos += strafeY * MOVE_SPEED;
+            this.yPos += strafeY * (MOVE_SPEED / 2);
          }
       }
 
@@ -72,13 +78,14 @@ public class Camera  {
          double strafeY = -this.xDir;
 
          if (map[(int)(this.xPos + strafeX * MOVE_SPEED)][(int)this.yPos] == 0) {
-            this.xPos += strafeX * MOVE_SPEED;
+            this.xPos += strafeX * (MOVE_SPEED / 2);
          }
 
          if (map[(int)this.xPos][(int)(this.yPos + strafeY * MOVE_SPEED)] == 0) {
-            this.yPos += strafeY * MOVE_SPEED;
+            this.yPos += strafeY * (MOVE_SPEED / 2);
          }
       }
+
 
       double oldxDir;
       double oldxPlane;
@@ -93,8 +100,8 @@ public class Camera  {
 
       if (this.left) {
          oldxDir = this.xDir;
-         this.xDir = this.xDir * Math.cos(ROTATION_SPEED) - this.yDir * Math.sin(0.06D);
-         this.yDir = oldxDir * Math.sin(ROTATION_SPEED) + this.yDir * Math.cos(0.06D);
+         this.xDir = this.xDir * Math.cos(ROTATION_SPEED) - this.yDir * Math.sin(ROTATION_SPEED);
+         this.yDir = oldxDir * Math.sin(ROTATION_SPEED) + this.yDir * Math.cos(ROTATION_SPEED);
          oldxPlane = this.xPlane;
          this.xPlane = this.xPlane * Math.cos(ROTATION_SPEED) - this.yPlane * Math.sin(ROTATION_SPEED);
          this.yPlane = oldxPlane * Math.sin(ROTATION_SPEED) + this.yPlane * Math.cos(ROTATION_SPEED);
@@ -114,12 +121,12 @@ public class Camera  {
 
       if (!this.player.getState().equals(Player.STATE.PAUSE) && !this.player.getState().equals(Player.STATE.IN_EVENT)) {
          System.out.println("Ni en pausa ni en evento");
-         if (key == KeyInputEnum.LEFT_ARROW.getValue()) {
+         if (key == KeyInputEnum.LEFT_ARROW.getValue() || key == KeyInputEnum.Q.getValue()) {
             this.left = true;
             this.player.setState(Player.STATE.WALKING);
          }
 
-         if (key == KeyInputEnum.RIGHT_ARROW.getValue()) {
+         if (key == KeyInputEnum.RIGHT_ARROW.getValue() || key == KeyInputEnum.E.getValue()) {
             this.right = true;
             this.player.setState(Player.STATE.WALKING);
          }
@@ -154,11 +161,11 @@ public class Camera  {
    }
 
    public void keyReleased(int key) {
-      if (key == KeyInputEnum.LEFT_ARROW.getValue()) {
+      if (key == KeyInputEnum.LEFT_ARROW.getValue() || key == KeyInputEnum.Q.getValue()) {
          this.left = false;
       }
 
-      if (key == KeyInputEnum.RIGHT_ARROW.getValue()) {
+      if (key == KeyInputEnum.RIGHT_ARROW.getValue() || key == KeyInputEnum.E.getValue()) {
          this.right = false;
       }
 
@@ -195,6 +202,10 @@ public class Camera  {
    }
 
    public void keyTyped(KeyEvent key) {
+   }
+
+   public void setMouseDeltaX(double deltaX) {
+      this.mouseDeltaX = deltaX;
    }
 
    public class CameraValues {
