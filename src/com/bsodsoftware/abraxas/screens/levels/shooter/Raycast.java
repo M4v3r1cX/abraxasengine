@@ -349,7 +349,7 @@ public class Raycast extends GameState {
     @Override
     public void mouseMoved(MouseEvent e) {
         int deltaX = e.getX() - centerX;
-        this.camera.setMouseDeltaX(deltaX);
+
     }
 
 
