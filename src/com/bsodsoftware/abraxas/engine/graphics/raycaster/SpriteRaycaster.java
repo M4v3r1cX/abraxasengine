@@ -5,10 +5,15 @@ public class SpriteRaycaster {
     private double y;
     private int texture;
 
-    public SpriteRaycaster(double x, double y, int texture) {
+    boolean solid;
+    double radius;
+
+    public SpriteRaycaster(double x, double y, int texture, boolean solid, double radius) {
         this.x = x;
         this.y = y;
         this.texture = texture;
+        this.solid = solid;
+        this.radius = radius;
     }
 
     public double getX() {
@@ -33,5 +38,21 @@ public class SpriteRaycaster {
 
     public void setTexture(int texture) {
         this.texture = texture;
+    }
+
+    public boolean isSolid() {
+        return solid;
+    }
+
+    public void setSolid(boolean solid) {
+        this.solid = solid;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
+    public void setRadius(double radius) {
+        this.radius = radius;
     }
 }

@@ -1,5 +1,6 @@
 package com.bsodsoftware.abraxas.engine.events;
 
+import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.shooter.Maps;
 
 import java.util.ArrayList;
@@ -15,14 +16,34 @@ public class CollisionEngine {
     }
 
     public void checkForCollission(double playerPosX, double playerPosY) {
-        for (Event e : eventsByLevel) {
-            if (playerPosX >= e.getxStart() && playerPosX <= e.getxEnd() && playerPosY >= e.getyStart()
-                    && playerPosY <= e.getyEnd()) {
-                if ((!e.isHasBeenActivated() || e.isRepeatable()) && !e.isActive()) {
-                    e.setActive(true);
-                    e.setHasBeenActivated(true);
+        if (eventsByLevel != null) {
+            for (Event e : eventsByLevel) {
+                if (playerPosX >= e.getxStart() && playerPosX <= e.getxEnd() && playerPosY >= e.getyStart()
+                        && playerPosY <= e.getyEnd()) {
+                    if ((!e.isHasBeenActivated() || e.isRepeatable()) && !e.isActive()) {
+                        e.setActive(true);
+                        e.setHasBeenActivated(true);
+                    }
                 }
             }
         }
+    }
+
+    public boolean collidesWithSprite(double x, double y, List<SpriteRaycaster> sprites, double playerRadius) {
+        boolean ret = false;
+        for (SpriteRaycaster sprite : sprites) {
+            if (!sprite.isSolid()) continue;
+
+            double dx = x - sprite.getX();
+            double dy = y - sprite.getY();
+
+            double dist = Math.sqrt(dx * dx + dy * dy);
+
+            if (dist < (playerRadius + sprite.getRadius())) {
+                ret = true;
+            }
+        }
+
+        return ret;
     }
 }

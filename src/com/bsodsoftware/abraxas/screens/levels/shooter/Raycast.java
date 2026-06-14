@@ -70,12 +70,12 @@ public class Raycast extends GameState {
     @Override
     public void init() {
         initMap();
+        initCollisionEngine();
         initPlayer();
         initScreen();
         initSound();
         initHud();
         initEvents();
-        initCollisionEngine();
 
         this.loaded = true;
     }
@@ -84,9 +84,9 @@ public class Raycast extends GameState {
         this.image = new BufferedImage(this.WINDOW_WIDTH, this.WINDOW_HEIGHT, 1);
         this.pixels = ((DataBufferInt)this.image.getRaster().getDataBuffer()).getData();
         this.textures = Texture.getAvailableTextures();
-        this.camera = new Camera(3.1D, 3.1D, 1.0D, 0.0D, 0.0D, -0.66D, this.player);
-        this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, getLights());
         this.sprites = getSprites();
+        this.camera = new Camera(3.1D, 3.1D, 1.0D, 0.0D, 0.0D, -0.66D, this.player, this.collisionEngine, this.sprites);
+        this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, getLights());
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
         sword.setPosition(initialPosX, initialPosY);
@@ -103,9 +103,9 @@ public class Raycast extends GameState {
     private List<SpriteRaycaster> getSprites() {
         List<SpriteRaycaster> sprites = new ArrayList<>();
 
-        sprites.add(new SpriteRaycaster(5.5, 4.5, 5));
-        sprites.add(new SpriteRaycaster(6.5, 7.5, 5));
-        sprites.add(new SpriteRaycaster(6.5, 7.5, 7));
+        sprites.add(new SpriteRaycaster(5.5, 4.5, 5, true, 0.3));
+        sprites.add(new SpriteRaycaster(6.5, 7.5, 5, true, 0.3));
+        sprites.add(new SpriteRaycaster(6.5, 7.5, 7, false, 0.3));
 
         return sprites;
     }

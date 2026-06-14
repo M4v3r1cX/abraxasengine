@@ -1,5 +1,7 @@
 package com.bsodsoftware.abraxas.engine.player;
 
+import com.bsodsoftware.abraxas.engine.inventory.Inventory;
+
 public class Player {
 
     public enum STATE {
@@ -11,8 +13,10 @@ public class Player {
     private int armor;
     private int attack;
     private int stamina;
+    private final double radius = 0.3;
     private String name;
     private STATE state;
+    private Inventory inventory;
 
     public int getHealth() {
         return health;
@@ -60,5 +64,17 @@ public class Player {
 
     public void setState(STATE state) {
         this.state = state;
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
+    public double getRadius() {
+        return radius;
     }
 }

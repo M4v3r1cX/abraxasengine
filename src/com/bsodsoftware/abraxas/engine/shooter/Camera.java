@@ -1,11 +1,14 @@
 package com.bsodsoftware.abraxas.engine.shooter;
 
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
+import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
+import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.player.Player;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseMotionListener;
+import java.util.List;
 
 public class Camera {
    private double xPos;
@@ -26,8 +29,10 @@ public class Camera {
    private boolean vieneDePausa;
    private double mouseDeltaX;
    private int lastMouseX;
+   private CollisionEngine collisionEngine;
+   private List<SpriteRaycaster> sprites;
 
-   public Camera(double x, double y, double xd, double yd, double xp, double yp, Player player) {
+   public Camera(double x, double y, double xd, double yd, double xp, double yp, Player player, CollisionEngine collisionEngine, List<SpriteRaycaster> sprites) {
       this.xPos = x;
       this.yPos = y;
       this.xDir = xd;
@@ -37,55 +42,69 @@ public class Camera {
       this.player = player;
       this.mouseDeltaX = 0;
       this.lastMouseX = 0;
+      this.collisionEngine = collisionEngine;
+      this.sprites = sprites;
    }
 
    public void update(int[][] map) {
       if (this.forward) {
-         if (map[(int)(this.xPos + this.xDir * MOVE_SPEED)][(int)this.yPos] == 0) {
-            this.xPos += this.xDir * MOVE_SPEED;
+         double newX = this.xPos + this.xDir * MOVE_SPEED;
+         double newY = this.yPos + this.yDir * MOVE_SPEED;
+
+
+         // wall collision
+         boolean canMoveX = map[(int)(newX + Math.signum(xDir) * player.getRadius())][(int)this.yPos] == 0;
+         boolean canMoveY = map[(int)this.xPos][(int)(newY + Math.signum(yDir) * player.getRadius())] == 0;
+
+         // sprite collision
+         boolean spriteBlockX = collisionEngine.collidesWithSprite(newX, this.yPos, this.sprites, player.getRadius());
+         boolean spriteBlockY = collisionEngine.collidesWithSprite(this.xPos, newY, sprites, player.getRadius());
+
+         if (canMoveX && !spriteBlockX) {
+            this.xPos = newX;
          }
 
-         if (map[(int)this.xPos][(int)(this.yPos + this.yDir * MOVE_SPEED)] == 0) {
-            this.yPos += this.yDir * MOVE_SPEED;
+         if (canMoveY && !spriteBlockY) {
+            this.yPos = newY;
          }
+
       }
 
       if (this.back) {
-         if (map[(int)(this.xPos - this.xDir * MOVE_SPEED)][(int)this.yPos] == 0) {
-            this.xPos -= this.xDir * MOVE_SPEED;
+         double newX = this.xPos - this.xDir * MOVE_SPEED;
+         double newY = this.yPos - this.yDir * MOVE_SPEED;
+
+         if (map[(int)(newX - Math.signum(xDir) * player.getRadius())][(int)this.yPos] == 0) {
+            this.xPos = newX;
          }
 
-         if (map[(int)this.xPos][(int)(this.yPos - this.yDir * MOVE_SPEED)] == 0) {
-            this.yPos -= this.yDir * MOVE_SPEED;
-         }
-      }
-
-      if (this.strafeLeft) {
-         double strafeX = -this.yDir;
-         double strafeY = this.xDir;
-
-         if (map[(int)(this.xPos + strafeX * MOVE_SPEED)][(int)this.yPos] == 0) {
-            this.xPos += strafeX * (MOVE_SPEED / 2);
-         }
-
-         if (map[(int)this.xPos][(int)(this.yPos + strafeY * MOVE_SPEED)] == 0) {
-            this.yPos += strafeY * (MOVE_SPEED / 2);
+         if (map[(int)this.xPos][(int)(newY - Math.signum(yDir) * player.getRadius())] == 0) {
+            this.yPos = newY;
          }
       }
 
-      if (this.strafeRight) {
-         double strafeX = this.yDir;
-         double strafeY = -this.xDir;
-
-         if (map[(int)(this.xPos + strafeX * MOVE_SPEED)][(int)this.yPos] == 0) {
-            this.xPos += strafeX * (MOVE_SPEED / 2);
+      if (this.strafeLeft || this.strafeRight) {
+         double strafeX;
+         double strafeY;
+         if (this.strafeLeft) {
+            strafeX = -this.yDir;
+            strafeY = this.xDir;
+         } else {
+            strafeX = this.yDir;
+            strafeY = -this.xDir;
          }
 
-         if (map[(int)this.xPos][(int)(this.yPos + strafeY * MOVE_SPEED)] == 0) {
-            this.yPos += strafeY * (MOVE_SPEED / 2);
+         double newX = this.xPos + strafeX * (MOVE_SPEED / 2);
+         double newY = this.yPos + strafeY * (MOVE_SPEED / 2);
+
+         if (map[(int)(newX + Math.signum(strafeX) * player.getRadius())][(int)this.yPos] == 0) {
+            this.xPos = newX;
+         }
+
+         if (map[(int)this.xPos][(int)(newY + Math.signum(strafeY) * player.getRadius())] == 0) {
+            this.yPos = newY;
          }
       }
-
 
       double oldxDir;
       double oldxPlane;
