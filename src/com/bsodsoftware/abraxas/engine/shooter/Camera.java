@@ -51,7 +51,6 @@ public class Camera {
          double newX = this.xPos + this.xDir * MOVE_SPEED;
          double newY = this.yPos + this.yDir * MOVE_SPEED;
 
-
          // wall collision
          boolean canMoveX = map[(int)(newX + Math.signum(xDir) * player.getRadius())][(int)this.yPos] == 0;
          boolean canMoveY = map[(int)this.xPos][(int)(newY + Math.signum(yDir) * player.getRadius())] == 0;
@@ -74,11 +73,19 @@ public class Camera {
          double newX = this.xPos - this.xDir * MOVE_SPEED;
          double newY = this.yPos - this.yDir * MOVE_SPEED;
 
-         if (map[(int)(newX - Math.signum(xDir) * player.getRadius())][(int)this.yPos] == 0) {
+         // wall collision
+         boolean canMoveX = map[(int)(newX - Math.signum(xDir) * player.getRadius())][(int)this.yPos] == 0;
+         boolean canMoveY = map[(int)this.xPos][(int)(newY - Math.signum(yDir) * player.getRadius())] == 0;
+
+         // sprite collision
+         boolean spriteBlockX = collisionEngine.collidesWithSprite(newX, this.yPos, this.sprites, player.getRadius());
+         boolean spriteBlockY = collisionEngine.collidesWithSprite(this.xPos, newY, sprites, player.getRadius());
+
+         if (canMoveX && !spriteBlockX) {
             this.xPos = newX;
          }
 
-         if (map[(int)this.xPos][(int)(newY - Math.signum(yDir) * player.getRadius())] == 0) {
+         if (canMoveY && !spriteBlockY) {
             this.yPos = newY;
          }
       }
@@ -96,12 +103,19 @@ public class Camera {
 
          double newX = this.xPos + strafeX * (MOVE_SPEED / 2);
          double newY = this.yPos + strafeY * (MOVE_SPEED / 2);
+         // wall collision
+         boolean canMoveX = map[(int)(newX + Math.signum(strafeX) * player.getRadius())][(int)this.yPos] == 0;
+         boolean canMoveY = map[(int)this.xPos][(int)(newY + Math.signum(strafeY) * player.getRadius())] == 0;
 
-         if (map[(int)(newX + Math.signum(strafeX) * player.getRadius())][(int)this.yPos] == 0) {
+         // sprite collision
+         boolean spriteBlockX = collisionEngine.collidesWithSprite(newX, this.yPos, this.sprites, player.getRadius());
+         boolean spriteBlockY = collisionEngine.collidesWithSprite(this.xPos, newY, sprites, player.getRadius());
+
+         if (canMoveX && !spriteBlockX) {
             this.xPos = newX;
          }
 
-         if (map[(int)this.xPos][(int)(newY + Math.signum(strafeY) * player.getRadius())] == 0) {
+         if (canMoveY && !spriteBlockY) {
             this.yPos = newY;
          }
       }
