@@ -5,7 +5,7 @@ import com.bsodsoftware.abraxas.engine.inventory.Inventory;
 public class Player {
 
     public enum STATE {
-        IN_COMBAT, WALKING, IN_MENU, PAUSE, STANDING,    // ON THE EDGE OF THE CRATER WHERE THE PROFETS ONCE SAID
+        IN_COMBAT, WALKING, ROTATING, PAUSE, STANDING,    // ON THE EDGE OF THE CRATER WHERE THE PROFETS ONCE SAID
         IN_EVENT
     }
 
@@ -76,5 +76,9 @@ public class Player {
 
     public double getRadius() {
         return radius;
+    }
+
+    public boolean isWalking() {
+        return getState().equals(STATE.WALKING);
     }
 }

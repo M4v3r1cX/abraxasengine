@@ -357,7 +357,7 @@ public class Raycast extends GameState {
     // intento de animación pa hacer la wea tipo Doom
     // TODO hacer un engine de animaciones porque lo vamos a usar pa todo
     private void weaponBob() {
-        if (this.player.getState().equals(Player.STATE.WALKING)) {
+        if (this.player.isWalking()) {
             if (currentFrame < 20) {
                 currentPosX-= 1;
                 currentPosY+= 1;

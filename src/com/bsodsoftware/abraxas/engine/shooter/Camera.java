@@ -47,77 +47,47 @@ public class Camera {
    }
 
    public void update(int[][] map) {
+      double moveX = 0, moveY = 0;
       if (this.forward) {
-         double newX = this.xPos + this.xDir * MOVE_SPEED;
-         double newY = this.yPos + this.yDir * MOVE_SPEED;
-
-         // wall collision
-         boolean canMoveX = map[(int)(newX + Math.signum(xDir) * player.getRadius())][(int)this.yPos] == 0;
-         boolean canMoveY = map[(int)this.xPos][(int)(newY + Math.signum(yDir) * player.getRadius())] == 0;
-
-         // sprite collision
-         boolean spriteBlockX = collisionEngine.collidesWithSprite(newX, this.yPos, this.sprites, player.getRadius());
-         boolean spriteBlockY = collisionEngine.collidesWithSprite(this.xPos, newY, sprites, player.getRadius());
-
-         if (canMoveX && !spriteBlockX) {
-            this.xPos = newX;
-         }
-
-         if (canMoveY && !spriteBlockY) {
-            this.yPos = newY;
-         }
-
+         moveX += this.xDir;
+         moveY += this.yDir;
       }
-
       if (this.back) {
-         double newX = this.xPos - this.xDir * MOVE_SPEED;
-         double newY = this.yPos - this.yDir * MOVE_SPEED;
-
-         // wall collision
-         boolean canMoveX = map[(int)(newX - Math.signum(xDir) * player.getRadius())][(int)this.yPos] == 0;
-         boolean canMoveY = map[(int)this.xPos][(int)(newY - Math.signum(yDir) * player.getRadius())] == 0;
-
-         // sprite collision
-         boolean spriteBlockX = collisionEngine.collidesWithSprite(newX, this.yPos, this.sprites, player.getRadius());
-         boolean spriteBlockY = collisionEngine.collidesWithSprite(this.xPos, newY, sprites, player.getRadius());
-
-         if (canMoveX && !spriteBlockX) {
-            this.xPos = newX;
-         }
-
-         if (canMoveY && !spriteBlockY) {
-            this.yPos = newY;
-         }
+         moveX -= this.xDir;
+         moveY -= this.yDir;
       }
 
-      if (this.strafeLeft || this.strafeRight) {
-         double strafeX;
-         double strafeY;
-         if (this.strafeLeft) {
-            strafeX = -this.yDir;
-            strafeY = this.xDir;
-         } else {
-            strafeX = this.yDir;
-            strafeY = -this.xDir;
-         }
+      if (this.strafeLeft) {
+         moveX += -this.yDir;
+         moveY += this.xDir;
+      }
 
-         double newX = this.xPos + strafeX * (MOVE_SPEED / 2);
-         double newY = this.yPos + strafeY * (MOVE_SPEED / 2);
-         // wall collision
-         boolean canMoveX = map[(int)(newX + Math.signum(strafeX) * player.getRadius())][(int)this.yPos] == 0;
-         boolean canMoveY = map[(int)this.xPos][(int)(newY + Math.signum(strafeY) * player.getRadius())] == 0;
+      if (this.strafeRight) {
+         moveX += this.yDir;
+         moveY += -this.xDir;
+      }
 
-         // sprite collision
-         boolean spriteBlockX = collisionEngine.collidesWithSprite(newX, this.yPos, this.sprites, player.getRadius());
-         boolean spriteBlockY = collisionEngine.collidesWithSprite(this.xPos, newY, sprites, player.getRadius());
+      double length = Math.sqrt(moveX * moveX + moveY * moveY);
+      if (length > 0) {
+         moveX /= length;
+         moveY /= length;
+      }
 
-         if (canMoveX && !spriteBlockX) {
-            this.xPos = newX;
-         }
+      double newX = this.xPos + moveX * MOVE_SPEED;
+      double newY = this.yPos + moveY * MOVE_SPEED;
 
-         if (canMoveY && !spriteBlockY) {
-            this.yPos = newY;
-         }
+      boolean canMoveX = map[(int)(newX + Math.signum(moveX) * player.getRadius())][(int)this.yPos] == 0;
+      boolean canMoveY = map[(int)this.xPos][(int)(newY + Math.signum(moveY) * player.getRadius())] == 0;
+
+      boolean spriteBlockX = collisionEngine.collidesWithSprite(newX, this.yPos, sprites, player.getRadius());
+      boolean spriteBlockY = collisionEngine.collidesWithSprite(this.xPos, newY, sprites, player.getRadius());
+
+      if (canMoveX && !spriteBlockX) {
+         this.xPos = newX;
+      }
+
+      if (canMoveY && !spriteBlockY) {
+         this.yPos = newY;
       }
 
       double oldxDir;
