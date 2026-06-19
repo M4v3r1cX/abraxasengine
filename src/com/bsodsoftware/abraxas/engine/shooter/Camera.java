@@ -23,7 +23,7 @@ public class Camera {
    private boolean back;
    private boolean strafeRight;
    private boolean strafeLeft;
-   private final double MOVE_SPEED = 0.07D;
+   private final double MOVE_SPEED = 0.05D;
    private final double ROTATION_SPEED = 0.06D;
    private Player player;
    private boolean vieneDePausa;

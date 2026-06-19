@@ -9,6 +9,7 @@ import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.player.Player;
 import com.bsodsoftware.abraxas.engine.shooter.Camera;
+import com.bsodsoftware.abraxas.engine.shooter.MapGenerator;
 import com.bsodsoftware.abraxas.engine.shooter.Maps;
 import com.bsodsoftware.abraxas.engine.shooter.SoftwareRenderer;
 import com.bsodsoftware.abraxas.engine.graphics.Texture;
@@ -30,6 +31,7 @@ public class Raycast extends GameState {
     private BufferedImage image;
     private int[] pixels;
     private int[][] map;
+    private MapGenerator mapGenerator;
     private List<Texture> textures;
     private List<SpriteRaycaster> sprites;
 
@@ -85,7 +87,7 @@ public class Raycast extends GameState {
         this.pixels = ((DataBufferInt)this.image.getRaster().getDataBuffer()).getData();
         this.textures = Texture.getAvailableTextures();
         this.sprites = getSprites();
-        this.camera = new Camera(3.1D, 3.1D, 1.0D, 0.0D, 0.0D, -0.66D, this.player, this.collisionEngine, this.sprites);
+        this.camera = new Camera(1.5D, 1.5D, 1.0D, 0.0D, 0.0D, -0.66D, this.player, this.collisionEngine, this.sprites);
         this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, getLights());
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
@@ -147,7 +149,8 @@ public class Raycast extends GameState {
     }
 
     private void initMap() {
-        this.map = Maps.getLightTest();
+        mapGenerator = new MapGenerator(this.mapWidth, this.mapHeight);
+        this.map = mapGenerator.generateFloor();
     }
 
     @Override
