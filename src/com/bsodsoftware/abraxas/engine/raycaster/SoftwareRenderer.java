@@ -1,6 +1,5 @@
-package com.bsodsoftware.abraxas.engine.shooter;
+package com.bsodsoftware.abraxas.engine.raycaster;
 
-import com.bsodsoftware.abraxas.engine.graphics.Sprite;
 import com.bsodsoftware.abraxas.engine.graphics.Texture;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;

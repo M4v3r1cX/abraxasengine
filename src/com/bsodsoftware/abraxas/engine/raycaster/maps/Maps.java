@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine.shooter;
+package com.bsodsoftware.abraxas.engine.raycaster.maps;
 
 public class Maps {
 	public enum MAPS {

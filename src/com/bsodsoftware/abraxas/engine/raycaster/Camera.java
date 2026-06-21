@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine.shooter;
+package com.bsodsoftware.abraxas.engine.raycaster;
 
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
@@ -6,8 +6,6 @@ import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.player.Player;
 
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseMotionListener;
 import java.util.List;
 
 public class Camera {

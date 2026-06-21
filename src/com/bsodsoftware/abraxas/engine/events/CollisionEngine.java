@@ -1,10 +1,7 @@
 package com.bsodsoftware.abraxas.engine.events;
 
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
-import com.bsodsoftware.abraxas.engine.shooter.Maps;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class CollisionEngine {
