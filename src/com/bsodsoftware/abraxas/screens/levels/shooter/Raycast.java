@@ -30,8 +30,11 @@ public class Raycast extends GameState {
     private int mapWidth = 35;
     private int mapHeight = 35;
     private BufferedImage image;
+
     private int[] pixels;
     private int[][] map;
+    private boolean[][] visited;
+
     private MapGenerator mapGenerator;
     private List<Texture> textures;
     private List<SpriteRaycaster> sprites;
@@ -44,7 +47,6 @@ public class Raycast extends GameState {
     private final int WINDOW_WIDTH = 1280;
     private final int WINDOW_HEIGHT = 800;
     private Audio song;
-    private boolean loaded = false;
     private Sprite sprite;
     private Sprite sword;
     private int currentFrame = 0;
@@ -62,6 +64,9 @@ public class Raycast extends GameState {
     private Player player;
     ArrayList<Event> events;
     private CollisionEngine collisionEngine;
+
+    private boolean loaded = false;
+    private boolean autoMap = false;
 
     private int currentChoice = 0;
     private String[] options = {"Continuar", "Salir"};
@@ -101,7 +106,30 @@ public class Raycast extends GameState {
     private List<LightSource> getLights() {
         List<LightSource> lights = new ArrayList<>();
 
-        lights.add(new LightSource(6.5,7.5, 2.0,2.0));
+        for (Room r : mapGenerator.getRooms()) {
+            /*if (mapGenerator.getRandom().nextDouble() < 0.5) {
+                sprites.add(new SpriteRaycaster(
+                        r.getCenterX() + 0.5,
+                        r.getCenterY() + 0.5,
+                        7,
+                        true,
+                        3
+                ));
+            }*/
+
+
+            lights.add(new LightSource(
+                    r.getCenterX(),
+                    r.getCenterY(),
+                    2.0,
+                    10.0
+            ));
+
+            sprites.add(new SpriteRaycaster(r.getCenterX(), r.getCenterY(), 7, false, 0.3));
+        }
+
+
+        //lights.add(new LightSource(6.5,7.5, 2.0,2.0));
 
         return lights;
     }
@@ -111,7 +139,7 @@ public class Raycast extends GameState {
 
         sprites.add(new SpriteRaycaster(5.5, 4.5, 5, true, 0.3));
         sprites.add(new SpriteRaycaster(6.5, 7.5, 5, true, 0.3));
-        sprites.add(new SpriteRaycaster(6.5, 7.5, 7, false, 0.3));
+
 
         return sprites;
     }
@@ -155,6 +183,7 @@ public class Raycast extends GameState {
     private void initMap() {
         mapGenerator = new MapGenerator(this.mapWidth, this.mapHeight);
         this.map = mapGenerator.generateFloor();
+        this.visited = new boolean[this.mapWidth][this.mapHeight];
     }
 
     @Override
@@ -163,10 +192,25 @@ public class Raycast extends GameState {
             this.sortSprites();
             this.screen.update(this.camera, this.pixels, this.sprites);
             this.camera.update(map);
+            markVisited();
             this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
             this.checkForEvents();
             if (this.player.getState().equals(Player.STATE.STANDING)) {
                 this.camera.setVieneDePausa(false);
+            }
+        }
+    }
+
+    private void markVisited() {
+        int radius = 3;
+
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                int nx = (int)this.camera.getxPos() + dx;
+                int ny = (int)this.camera.getyPos() + dy;
+                if (nx >= 0 && ny >= 0 && nx < this.mapWidth && ny < this.mapHeight) {
+                    visited[nx][ny] = true;
+                }
             }
         }
     }
@@ -178,6 +222,9 @@ public class Raycast extends GameState {
             renderRaycast(graphics);
             drawWeapon(graphics);
             drawHud(graphics);
+            if (autoMap){
+                renderAutomap(graphics);
+            }
         }  else {
             showLoadingScreen(graphics);
         }
@@ -274,6 +321,36 @@ public class Raycast extends GameState {
         });
     }
 
+    public void renderAutomap(Graphics2D graphics) {
+        graphics.setColor(maskColor);
+        graphics.fillRect(0,0, getWINDOW_WIDTH(), getWINDOW_HEIGHT());
+
+        int scale = 21;
+        for (int x = 0; x < map.length; x++) {
+            for (int y = 0; y < map[0].length; y++) {
+                if (visited[x][y]) {
+                    if (map[x][y] == 0) {
+                        graphics.setColor(Color.WHITE);
+                    } else {
+                        graphics.setColor(Color.BLACK);
+                    }
+                    graphics.fillRect(x * scale, y * scale, scale, scale);
+                }
+            }
+        }
+
+        int px = (int)(camera.getxPos() * scale);
+        int py = (int)(camera.getyPos() * scale);
+
+        graphics.setColor(Color.RED);
+        graphics.fillOval(px - 2, py - 2, 4, 4);
+
+        int dx = (int)(camera.getxDir() * 10);
+        int dy = (int)(camera.getyDir() * 10);
+
+        graphics.drawLine(px, py, px + dx, py + dy);
+    }
+
     @Override
     public void onKeyPressed(int key) {
         if (!player.getState().equals(Player.STATE.IN_EVENT)) {
@@ -281,8 +358,9 @@ public class Raycast extends GameState {
             System.out.println("Key " + key + " pressed");
         }
 
-        if (key == 77) {
-            gameStateManager.setState(GameStateManager.MENU);
+        if (key == KeyInputEnum.M.getValue()) {
+            //gameStateManager.setState(GameStateManager.MENU);
+            this.autoMap = !autoMap;
         }
 
         // Voy a ser bien honesto, voy a poner el código pa manejar el menú de pausa desde acá porque no se como más

@@ -99,7 +99,6 @@ public class MapGenerator {
         return map;
     }
 
-
     private void carve(int x, int y, int[][] map) {
         map[x][y] = 0;
 
