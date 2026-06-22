@@ -33,7 +33,7 @@ public class Raycast extends GameState {
 
     private int[] pixels;
     private int[][] map;
-    private boolean[][] visited;
+    private int[][] visibility;
 
     private MapGenerator mapGenerator;
     private List<Texture> textures;
@@ -41,8 +41,6 @@ public class Raycast extends GameState {
 
     private Camera camera;
     private SoftwareRenderer screen;
-    private int centerX;
-    private int centerY;
 
     private final int WINDOW_WIDTH = 1280;
     private final int WINDOW_HEIGHT = 800;
@@ -107,29 +105,14 @@ public class Raycast extends GameState {
         List<LightSource> lights = new ArrayList<>();
 
         for (Room r : mapGenerator.getRooms()) {
-            /*if (mapGenerator.getRandom().nextDouble() < 0.5) {
-                sprites.add(new SpriteRaycaster(
-                        r.getCenterX() + 0.5,
-                        r.getCenterY() + 0.5,
-                        7,
-                        true,
-                        3
-                ));
-            }*/
-
-
             lights.add(new LightSource(
                     r.getCenterX(),
                     r.getCenterY(),
                     2.0,
                     10.0
             ));
-
             sprites.add(new SpriteRaycaster(r.getCenterX(), r.getCenterY(), 7, false, 0.3));
         }
-
-
-        //lights.add(new LightSource(6.5,7.5, 2.0,2.0));
 
         return lights;
     }
@@ -139,7 +122,6 @@ public class Raycast extends GameState {
 
         sprites.add(new SpriteRaycaster(5.5, 4.5, 5, true, 0.3));
         sprites.add(new SpriteRaycaster(6.5, 7.5, 5, true, 0.3));
-
 
         return sprites;
     }
@@ -183,7 +165,7 @@ public class Raycast extends GameState {
     private void initMap() {
         mapGenerator = new MapGenerator(this.mapWidth, this.mapHeight);
         this.map = mapGenerator.generateFloor();
-        this.visited = new boolean[this.mapWidth][this.mapHeight];
+        this.visibility = new int[this.mapWidth][this.mapHeight];
     }
 
     @Override
@@ -202,14 +184,26 @@ public class Raycast extends GameState {
     }
 
     private void markVisited() {
-        int radius = 3;
+        int px = (int) camera.getxPos();
+        int py = (int) camera.getyPos();
 
+        for (int x = 0; x < mapWidth; x++) {
+            for (int y = 0; y < mapHeight; y++) {
+                if (visibility[x][y] == 2) {
+                    visibility[x][y] = 1;
+                }
+            }
+        }
+
+        int radius = 5;
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dy = -radius; dy <= radius; dy++) {
-                int nx = (int)this.camera.getxPos() + dx;
-                int ny = (int)this.camera.getyPos() + dy;
-                if (nx >= 0 && ny >= 0 && nx < this.mapWidth && ny < this.mapHeight) {
-                    visited[nx][ny] = true;
+                int nx = px + dx;
+                int ny = py + dy;
+                if (nx >= 0 && ny >= 0 && nx < mapWidth && ny < mapHeight) {
+                    if (dx*dx + dy*dy <= radius*radius) {
+                        visibility[nx][ny] = 2; // currently visible
+                    }
                 }
             }
         }
@@ -217,14 +211,15 @@ public class Raycast extends GameState {
 
     @Override
     public void draw(Graphics2D graphics) {
-        // Este es el método principal pa dibujar renderizar
         if (loaded) {
-            renderRaycast(graphics);
-            drawWeapon(graphics);
-            drawHud(graphics);
+            if (!autoMap) {
+                renderRaycast(graphics);
+                drawWeapon(graphics);
+            }
             if (autoMap){
                 renderAutomap(graphics);
             }
+            drawHud(graphics);
         }  else {
             showLoadingScreen(graphics);
         }
@@ -322,33 +317,63 @@ public class Raycast extends GameState {
     }
 
     public void renderAutomap(Graphics2D graphics) {
+        int centerX = screen.width / 2;
+        int centerY = screen.height / 2;
+
+        double camX = camera.getxPos();
+        double camY = camera.getyPos();
+
         graphics.setColor(maskColor);
         graphics.fillRect(0,0, getWINDOW_WIDTH(), getWINDOW_HEIGHT());
 
         int scale = 21;
         for (int x = 0; x < map.length; x++) {
             for (int y = 0; y < map[0].length; y++) {
-                if (visited[x][y]) {
-                    if (map[x][y] == 0) {
+                double dx = x - camX;
+                double dy = y - camY;
+
+                int drawX = (int)(dx * scale) + centerX;
+                int drawY = (int)(dy * scale) + centerY;
+
+                if (visibility[x][y] == 0) continue;
+
+                if (map[x][y] != 0) {
+                    int sx = drawX;
+                    int sy = drawY;
+
+                    if (visibility[x][y] == 2) {
                         graphics.setColor(Color.WHITE);
                     } else {
-                        graphics.setColor(Color.BLACK);
+                        graphics.setColor(Color.GRAY);
                     }
-                    graphics.fillRect(x * scale, y * scale, scale, scale);
+
+                    if (x == 0 || map[x-1][y] == 0) {
+                        graphics.drawLine(sx, sy, sx, sy + scale);
+                    }
+
+                    if (x == map.length-1 || map[x+1][y] == 0) {
+                        graphics.drawLine(sx + scale, sy, sx + scale, sy + scale);
+                    }
+
+
+                    if (y == 0 || map[x][y-1] == 0) {
+                        graphics.drawLine(sx, sy, sx + scale, sy);
+                    }
+
+                    if (y == map[0].length-1 || map[x][y+1] == 0) {
+                        graphics.drawLine(sx, sy + scale, sx + scale, sy + scale);
+                    }
+
+                    graphics.setColor(Color.RED);
+                    graphics.fillOval(centerX - 3, centerY - 3, 6, 6);
+
+                    int dx2 = (int)(camera.getxDir() * 10);
+                    int dy2 = (int)(camera.getyDir() * 10);
+
+                    graphics.drawLine(centerX, centerY, centerX + dx2, centerY + dy2);
                 }
             }
         }
-
-        int px = (int)(camera.getxPos() * scale);
-        int py = (int)(camera.getyPos() * scale);
-
-        graphics.setColor(Color.RED);
-        graphics.fillOval(px - 2, py - 2, 4, 4);
-
-        int dx = (int)(camera.getxDir() * 10);
-        int dy = (int)(camera.getyDir() * 10);
-
-        graphics.drawLine(px, py, px + dx, py + dy);
     }
 
     @Override
@@ -433,7 +458,7 @@ public class Raycast extends GameState {
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        int deltaX = e.getX() - centerX;
+        //int deltaX = e.getX() - centerX;
 
     }
 
