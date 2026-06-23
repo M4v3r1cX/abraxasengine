@@ -21,7 +21,7 @@ public class Camera {
    private boolean back;
    private boolean strafeRight;
    private boolean strafeLeft;
-   private final float MOVE_SPEED = 0.05f;
+   private final float MOVE_SPEED = 0.07f;
    private final float ROTATION_SPEED = 0.06f;
    private Player player;
    private boolean vieneDePausa;
