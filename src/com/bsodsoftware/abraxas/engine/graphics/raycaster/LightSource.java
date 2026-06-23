@@ -1,47 +1,47 @@
 package com.bsodsoftware.abraxas.engine.graphics.raycaster;
 
 public class LightSource {
-    private double x;
-    private double y;
-    private double intensity;
-    private double radius;
+    private float x;
+    private float y;
+    private float intensity;
+    private float radius;
 
-    public LightSource(double x, double y, double intensity, double radius) {
+    public LightSource(float x, float y, float intensity, float radius) {
         this.x = x;
         this.y = y;
         this.intensity = intensity;
         this.radius = radius;
     }
 
-    public double getX() {
+    public float getX() {
         return x;
     }
 
-    public void setX(double x) {
+    public void setX(float x) {
         this.x = x;
     }
 
-    public double getY() {
+    public float getY() {
         return y;
     }
 
-    public void setY(double y) {
+    public void setY(float y) {
         this.y = y;
     }
 
-    public double getIntensity() {
+    public float getIntensity() {
         return intensity;
     }
 
-    public void setIntensity(double intensity) {
+    public void setIntensity(float intensity) {
         this.intensity = intensity;
     }
 
-    public double getRadius() {
+    public float getRadius() {
         return radius;
     }
 
-    public void setRadius(double radius) {
+    public void setRadius(float radius) {
         this.radius = radius;
     }
 }

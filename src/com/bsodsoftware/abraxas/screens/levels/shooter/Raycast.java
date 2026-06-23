@@ -92,9 +92,9 @@ public class Raycast extends GameState {
         this.textures = Texture.getAvailableTextures();
         this.sprites = getSprites();
 
-        double startX = mapGenerator.getRooms().get(0).getCenterX() - 0.5;
-        double startY = mapGenerator.getRooms().get(0).getCenterY() - 0.5;
-        this.camera = new Camera(startX, startY, 1.0D, 0.0D, 0.0D, -0.66D, this.player, this.collisionEngine, this.sprites);
+        float startX = mapGenerator.getRooms().get(0).getCenterX() - 0.5f;
+        float startY = mapGenerator.getRooms().get(0).getCenterY() - 0.5f;
+        this.camera = new Camera(startX, startY, 1.0f, 0.0f, 0.0f, -0.66f, this.player, this.collisionEngine, this.sprites);
         this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, getLights());
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
@@ -108,8 +108,8 @@ public class Raycast extends GameState {
             lights.add(new LightSource(
                     r.getCenterX(),
                     r.getCenterY(),
-                    2.0,
-                    10.0
+                    2.0f,
+                    10.0f
             ));
             sprites.add(new SpriteRaycaster(r.getCenterX(), r.getCenterY(), 7, false, 0.3));
         }
@@ -176,7 +176,7 @@ public class Raycast extends GameState {
             this.camera.update(map);
             markVisited();
             this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
-            this.checkForEvents();
+            //this.checkForEvents();
             if (this.player.getState().equals(Player.STATE.STANDING)) {
                 this.camera.setVieneDePausa(false);
             }

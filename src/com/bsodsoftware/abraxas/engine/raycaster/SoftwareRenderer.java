@@ -28,7 +28,7 @@ public class SoftwareRenderer {
    }
 
    public int[] update(Camera camera, int[] pixels, List<SpriteRaycaster> sprites) {
-      double[] zBuffer = new double[this.width];
+      float[] zBuffer = new float[this.width];
       int x;
 
       for(x = 0; x < pixels.length / 2; ++x) {
@@ -38,22 +38,25 @@ public class SoftwareRenderer {
       }
 
       // Ceiling/Floor casting
-      for (int y = this.height / 2 + 1; y < this.height; y++) {
-         double rayDirX0 = camera.getxDir() - camera.getxPlane();
-         double rayDirY0 = camera.getyDir() - camera.getyPlane();
-         double rayDirX1 = camera.getxDir() + camera.getxPlane();
-         double rayDirY1 = camera.getyDir() + camera.getyPlane();
+      Texture floorTex = this.textures.get(5);
+      Texture ceilTex = this.textures.get(7);
+
+      for (int y = this.height / 2 + 1; y < this.height; y+= 2) {
+         float rayDirX0 = (camera.getxDir() - camera.getxPlane());
+         float rayDirY0 = camera.getyDir() - camera.getyPlane();
+         float rayDirX1 = camera.getxDir() + camera.getxPlane();
+         float rayDirY1 = camera.getyDir() + camera.getyPlane();
 
          int p = y - this.height / 2;
-         double posZ = 0.5 * this.height;
+         float posZ = 0.5f * this.height;
 
-         double rowDistance = posZ / p;
+         float rowDistance = posZ / p;
 
-         double floorStepX = rowDistance * (rayDirX1 - rayDirX0) / this.width;
-         double floorStepY = rowDistance * (rayDirY1 - rayDirY0) / this.width;
+         float floorStepX = rowDistance * (rayDirX1 - rayDirX0) / this.width;
+         float floorStepY = rowDistance * (rayDirY1 - rayDirY0) / this.width;
 
-         double floorX = camera.getxPos() + rowDistance * rayDirX0;
-         double floorY = camera.getyPos() + rowDistance * rayDirY0;
+         float floorX = camera.getxPos() + rowDistance * rayDirX0;
+         float floorY = camera.getyPos() + rowDistance * rayDirY0;
 
          for (int z = 0; z < this.width; ++z) {
             int cellX = (int)(floorX);
@@ -66,50 +69,54 @@ public class SoftwareRenderer {
             floorY += floorStepY;
 
             // Floor
-            Texture floorTex = this.textures.get(5);
             int color = floorTex.getPixels()[tx + ty * floorTex.getSize()];
 
             color = applyLighting(color, floorX, floorY, rowDistance);
             pixels[z + y * this.width] = color;
+            if (y + 1 < this.height) {
+               pixels[z + (y + 1) * this.width] = color;
+            }
 
             // Ceiling
-            Texture ceilTex = this.textures.get(7);
             int ceilColor = ceilTex.getPixels()[tx + ty * ceilTex.getSize()];
             ceilColor = shadeColor(ceilColor, rowDistance);
-
-            pixels[z + (this.height - y) * this.width] = ceilColor;
+            int ceilY = this.height - y;
+            pixels[z + ceilY * this.width] = ceilColor;
+            if (ceilY - 1 >= 0) {
+               pixels[z + (ceilY - 1) * this.width] = ceilColor;
+            }
          }
       }
 
       // Wall casting
       for(x = 0; x < this.width; ++x) {
-         double cameraX = (double)(2 * x) / (double)this.width - 1.0D;
-         double rayDirX = camera.getxDir() + camera.getxPlane() * cameraX;
-         double rayDirY = camera.getyDir() + camera.getyPlane() * cameraX;
+         float cameraX = (2f * x) / this.width - 1.0f;
+         float rayDirX = camera.getxDir() + camera.getxPlane() * cameraX;
+         float rayDirY = camera.getyDir() + camera.getyPlane() * cameraX;
          int mapX = (int)camera.getxPos();
          int mapY = (int)camera.getyPos();
-         double deltaDistX = Math.sqrt(1.0D + rayDirY * rayDirY / (rayDirX * rayDirX));
-         double deltaDistY = Math.sqrt(1.0D + rayDirX * rayDirX / (rayDirY * rayDirY));
+         float deltaDistX = (float) Math.sqrt(1.0D + rayDirY * rayDirY / (rayDirX * rayDirX));
+         float deltaDistY = (float) Math.sqrt(1.0D + rayDirX * rayDirX / (rayDirY * rayDirY));
          boolean hit = false;
          boolean side = false;
-         double sideDistX;
+         float sideDistX;
          byte stepX;
          if (rayDirX < 0.0D) {
             stepX = -1;
-            sideDistX = (camera.getxPos() - (double)mapX) * deltaDistX;
+            sideDistX = (camera.getxPos() - (float)mapX) * deltaDistX;
          } else {
             stepX = 1;
-            sideDistX = ((double)mapX + 1.0D - camera.getxPos()) * deltaDistX;
+            sideDistX = ((float)mapX + 1.0f - camera.getxPos()) * deltaDistX;
          }
 
-         double sideDistY;
+         float sideDistY;
          byte stepY;
          if (rayDirY < 0.0D) {
             stepY = -1;
-            sideDistY = (camera.getyPos() - (double)mapY) * deltaDistY;
+            sideDistY = (camera.getyPos() - (float)mapY) * deltaDistY;
          } else {
             stepY = 1;
-            sideDistY = ((double)mapY + 1.0D - camera.getyPos()) * deltaDistY;
+            sideDistY = ((float)mapY + 1.0f - camera.getyPos()) * deltaDistY;
          }
 
          while(!hit) {
@@ -128,17 +135,17 @@ public class SoftwareRenderer {
             }
          }
 
-         double perpWallDist;
+         float perpWallDist;
          if (!side) {
-            perpWallDist = Math.abs(((double)mapX - camera.getxPos() + (double)((1 - stepX) / 2)) / rayDirX);
+            perpWallDist = Math.abs(((float)mapX - camera.getxPos() + (float)((1 - stepX) / 2)) / rayDirX);
          } else {
-            perpWallDist = Math.abs(((double)mapY - camera.getyPos() + (double)((1 - stepY) / 2)) / rayDirY);
+            perpWallDist = Math.abs(((float)mapY - camera.getyPos() + (float)((1 - stepY) / 2)) / rayDirY);
          }
          zBuffer[x] = perpWallDist;
 
          int lineHeight;
          if (perpWallDist > 0.0D) {
-            lineHeight = Math.abs((int)((double)this.height / perpWallDist));
+            lineHeight = Math.abs((int)((float)this.height / perpWallDist));
          } else {
             lineHeight = this.height;
          }
@@ -155,17 +162,17 @@ public class SoftwareRenderer {
 
          int textNum = this.map[mapX][mapY] - 1;
          int textureSize = this.textures.get(textNum).getSize();
-         double wallX;
+         float wallX;
          if (side) {
-            wallX = camera.getxPos() + ((double)mapY - camera.getyPos() + (double)((1 - stepY) / 2)) / rayDirY * rayDirX;
+            wallX = camera.getxPos() + ((float)mapY - camera.getyPos() + (float)((1 - stepY) / 2)) / rayDirY * rayDirX;
          } else {
-            wallX = camera.getyPos() + ((double)mapX - camera.getxPos() + (double)((1 - stepX) / 2)) / rayDirX * rayDirY;
+            wallX = camera.getyPos() + ((float)mapX - camera.getxPos() + (float)((1 - stepX) / 2)) / rayDirX * rayDirY;
          }
-         double worldX = camera.getxPos() + rayDirX * perpWallDist;
-         double worldY = camera.getyPos() + rayDirY * perpWallDist;
+         float worldX = camera.getxPos() + rayDirX * perpWallDist;
+         float worldY = camera.getyPos() + rayDirY * perpWallDist;
 
-         wallX -= Math.floor(wallX);
-         int texX = (int)(wallX * (double)textureSize);
+         wallX -= (float) Math.floor(wallX);
+         int texX = (int)(wallX * (float)textureSize);
          if (!side && rayDirX > 0.0D) {
             texX = textureSize - texX - 1;
          }
@@ -191,17 +198,17 @@ public class SoftwareRenderer {
 
       // Sprite Casting
       for (SpriteRaycaster sprite : sprites) {
-         double worldX = sprite.getX();
-         double worldY = sprite.getY();
-         double spriteX = sprite.getX() - camera.getxPos();
-         double spriteY = sprite.getY() - camera.getyPos();
+         float worldX = (float) sprite.getX();
+         float worldY = (float) sprite.getY();
+         float spriteX = (float) (sprite.getX() - camera.getxPos());
+         float spriteY = (float) (sprite.getY() - camera.getyPos());
 
-         double invDet = 1.0 / (camera.getxPlane() * camera.getyDir() - camera.getxDir() * camera.getyPlane());
+         float invDet = 1.0f / (camera.getxPlane() * camera.getyDir() - camera.getxDir() * camera.getyPlane());
 
-         double transformX = invDet * (camera.getyDir() * spriteX - camera.getxDir() * spriteY);
-         double transformY = invDet * (-camera.getyPlane() * spriteX + camera.getxPlane() * spriteY);
+         float transformX = invDet * (camera.getyDir() * spriteX - camera.getxDir() * spriteY);
+         float transformY = invDet * (-camera.getyPlane() * spriteX + camera.getxPlane() * spriteY);
 
-         int spriteScreenX = (int)(((double) this.width / 2) * (1 + transformX / transformY));
+         int spriteScreenX = (int)(((float) this.width / 2) * (1 + transformX / transformY));
 
          int spriteHeight = Math.abs((int)(this.height / transformY));
          int drawStartY = -spriteHeight / 2 + this.height / 2;
@@ -240,22 +247,27 @@ public class SoftwareRenderer {
       return pixels;
    }
 
-   private int applyLighting(int color, double worldX, double worldY, double distance) {
-      double brightness = 0.2;
+   private int applyLighting(int color, float worldX, float worldY, float distance) {
+      float brightness = 0.2f;
 
       for (LightSource light : lights) {
-         double dx = worldX - light.getX();
-         double dy = worldY - light.getY();
-         double dist = Math.sqrt(dx * dx + dy * dy);
-         double attenuation = light.getIntensity() / (1.0 + dist * dist * 0.5);
-         double falloff = Math.max(0.0, 1.0 - (dist / light.getRadius()));
+         if (distance > 10) {
+            brightness *= 0.5f;
+         }
+         else {
+            float dx = worldX - light.getX();
+            float dy = worldY - light.getY();
 
-         brightness += attenuation * falloff;
+            float distSq = dx * dx + dy * dy;
+            float attenuation = light.getIntensity() / (1.0f + distSq * 0.2f);
+            float falloff = (float) Math.max(0.0, 1.0 - (distSq / light.getRadius()));
 
+            brightness += attenuation * falloff;
+         }
       }
 
-      brightness *= 1.0 / (1.0 + distance * 0.1);
-      brightness = Math.min(brightness, 1.0);
+      brightness *= 1.0f / (1.0f + distance * 0.1f);
+      brightness = (float) Math.min(brightness, 1.0);
 
       int r = (int)(((color >> 16) & 0xFF) * brightness);
       int g = (int)(((color >> 8) & 0xFF) * brightness);
@@ -264,9 +276,9 @@ public class SoftwareRenderer {
       return (r << 16) | (g << 8) | b;
    }
 
-   private int shadeColor(int color, double distance) {
-      double strength = 0.15;
-      double shade = 1.0 / (1.0 + distance * strength);
+   private int shadeColor(int color, float distance) {
+      float strength = 0.15f;
+      float shade = 1.0f/ (1.0f + distance * strength);
       int r = (int)(((color >> 16) & 0xFF) * shade);
       int g = (int)(((color >> 8) & 0xFF) * shade);
       int b = (int)((color & 0xFF) * shade);

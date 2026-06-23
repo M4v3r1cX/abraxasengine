@@ -9,28 +9,28 @@ import java.awt.event.KeyEvent;
 import java.util.List;
 
 public class Camera {
-   private double xPos;
-   private double yPos;
-   private double xDir;
-   private double yDir;
-   private double xPlane;
-   private double yPlane;
+   private float xPos;
+   private float yPos;
+   private float xDir;
+   private float yDir;
+   private float xPlane;
+   private float yPlane;
    private boolean left;
    private boolean right;
    private boolean forward;
    private boolean back;
    private boolean strafeRight;
    private boolean strafeLeft;
-   private final double MOVE_SPEED = 0.05D;
-   private final double ROTATION_SPEED = 0.06D;
+   private final float MOVE_SPEED = 0.05f;
+   private final float ROTATION_SPEED = 0.06f;
    private Player player;
    private boolean vieneDePausa;
-   private double mouseDeltaX;
+   private float mouseDeltaX;
    private int lastMouseX;
    private CollisionEngine collisionEngine;
    private List<SpriteRaycaster> sprites;
 
-   public Camera(double x, double y, double xd, double yd, double xp, double yp, Player player, CollisionEngine collisionEngine, List<SpriteRaycaster> sprites) {
+   public Camera(float x, float y, float xd, float yd, float xp, float yp, Player player, CollisionEngine collisionEngine, List<SpriteRaycaster> sprites) {
       this.xPos = x;
       this.yPos = y;
       this.xDir = xd;
@@ -45,7 +45,7 @@ public class Camera {
    }
 
    public void update(int[][] map) {
-      double moveX = 0, moveY = 0;
+      float moveX = 0, moveY = 0;
       if (this.forward) {
          moveX += this.xDir;
          moveY += this.yDir;
@@ -65,14 +65,14 @@ public class Camera {
          moveY += -this.xDir;
       }
 
-      double length = Math.sqrt(moveX * moveX + moveY * moveY);
+      float length = (float) Math.sqrt(moveX * moveX + moveY * moveY);
       if (length > 0) {
          moveX /= length;
          moveY /= length;
       }
 
-      double newX = this.xPos + moveX * MOVE_SPEED;
-      double newY = this.yPos + moveY * MOVE_SPEED;
+      float newX = this.xPos + moveX * MOVE_SPEED;
+      float newY = this.yPos + moveY * MOVE_SPEED;
 
       boolean canMoveX = map[(int)(newX + Math.signum(moveX) * player.getRadius())][(int)this.yPos] == 0;
       boolean canMoveY = map[(int)this.xPos][(int)(newY + Math.signum(moveY) * player.getRadius())] == 0;
@@ -88,24 +88,24 @@ public class Camera {
          this.yPos = newY;
       }
 
-      double oldxDir;
-      double oldxPlane;
+      float oldxDir;
+      float oldxPlane;
       if (this.right) {
          oldxDir = this.xDir;
-         this.xDir = this.xDir * Math.cos(-ROTATION_SPEED) - this.yDir * Math.sin(-ROTATION_SPEED);
-         this.yDir = oldxDir * Math.sin(-ROTATION_SPEED) + this.yDir * Math.cos(-ROTATION_SPEED);
+         this.xDir = (float) (this.xDir * Math.cos(-ROTATION_SPEED) - this.yDir * Math.sin(-ROTATION_SPEED));
+         this.yDir = (float) (oldxDir * Math.sin(-ROTATION_SPEED) + this.yDir * Math.cos(-ROTATION_SPEED));
          oldxPlane = this.xPlane;
-         this.xPlane = this.xPlane * Math.cos(-ROTATION_SPEED) - this.yPlane * Math.sin(-ROTATION_SPEED);
-         this.yPlane = oldxPlane * Math.sin(-ROTATION_SPEED) + this.yPlane * Math.cos(-ROTATION_SPEED);
+         this.xPlane = (float) (this.xPlane * Math.cos(-ROTATION_SPEED) - this.yPlane * Math.sin(-ROTATION_SPEED));
+         this.yPlane = (float) (oldxPlane * Math.sin(-ROTATION_SPEED) + this.yPlane * Math.cos(-ROTATION_SPEED));
       }
 
       if (this.left) {
          oldxDir = this.xDir;
-         this.xDir = this.xDir * Math.cos(ROTATION_SPEED) - this.yDir * Math.sin(ROTATION_SPEED);
-         this.yDir = oldxDir * Math.sin(ROTATION_SPEED) + this.yDir * Math.cos(ROTATION_SPEED);
+         this.xDir = (float) (this.xDir * Math.cos(ROTATION_SPEED) - this.yDir * Math.sin(ROTATION_SPEED));
+         this.yDir = (float) (oldxDir * Math.sin(ROTATION_SPEED) + this.yDir * Math.cos(ROTATION_SPEED));
          oldxPlane = this.xPlane;
-         this.xPlane = this.xPlane * Math.cos(ROTATION_SPEED) - this.yPlane * Math.sin(ROTATION_SPEED);
-         this.yPlane = oldxPlane * Math.sin(ROTATION_SPEED) + this.yPlane * Math.cos(ROTATION_SPEED);
+         this.xPlane = (float) (this.xPlane * Math.cos(ROTATION_SPEED) - this.yPlane * Math.sin(ROTATION_SPEED));
+         this.yPlane = (float) (oldxPlane * Math.sin(ROTATION_SPEED) + this.yPlane * Math.cos(ROTATION_SPEED));
       }
    }
 
@@ -205,61 +205,55 @@ public class Camera {
    public void keyTyped(KeyEvent key) {
    }
 
-   public void setMouseDeltaX(double deltaX) {
+   public void setMouseDeltaX(float deltaX) {
       this.mouseDeltaX = deltaX;
    }
 
-   public class CameraValues {
-      public static final double STARTING_LOCATION_X = 4.5D;
-      public static final double STARTING_LOCATION_Y = 4.5D;
-      public static final double FOV = -0.66D;
-   }
-
-   public double getxPos() {
+   public float getxPos() {
       return xPos;
    }
 
-   public void setxPos(double xPos) {
+   public void setxPos(float xPos) {
       this.xPos = xPos;
    }
 
-   public double getyPos() {
+   public float getyPos() {
       return yPos;
    }
 
-   public void setyPos(double yPos) {
+   public void setyPos(float yPos) {
       this.yPos = yPos;
    }
 
-   public double getxDir() {
+   public float getxDir() {
       return xDir;
    }
 
-   public void setxDir(double xDir) {
+   public void setxDir(float xDir) {
       this.xDir = xDir;
    }
 
-   public double getyDir() {
+   public float getyDir() {
       return yDir;
    }
 
-   public void setyDir(double yDir) {
+   public void setyDir(float yDir) {
       this.yDir = yDir;
    }
 
-   public double getxPlane() {
+   public float getxPlane() {
       return xPlane;
    }
 
-   public void setxPlane(double xPlane) {
+   public void setxPlane(float xPlane) {
       this.xPlane = xPlane;
    }
 
-   public double getyPlane() {
+   public float getyPlane() {
       return yPlane;
    }
 
-   public void setyPlane(double yPlane) {
+   public void setyPlane(float yPlane) {
       this.yPlane = yPlane;
    }
 
@@ -295,11 +289,11 @@ public class Camera {
       this.back = back;
    }
 
-   public double getMOVE_SPEED() {
+   public float getMOVE_SPEED() {
       return MOVE_SPEED;
    }
 
-   public double getROTATION_SPEED() {
+   public float getROTATION_SPEED() {
       return ROTATION_SPEED;
    }
 
