@@ -1,6 +1,6 @@
 package com.bsodsoftware.abraxas.engine.player;
 
-import com.bsodsoftware.abraxas.engine.inventory.Inventory;
+import com.bsodsoftware.abraxas.engine.things.Inventory;
 
 public class Player {
 

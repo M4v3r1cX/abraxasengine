@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine.inventory;
+package com.bsodsoftware.abraxas.engine.things;
 
 import java.util.List;
 
