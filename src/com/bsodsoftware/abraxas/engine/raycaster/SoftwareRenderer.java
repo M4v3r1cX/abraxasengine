@@ -3,6 +3,7 @@ package com.bsodsoftware.abraxas.engine.raycaster;
 import com.bsodsoftware.abraxas.engine.graphics.Texture;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
+import com.bsodsoftware.abraxas.engine.things.Door;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class SoftwareRenderer {
       this.zBuffer = new float[this.width];
    }
 
-   public int[] update(Camera camera, int[] pixels, List<SpriteRaycaster> sprites) {
+   public int[] update(Camera camera, int[] pixels, List<SpriteRaycaster> sprites, Door[][] doors) {
       int x;
       float camX = camera.getxPos();
       float camY = camera.getyPos();
@@ -143,6 +144,14 @@ public class SoftwareRenderer {
             sideDistY = ((float)mapY + 1.0f - camY) * deltaDistY;
          }
 
+         float perpWallDist;
+         if (!side) {
+            perpWallDist = Math.abs(((float)mapX - camX + (float)((1 - stepX) / 2)) / rayDirX);
+         } else {
+            perpWallDist = Math.abs(((float)mapY - camY + (float)((1 - stepY) / 2)) / rayDirY);
+         }
+         zBuffer[x] = perpWallDist;
+
          while(!hit) {
             if (sideDistX < sideDistY) {
                sideDistX += deltaDistX;
@@ -154,18 +163,38 @@ public class SoftwareRenderer {
                side = true;
             }
 
-            if (this.map[mapX][mapY] > 0) {
+            if (mapX < 0 || mapY < 0 || mapX >= mapWidth || mapY >= mapHeight) {
                hit = true;
+               break;
+            }
+
+            if (this.map[mapX][mapY] == 1) {    // Muralla
+               hit = true;
+            } else if(map[mapX][mapY] == 2) {   // Puerta
+               if (doors != null && doors.length > 0) {
+                  Door door = doors[mapX][mapY];
+                  if (door != null) {
+                     float hitPos;
+                     if (!side) {
+                        hitPos = camY + perpWallDist * rayDirY;
+                     } else {
+                        hitPos = camX + perpWallDist * rayDirX;
+                     }
+
+                     hitPos -= (int)hitPos;
+                     if (hitPos > door.openAmount) {
+                        hit = true;
+                     } else {
+                        continue;
+                     }
+                  } else {
+                     continue;
+                  }
+               } else {
+                  continue;
+               }
             }
          }
-
-         float perpWallDist;
-         if (!side) {
-            perpWallDist = Math.abs(((float)mapX - camX + (float)((1 - stepX) / 2)) / rayDirX);
-         } else {
-            perpWallDist = Math.abs(((float)mapY - camY + (float)((1 - stepY) / 2)) / rayDirY);
-         }
-         zBuffer[x] = perpWallDist;
 
          int lineHeight;
          if (perpWallDist > 0.0D) {
@@ -184,7 +213,11 @@ public class SoftwareRenderer {
             drawEnd = this.height - 1;
          }
 
-         int textNum = this.map[mapX][mapY] - 1;
+         int tile = this.map[mapX][mapY];
+         if (tile <= 0) {
+            tile = 1;
+         }
+         int textNum = Math.min(tile - 1, textures.size() - 1);
          Texture texture = this.textures.get(textNum);
 
          int textureSize = texture.getSize();
@@ -199,7 +232,17 @@ public class SoftwareRenderer {
          float worldY = camY + rayDirY * perpWallDist;
 
          wallX -= (float) Math.floor(wallX);
-         int texX = (int)(wallX * (float)textureSize);
+         int texX = 0;
+         if (this.map[mapX][mapY] == 1) {    // Muralla
+            texX = (int)(wallX * textureSize);
+         } else if(map[mapX][mapY] == 2) {   // Puerta
+            Door door = doors[mapX][mapY];
+            float shifted = wallX - door.openAmount;
+            texX = (int)(shifted * textureSize);
+            if (texX < 0) texX = 0;
+            if (texX >= textureSize) texX = textureSize - 1;
+         }
+
          if (!side && rayDirX > 0.0D) {
             texX = textureSize - texX - 1;
          }
@@ -339,10 +382,10 @@ public class SoftwareRenderer {
 
 
    private float computeLighting(float worldX, float worldY, float distance) {
-      float brightness = 0.2f;
+      float brightness = 0.01f;
       for (LightSource light : lights) {
          if (distance > 20) {
-            brightness *= 0.2f;
+            brightness *= 0.01f;
          } else {
             float dx = worldX - light.getX();
             float dy = worldY - light.getY();

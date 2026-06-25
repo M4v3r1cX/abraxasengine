@@ -4,6 +4,7 @@ import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.player.Player;
+import com.bsodsoftware.abraxas.engine.things.Door;
 
 import java.awt.event.KeyEvent;
 import java.util.List;
@@ -28,7 +29,6 @@ public class Camera {
    private float mouseDeltaX;
    private int lastMouseX;
    private CollisionEngine collisionEngine;
-   private List<SpriteRaycaster> sprites;
 
    public Camera(float x, float y, float xd, float yd, float xp, float yp, Player player, CollisionEngine collisionEngine, List<SpriteRaycaster> sprites) {
       this.xPos = x;
@@ -41,10 +41,9 @@ public class Camera {
       this.mouseDeltaX = 0;
       this.lastMouseX = 0;
       this.collisionEngine = collisionEngine;
-      this.sprites = sprites;
    }
 
-   public void update(int[][] map) {
+   public void update(int[][] map, Door[][] doors, List<SpriteRaycaster> sprites) {
       float moveX = 0, moveY = 0;
       if (this.forward) {
          moveX += this.xDir;
@@ -74,8 +73,13 @@ public class Camera {
       float newX = this.xPos + moveX * MOVE_SPEED;
       float newY = this.yPos + moveY * MOVE_SPEED;
 
-      boolean canMoveX = map[(int)(newX + Math.signum(moveX) * player.getRadius())][(int)this.yPos] == 0;
-      boolean canMoveY = map[(int)this.xPos][(int)(newY + Math.signum(moveY) * player.getRadius())] == 0;
+      int checkX = (int)(newX + Math.signum(moveX) * player.getRadius());
+      int checkY = (int)this.yPos;
+      boolean canMoveX = isWalkable(checkX, checkY, doors, map);
+
+      checkX = (int)this.xPos;
+      checkY = (int)(newY + Math.signum(moveY) * player.getRadius());
+      boolean canMoveY = isWalkable(checkX, checkY, doors, map);
 
       boolean spriteBlockX = collisionEngine.collidesWithSprite(newX, this.yPos, sprites, player.getRadius());
       boolean spriteBlockY = collisionEngine.collidesWithSprite(this.xPos, newY, sprites, player.getRadius());
@@ -108,6 +112,21 @@ public class Camera {
          this.yPlane = (float) (oldxPlane * Math.sin(ROTATION_SPEED) + this.yPlane * Math.cos(ROTATION_SPEED));
       }
    }
+
+
+   private boolean isWalkable(int x, int y, Door[][] doors, int[][] map) {
+      boolean ret = false;
+      int tile = map[x][y];
+      if (tile == 0) {
+         ret = true;
+      }
+      if (tile == 2) {
+         Door door = doors[x][y];
+         return door != null && door.openAmount >= 0.9f;
+      }
+      return ret;
+   }
+
 
    public void keyPressed(int key) {
       System.out.println("tecla apretada: " + key);

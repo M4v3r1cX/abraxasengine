@@ -15,6 +15,7 @@ import com.bsodsoftware.abraxas.engine.raycaster.SoftwareRenderer;
 import com.bsodsoftware.abraxas.engine.graphics.Texture;
 import com.bsodsoftware.abraxas.engine.raycaster.maps.Room;
 import com.bsodsoftware.abraxas.engine.sound.Audio;
+import com.bsodsoftware.abraxas.engine.things.Door;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
@@ -34,6 +35,7 @@ public class Raycast extends GameState {
     private int[] pixels;
     private int[][] map;
     private int[][] visibility;
+    private Door[][] doors;
 
     private MapGenerator mapGenerator;
     private List<Texture> textures;
@@ -172,9 +174,10 @@ public class Raycast extends GameState {
     public void update() {
         if (loaded) {
             this.sortSprites();
-            this.screen.update(this.camera, this.pixels, this.sprites);
-            this.camera.update(map);
+            this.screen.update(this.camera, this.pixels, this.sprites, this.doors);
+            this.camera.update(map, doors, sprites);
             markVisited();
+            updateDoors();
             this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
             //this.checkForEvents();
             if (this.player.getState().equals(Player.STATE.STANDING)) {
@@ -208,6 +211,23 @@ public class Raycast extends GameState {
             }
         }
     }
+
+
+    public void updateDoors() {
+        for (int x = 0; x < mapWidth; x++) {
+            for (int y = 0; y < mapHeight; y++) {
+                Door door = doors[x][y];
+                if (door == null) continue;
+                if (door.isOpening()) {
+                    door.openAmount += 0.02f;
+                    if (door.openAmount > 1.0f) {
+                        door.openAmount = 1.0f;
+                    }
+                }
+            }
+        }
+    }
+
 
     @Override
     public void draw(Graphics2D graphics) {
