@@ -120,11 +120,26 @@ public class Camera {
       if (tile == 0) {
          ret = true;
       }
-      if (tile == 2) {
-         Door door = doors[x][y];
-         return door != null && door.openAmount >= 0.9f;
+      if (tile == 3) {
+         if (doors != null && doors.length > 1) {
+            Door door = doors[x][y];
+            ret = door != null && door.openAmount >= 0.9f;
+         }
       }
       return ret;
+   }
+
+
+   public void tryOpenDoor(int[][] map, Door[][] doors) {
+      float reach = 0.8f;
+      int checkX = (int)(xPos + xDir * reach);
+      int checkY = (int)(yPos + yDir * reach);
+      if (map[checkX][checkY] == 3) { // DOOR TILE
+         Door door = doors[checkX][checkY];
+         if (door != null) {
+            door.setOpening(true);
+         }
+      }
    }
 
 

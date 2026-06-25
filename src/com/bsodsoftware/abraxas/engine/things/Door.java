@@ -6,6 +6,13 @@ public class Door {
     public float openAmount;
     private boolean opening;
 
+    public Door(float x, float y) {
+        this.x = x;
+        this.y = y;
+        opening = false;
+        openAmount = 0f;
+    }
+
     public float getX() {
         return x;
     }

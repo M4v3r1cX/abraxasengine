@@ -13,7 +13,8 @@ public enum KeyInputEnum {
     W(87),
     S(83),
     Q(81),
-    E(69);
+    E(69),
+    SPACE(32);
 
     private final int keycode;
 

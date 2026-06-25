@@ -167,6 +167,7 @@ public class Raycast extends GameState {
     private void initMap() {
         mapGenerator = new MapGenerator(this.mapWidth, this.mapHeight);
         this.map = mapGenerator.generateFloor();
+        this.doors = mapGenerator.buildDoors(map, mapWidth, mapHeight);
         this.visibility = new int[this.mapWidth][this.mapHeight];
     }
 
@@ -214,14 +215,16 @@ public class Raycast extends GameState {
 
 
     public void updateDoors() {
-        for (int x = 0; x < mapWidth; x++) {
-            for (int y = 0; y < mapHeight; y++) {
-                Door door = doors[x][y];
-                if (door == null) continue;
-                if (door.isOpening()) {
-                    door.openAmount += 0.02f;
-                    if (door.openAmount > 1.0f) {
-                        door.openAmount = 1.0f;
+        if (doors != null && doors.length > 0) {
+            for (int x = 0; x < mapWidth; x++) {
+                for (int y = 0; y < mapHeight; y++) {
+                    Door door = doors[x][y];
+                    if (door == null) continue;
+                    if (door.isOpening()) {
+                        door.openAmount += 0.02f;
+                        if (door.openAmount > 1.0f) {
+                            door.openAmount = 1.0f;
+                        }
                     }
                 }
             }
@@ -406,6 +409,10 @@ public class Raycast extends GameState {
         if (key == KeyInputEnum.M.getValue()) {
             //gameStateManager.setState(GameStateManager.MENU);
             this.autoMap = !autoMap;
+        }
+
+        if (key == KeyInputEnum.SPACE.getValue()) {
+            camera.tryOpenDoor(map, doors);
         }
 
         // Voy a ser bien honesto, voy a poner el código pa manejar el menú de pausa desde acá porque no se como más

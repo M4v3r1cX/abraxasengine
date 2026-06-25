@@ -1,5 +1,7 @@
 package com.bsodsoftware.abraxas.engine.raycaster.maps;
 
+import com.bsodsoftware.abraxas.engine.things.Door;
+
 import java.util.*;
 
 public class MapGenerator {
@@ -66,20 +68,48 @@ public class MapGenerator {
             int y2 = b.getCenterY();
 
             if (random.nextBoolean()) {
-                for (int x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
-                    map[x][y1] = 0;
+                int minX = Math.min(x1, x2);
+                int maxX = Math.max(x1, x2);
+
+                for (int x = minX; x <= maxX; x++) {
+                    if (x == minX + 1 || x == maxX -1) {
+                        map[x][y1] = 3;
+                    } else {
+                        map[x][y1] = 0; // corridor
+                    }
                 }
 
-                for (int y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
-                    map[x2][y] = 0;
+                int minY = Math.min(y1, y2);
+                int maxY = Math.max(y1, y2);
+
+                for (int y = minY; y <= maxY; y++) {
+                    if (y == minY +1 || y == maxY -1) {
+                        map[x2][y] = 3; // DOOR
+                    } else {
+                        map[x2][y] = 0;
+                    }
                 }
             } else {
-                for (int y = Math.min(y1, y2); y <= Math.max(y1, y2); y++) {
-                    map[x1][y] = 0;
+                int minY = Math.min(y1, y2);
+                int maxY = Math.max(y1, y2);
+
+                for (int y = minY; y <= maxY; y++) {
+                    if (y == minY +1 || y == maxY -1) {
+                        map[x1][y] = 3;
+                    } else {
+                        map[x1][y] = 0;
+                    }
                 }
 
-                for (int x = Math.min(x1, x2); x <= Math.max(x1, x2); x++) {
-                    map[x][y2] = 0;
+                int minX = Math.min(x1, x2);
+                int maxX = Math.max(x1, x2);
+
+                for (int x = minX; x <= maxX; x++) {
+                    if (x == minX +1 || x == maxX -1) {
+                        map[x][y2] = 3;
+                    } else {
+                        map[x][y2] = 0;
+                    }
                 }
             }
         }
@@ -96,7 +126,34 @@ public class MapGenerator {
         map[1][0] = 1; // entrance
         map[width - 2][height - 1] = 1; // exit
 
+
+        for (int x = 1; x < width - 1; x++) {
+            for (int y = 1; y < height - 1; y++) {
+                if (map[x][y] == 3) {
+                    boolean vertical = map[x][y - 1] == 2 && map[x][y + 1] == 2;
+                    boolean horizontal = map[x - 1][y] == 2 && map[x + 1][y] == 2;
+                    if (!(vertical || horizontal)) {
+                        map[x][y] = 0;
+                    }
+                }
+            }
+        }
+
         return map;
+    }
+
+    public Door[][] buildDoors(int[][] map, int mapWidth, int mapHeight) {
+        Door[][] doors = new Door[mapWidth][mapHeight];
+
+        for (int x = 1; x < mapWidth - 1; x++) {
+            for (int y = 1; y < mapHeight - 1; y++) {
+                if (map[x][y] == 3) {
+                    doors[x][y] = new Door(x, y);
+                }
+            }
+        }
+
+        return doors;
     }
 
     private void carve(int x, int y, int[][] map) {
