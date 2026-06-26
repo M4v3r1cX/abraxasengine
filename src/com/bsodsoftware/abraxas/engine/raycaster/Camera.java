@@ -137,7 +137,13 @@ public class Camera {
       if (map[checkX][checkY] == 3) { // DOOR TILE
          Door door = doors[checkX][checkY];
          if (door != null) {
-            door.setOpening(true);
+            if (door.isOpening()) {
+               door.setClosing(true);
+               door.setOpening(false);
+            } else {
+               door.setOpening(true);
+               door.setClosing(false);
+            }
          }
       }
    }

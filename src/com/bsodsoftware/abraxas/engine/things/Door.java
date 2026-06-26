@@ -5,6 +5,8 @@ public class Door {
     private float y;
     public float openAmount;
     private boolean opening;
+    private boolean closing;
+    int openTimer;
 
     public Door(float x, float y) {
         this.x = x;
@@ -43,5 +45,21 @@ public class Door {
 
     public void setOpening(boolean opening) {
         this.opening = opening;
+    }
+
+    public boolean isClosing() {
+        return closing;
+    }
+
+    public void setClosing(boolean closing) {
+        this.closing = closing;
+    }
+
+    public int getOpenTimer() {
+        return openTimer;
+    }
+
+    public void setOpenTimer(int openTimer) {
+        this.openTimer = openTimer;
     }
 }

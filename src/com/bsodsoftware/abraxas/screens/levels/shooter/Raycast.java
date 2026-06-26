@@ -116,6 +116,34 @@ public class Raycast extends GameState {
             sprites.add(new SpriteRaycaster(r.getCenterX(), r.getCenterY(), 7, false, 0.3));
         }
 
+        for (int x = 1; x < map.length - 1; x++) {
+            for (int y = 1; y < map[0].length - 1; y++) {
+                if (map[x][y] != 3) continue;
+                boolean vertical = map[x][y - 1] == 2 && map[x][y + 1] == 2;
+                boolean horizontal = map[x - 1][y] == 2 && map[x + 1][y] == 2;
+
+                float lightX = x + 0.5f;
+                float lightY = y + 0.5f;
+
+                if (vertical) {
+                    if (map[x - 1][y] == 0) {
+                        lightX = x - 0.3f;
+                    } else if (map[x + 1][y] == 0) {
+                        lightX = x + 0.3f;
+                    }
+                }
+                else if (horizontal) {
+                    if (map[x][y - 1] == 0) {
+                        lightY = y - 0.3f;
+                    } else if (map[x][y + 1] == 0) {
+                        lightY = y + 0.3f;
+                    }
+                }
+
+                lights.add(new LightSource(lightX, lightY, 2.0f, 2.0f));
+            }
+        }
+
         return lights;
     }
 
@@ -220,12 +248,48 @@ public class Raycast extends GameState {
                 for (int y = 0; y < mapHeight; y++) {
                     Door door = doors[x][y];
                     if (door == null) continue;
+
+                    // Opening
                     if (door.isOpening()) {
-                        door.openAmount += 0.02f;
-                        if (door.openAmount > 1.0f) {
+                        door.openAmount += 0.05f;
+
+                        if (door.openAmount >= 1.0f) {
                             door.openAmount = 1.0f;
+                            door.setOpening(false);
+
+                            door.setOpenTimer(0); // start timer
                         }
                     }
+
+                    // FULLY OPEN → COUNT TIME
+                    if (door.openAmount == 1.0f) {
+                        door.setOpenTimer(door.getOpenTimer() + 1);
+
+                        if (door.getOpenTimer() > 180) { // ~3 seconds at 60 fps
+                            door.setClosing(true);
+                        }
+                    }
+
+                    // CLOSING
+                    if (door.isClosing()) {
+                        float dx = camera.getxPos() - x;
+                        float dy = camera.getyPos() - y;
+
+                        float distSq = dx * dx + dy * dy;
+
+                        if (distSq < 0.5f) {
+                            door.setClosing(false);
+                            door.openAmount = 1.0f;
+                        }
+
+                        door.openAmount -= 0.05f;
+
+                        if (door.openAmount <= 0.0f) {
+                            door.openAmount = 0.0f;
+                            door.setClosing(false);
+                        }
+                    }
+
                 }
             }
         }

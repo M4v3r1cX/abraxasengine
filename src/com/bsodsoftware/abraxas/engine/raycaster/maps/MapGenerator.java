@@ -1,5 +1,6 @@
 package com.bsodsoftware.abraxas.engine.raycaster.maps;
 
+import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
 import com.bsodsoftware.abraxas.engine.things.Door;
 
 import java.util.*;
