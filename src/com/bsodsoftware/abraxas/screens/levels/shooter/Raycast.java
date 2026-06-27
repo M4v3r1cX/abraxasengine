@@ -5,6 +5,7 @@ import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.events.Event;
 import com.bsodsoftware.abraxas.engine.graphics.Sprite;
+import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightEngine;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.player.Player;
@@ -36,6 +37,10 @@ public class Raycast extends GameState {
     private int[][] map;
     private int[][] visibility;
     private Door[][] doors;
+    float[][] lightMap;
+    List<LightSource> lights;
+    LightEngine lightEngine;
+    Thread lightEngineThread;
 
     private MapGenerator mapGenerator;
     private List<Texture> textures;
@@ -93,11 +98,17 @@ public class Raycast extends GameState {
         this.pixels = ((DataBufferInt)this.image.getRaster().getDataBuffer()).getData();
         this.textures = Texture.getAvailableTextures();
         this.sprites = getSprites();
+        this.lights = getLights();
+        this.lightMap = new float[mapWidth][mapHeight];
+        this.lightEngine = new LightEngine(map, mapWidth, mapHeight, lights, lightMap);
+        this.lightEngineThread = new Thread(lightEngine);
+        this.lightEngineThread.setName("LightEngineThread");
+        this.lightEngineThread.start();
 
         float startX = mapGenerator.getRooms().get(0).getCenterX() - 0.5f;
         float startY = mapGenerator.getRooms().get(0).getCenterY() - 0.5f;
         this.camera = new Camera(startX, startY, 1.0f, 0.0f, 0.0f, -0.66f, this.player, this.collisionEngine, this.sprites);
-        this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, getLights());
+        this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, lightMap);
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
         sword.setPosition(initialPosX, initialPosY);

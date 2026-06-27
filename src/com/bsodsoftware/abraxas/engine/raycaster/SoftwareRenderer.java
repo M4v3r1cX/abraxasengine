@@ -19,19 +19,20 @@ public class SoftwareRenderer {
    public int width;
    public int height;
    public List<Texture> textures;
-   public List<LightSource> lights;
-   private List<LightSource> activeLights;
+   //public List<LightSource> lights;
+   //private List<LightSource> activeLights;
+   private float[][] lightMap;
    private float[] zBuffer;
 
    public SoftwareRenderer(int[][] map, List<Texture> textures, int mapWidth, int mapHeight, int width, int height,
-                           List<LightSource> lights) {
+                           float[][] lightMap) {
       this.map = map;
       this.textures = textures;
       this.mapWidth = mapWidth;
       this.mapHeight = mapHeight;
       this.width = width;
       this.height = height;
-      this.lights = lights;
+      this.lightMap = lightMap;
       this.zBuffer = new float[this.width];
    }
 
@@ -43,9 +44,9 @@ public class SoftwareRenderer {
       float dirY = camera.getyDir();
       float planeX = camera.getxPlane();
       float planeY = camera.getyPlane();
-      this.activeLights = new ArrayList<>();
+      //this.activeLights = new ArrayList<>();
 
-      for (LightSource light : lights) {
+      /*for (LightSource light : lights) {
          float dx = camX - light.getX();
          float dy = camY - light.getY();
          float distSq = dx*dx + dy*dy;
@@ -53,8 +54,7 @@ public class SoftwareRenderer {
          if (distSq < maxRange * maxRange) {
             activeLights.add(light);
          }
-      }
-
+      }*/
 
       // Ceiling/Floor casting
       Texture floorTex = this.textures.get(5);
@@ -85,6 +85,11 @@ public class SoftwareRenderer {
             int cellX = (int)(floorX);
             int cellY = (int)(floorY);
 
+            if (cellX < 0) cellX = 0;
+            if (cellY < 0) cellY = 0;
+            if (cellX >= mapWidth)  cellX = mapWidth - 1;
+            if (cellY >= mapHeight) cellY = mapHeight - 1;
+
             float fracX = floorX - cellX;
             float fracY = floorY - cellY;
 
@@ -96,7 +101,8 @@ public class SoftwareRenderer {
 
             // Floor
             int color = floorTexPixels[tx + ty * floorTexSize];
-            float brightnessFactor = computeLighting(floorX, floorY, rowDistance);
+            //float brightnessFactor = computeLighting(floorX, floorY, rowDistance);
+            float brightnessFactor = lightMap[cellX][cellY];
             color = applyBrightness(color, brightnessFactor);
             pixels[z + y * this.width] = color;
             if (y + 1 < this.height) {
@@ -269,7 +275,16 @@ public class SoftwareRenderer {
          if (side && rayDirY < 0.0D) {
             texX = textureSize - texX - 1;
          }
-         float brightnessFactor = computeLighting(worldX, worldY, perpWallDist);
+
+         int cellX = (int)worldX;
+         int cellY = (int)worldY;
+
+         if (cellX < 0) cellX = 0;
+         if (cellY < 0) cellY = 0;
+         if (cellX >= mapWidth)  cellX = mapWidth - 1;
+         if (cellY >= mapHeight) cellY = mapHeight - 1;
+
+         float brightnessFactor = lightMap[cellX][cellY];
          for(int y = drawStart; y < drawEnd; ++y) {
             int d = y * 256 - height * 128 + lineHeight * 128;
             int texY = (d * textureSize) / lineHeight / 256;
@@ -302,10 +317,14 @@ public class SoftwareRenderer {
          if (transformY <= 0) continue;
          if (transformY > 20) continue;
 
-         float worldX = (float) sprite.getX();
-         float worldY = (float) sprite.getY();
+         int worldX = (int) sprite.getX();
+         int worldY = (int) sprite.getY();
+         if (worldX < 0) worldX = 0;
+         if (worldY < 0) worldY = 0;
+         if (worldX >= mapWidth)  worldX = mapWidth - 1;
+         if (worldY >= mapHeight) worldY = mapHeight - 1;
 
-         float brightness = computeLighting(worldX, worldY, transformY);
+         float brightness = lightMap[worldX][worldY];
 
          int spriteScreenX = (int)(((float) this.width / 2) * (1 + transformX / transformY));
 
@@ -350,7 +369,7 @@ public class SoftwareRenderer {
       return pixels;
    }
 
-   private int applyLighting(int color, float worldX, float worldY, float distance) {
+   /*private int applyLighting(int color, float worldX, float worldY, float distance) {
       float brightness = 0.2f;
 
       for (LightSource light : activeLights) {
@@ -378,17 +397,6 @@ public class SoftwareRenderer {
       return (r << 16) | (g << 8) | b;
    }
 
-   private int shadeColor(int color, float distance) {
-      float strength = 0.15f;
-      float shade = 1.0f/ (1.0f + distance * strength);
-      int r = (int)(((color >> 16) & 0xFF) * shade);
-      int g = (int)(((color >> 8) & 0xFF) * shade);
-      int b = (int)((color & 0xFF) * shade);
-
-      return (r << 16) | (g << 8) | b;
-   }
-
-
    private float computeLighting(float worldX, float worldY, float distance) {
       float brightness = 0.01f;
       for (LightSource light : activeLights) {
@@ -409,8 +417,17 @@ public class SoftwareRenderer {
       brightness *= 1.0f / (1.0f + distance * 0.1f);
 
       return Math.min(brightness, 1.0f);
-   }
+   }*/
 
+   private int shadeColor(int color, float distance) {
+      float strength = 0.15f;
+      float shade = 1.0f/ (1.0f + distance * strength);
+      int r = (int)(((color >> 16) & 0xFF) * shade);
+      int g = (int)(((color >> 8) & 0xFF) * shade);
+      int b = (int)((color & 0xFF) * shade);
+
+      return (r << 16) | (g << 8) | b;
+   }
 
    private int applyBrightness(int color, float brightness) {
       int r = (int)(((color >> 16) & 0xFF) * brightness);
