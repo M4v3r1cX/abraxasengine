@@ -19,8 +19,6 @@ public class SoftwareRenderer {
    public int width;
    public int height;
    public List<Texture> textures;
-   //public List<LightSource> lights;
-   //private List<LightSource> activeLights;
    private float[][] lightMap;
    private float[] zBuffer;
 
@@ -44,17 +42,6 @@ public class SoftwareRenderer {
       float dirY = camera.getyDir();
       float planeX = camera.getxPlane();
       float planeY = camera.getyPlane();
-      //this.activeLights = new ArrayList<>();
-
-      /*for (LightSource light : lights) {
-         float dx = camX - light.getX();
-         float dy = camY - light.getY();
-         float distSq = dx*dx + dy*dy;
-         float maxRange = light.getRadius() + 10;
-         if (distSq < maxRange * maxRange) {
-            activeLights.add(light);
-         }
-      }*/
 
       // Ceiling/Floor casting
       Texture floorTex = this.textures.get(5);
@@ -82,13 +69,8 @@ public class SoftwareRenderer {
          float floorY = camY + rowDistance * rayDirY0;
 
          for (int z = 0; z < this.width; ++z) {
-            int cellX = (int)(floorX);
-            int cellY = (int)(floorY);
-
-            if (cellX < 0) cellX = 0;
-            if (cellY < 0) cellY = 0;
-            if (cellX >= mapWidth)  cellX = mapWidth - 1;
-            if (cellY >= mapHeight) cellY = mapHeight - 1;
+            int cellX = (int)floorX;
+            int cellY = (int)floorY;
 
             float fracX = floorX - cellX;
             float fracY = floorY - cellY;
@@ -101,8 +83,16 @@ public class SoftwareRenderer {
 
             // Floor
             int color = floorTexPixels[tx + ty * floorTexSize];
-            //float brightnessFactor = computeLighting(floorX, floorY, rowDistance);
-            float brightnessFactor = lightMap[cellX][cellY];
+
+            float cellX2 = floorX;
+            float cellY2 = floorY;
+
+            if (cellX2 < 0) cellX2 = 0;
+            if (cellY2 < 0) cellY2 = 0;
+            if (cellX2 >= mapWidth)  cellX2 = mapWidth - 1;
+            if (cellY2 >= mapHeight) cellY2 = mapHeight - 1;
+
+            float brightnessFactor = sampleLight(cellX2, cellY2);
             color = applyBrightness(color, brightnessFactor);
             pixels[z + y * this.width] = color;
             if (y + 1 < this.height) {
@@ -276,15 +266,15 @@ public class SoftwareRenderer {
             texX = textureSize - texX - 1;
          }
 
-         int cellX = (int)worldX;
-         int cellY = (int)worldY;
+         float cellX = worldX;
+         float cellY = worldY;
 
          if (cellX < 0) cellX = 0;
          if (cellY < 0) cellY = 0;
          if (cellX >= mapWidth)  cellX = mapWidth - 1;
          if (cellY >= mapHeight) cellY = mapHeight - 1;
 
-         float brightnessFactor = lightMap[cellX][cellY];
+         float brightnessFactor = sampleLight(cellX, cellY);
          for(int y = drawStart; y < drawEnd; ++y) {
             int d = y * 256 - height * 128 + lineHeight * 128;
             int texY = (d * textureSize) / lineHeight / 256;
@@ -317,14 +307,14 @@ public class SoftwareRenderer {
          if (transformY <= 0) continue;
          if (transformY > 20) continue;
 
-         int worldX = (int) sprite.getX();
-         int worldY = (int) sprite.getY();
+         float worldX = (float) sprite.getX();
+         float worldY = (float) sprite.getY();
          if (worldX < 0) worldX = 0;
          if (worldY < 0) worldY = 0;
          if (worldX >= mapWidth)  worldX = mapWidth - 1;
          if (worldY >= mapHeight) worldY = mapHeight - 1;
 
-         float brightness = lightMap[worldX][worldY];
+         float brightness = sampleLight(worldX, worldY);
 
          int spriteScreenX = (int)(((float) this.width / 2) * (1 + transformX / transformY));
 
@@ -369,56 +359,6 @@ public class SoftwareRenderer {
       return pixels;
    }
 
-   /*private int applyLighting(int color, float worldX, float worldY, float distance) {
-      float brightness = 0.2f;
-
-      for (LightSource light : activeLights) {
-         float dx = worldX - light.getX();
-         float dy = worldY - light.getY();
-
-         float distSq = dx * dx + dy * dy;
-         float radiusSq = light.getRadius() * light.getRadius();
-
-         if (distSq > radiusSq) continue;
-
-         float attenuation = light.getIntensity() / (1.0f + distSq * 0.2f);
-         float falloff = Math.max(0.0f, 1.0f - (distSq / radiusSq));
-
-         brightness += attenuation * falloff;
-      }
-
-      brightness *= 1.0f / (1.0f + distance * 0.1f);
-      brightness = (float) Math.min(brightness, 1.0);
-
-      int r = (int)(((color >> 16) & 0xFF) * brightness);
-      int g = (int)(((color >> 8) & 0xFF) * brightness);
-      int b = (int)((color & 0xFF) * brightness);
-
-      return (r << 16) | (g << 8) | b;
-   }
-
-   private float computeLighting(float worldX, float worldY, float distance) {
-      float brightness = 0.01f;
-      for (LightSource light : activeLights) {
-         if (distance > 20) {
-            brightness *= 0.01f;
-         } else {
-            float dx = worldX - light.getX();
-            float dy = worldY - light.getY();
-            float distSq = dx * dx + dy * dy;
-            float attenuation = light.getIntensity() / (1.0f + distSq * 0.2f);
-            float radiusSq = light.getRadius() * light.getRadius();
-            float falloff = Math.max(0.0f, 1.0f - (distSq / radiusSq));
-
-            brightness += attenuation * falloff;
-         }
-      }
-
-      brightness *= 1.0f / (1.0f + distance * 0.1f);
-
-      return Math.min(brightness, 1.0f);
-   }*/
-
    private int shadeColor(int color, float distance) {
       float strength = 0.15f;
       float shade = 1.0f/ (1.0f + distance * strength);
@@ -446,6 +386,31 @@ public class SoftwareRenderer {
       if (tile <= 0) return 0;
       if (tile - 1 >= textures.size()) return 0;
       return tile - 1;
+   }
+
+
+   private float sampleLight(float worldX, float worldY) {
+      int x0 = (int)worldX;
+      int y0 = (int)worldY;
+
+      float fx = worldX - x0;
+      float fy = worldY - y0;
+
+      int x1 = Math.min(x0 + 1, mapWidth - 1);
+      int y1 = Math.min(y0 + 1, mapHeight - 1);
+
+      x0 = Math.max(0, Math.min(x0, mapWidth - 1));
+      y0 = Math.max(0, Math.min(y0, mapHeight - 1));
+
+      float l00 = lightMap[x0][y0];
+      float l10 = lightMap[x1][y0];
+      float l01 = lightMap[x0][y1];
+      float l11 = lightMap[x1][y1];
+
+      float lx0 = l00 + fx * (l10 - l00);
+      float lx1 = l01 + fx * (l11 - l01);
+
+      return lx0 + fy * (lx1 - lx0);
    }
 
 }

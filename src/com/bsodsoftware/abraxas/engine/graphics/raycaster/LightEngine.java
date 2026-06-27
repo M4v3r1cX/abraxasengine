@@ -25,7 +25,7 @@ public class LightEngine implements Runnable {
         while (running) {
             computeLightMap();
             try {
-                Thread.sleep(50); // ~60Hz update
+                Thread.sleep(50);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -48,7 +48,11 @@ public class LightEngine implements Runnable {
                     if (distSq > radiusSq) continue;
 
                     float atten = light.getIntensity() / (1.0f + distSq * 0.2f);
-                    float falloff = Math.max(0, 1 - distSq / radiusSq);
+
+                    float falloff = 1.0f - (distSq / radiusSq);
+                    falloff = Math.max(0, falloff);
+                    falloff = falloff * falloff * (3 - 2 * falloff);
+
 
                     brightness += atten * falloff;
                 }
