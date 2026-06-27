@@ -435,7 +435,7 @@ public class Raycast extends GameState {
 
                 if (visibility[x][y] == 0) continue;
 
-                if (map[x][y] != 0) {
+                if (map[x][y] == SoftwareRenderer.TILE_WALL) {
                     int sx = drawX;
                     int sy = drawY;
 
@@ -469,6 +469,27 @@ public class Raycast extends GameState {
                     int dy2 = (int)(camera.getyDir() * 10);
 
                     graphics.drawLine(centerX, centerY, centerX + dx2, centerY + dy2);
+                } else if (map[x][y] == SoftwareRenderer.TILE_DOOR) {
+                    int sx = drawX;
+                    int sy = drawY;
+
+                    boolean vertical = (y > 0 && y < map[0].length - 1 && map[x][y - 1] == SoftwareRenderer.TILE_WALL && map[x][y + 1] == SoftwareRenderer.TILE_WALL);
+
+                    boolean horizontal = (x > 0 && x < map.length - 1 && map[x - 1][y] == SoftwareRenderer.TILE_WALL && map[x + 1][y] == SoftwareRenderer.TILE_WALL);
+
+                    if (visibility[x][y] == 2) {
+                        graphics.setColor(Color.YELLOW);
+                    } else {
+                        graphics.setColor(Color.ORANGE);
+                    }
+
+                    if (horizontal) {
+                        graphics.drawLine(sx, sy + scale / 2, sx + scale, sy + scale / 2);
+                    } else if (vertical) {
+                        graphics.drawLine(sx + scale / 2, sy, sx + scale / 2, sy + scale);
+                    } else {
+                        graphics.drawRect(sx, sy, scale, scale);
+                    }
                 }
             }
         }
