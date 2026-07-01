@@ -8,7 +8,8 @@ import com.bsodsoftware.abraxas.engine.graphics.Sprite;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightEngine;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
-import com.bsodsoftware.abraxas.engine.player.Player;
+import com.bsodsoftware.abraxas.engine.things.Enemy;
+import com.bsodsoftware.abraxas.engine.things.Player;
 import com.bsodsoftware.abraxas.engine.raycaster.Camera;
 import com.bsodsoftware.abraxas.engine.raycaster.maps.MapGenerator;
 import com.bsodsoftware.abraxas.engine.raycaster.maps.Maps;
@@ -25,6 +26,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.DataBufferInt;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Raycast extends GameState {
@@ -45,6 +47,7 @@ public class Raycast extends GameState {
     private MapGenerator mapGenerator;
     private List<Texture> textures;
     private List<SpriteRaycaster> sprites;
+    private List<Enemy> enemies;
 
     private Camera camera;
     private SoftwareRenderer screen;
@@ -107,7 +110,8 @@ public class Raycast extends GameState {
 
         float startX = mapGenerator.getRooms().get(0).getCenterX() - 0.5f;
         float startY = mapGenerator.getRooms().get(0).getCenterY() - 0.5f;
-        this.camera = new Camera(startX, startY, 1.0f, 0.0f, 0.0f, -0.66f, this.player, this.collisionEngine, this.sprites);
+        this.camera = new Camera(startX, startY, 1.0f, 0.0f, 0.0f, -0.66f, this.player, this.collisionEngine);
+        this.enemies = getEnemies(5);
         this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, lightMap);
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
@@ -166,6 +170,63 @@ public class Raycast extends GameState {
 
         return sprites;
     }
+
+    private List<Enemy> getEnemies(int count) {
+        float playerX = camera.getxPos();
+        float playerY = camera.getyPos();
+        List<Enemy> enemies = new ArrayList<>();
+        List<int[]> candidates = new ArrayList<>();
+        for (int x = 1; x < mapWidth - 1; x++) {
+            for (int y = 1; y < mapHeight - 1; y++) {
+                if (isSpawnable(x, y, map, doors)) {
+                    candidates.add(new int[]{x, y});
+                }
+            }
+        }
+
+        Collections.shuffle(candidates);
+        float minDistance = 4.0f;
+        for (int[] pos : candidates) {
+            if (enemies.size() >= count) break;
+            float x = pos[0] + 0.5f;
+            float y = pos[1] + 0.5f;
+
+            float dx = x - playerX;
+            float dy = y - playerY;
+            if (dx*dx + dy*dy < 9.0f) continue;
+            boolean tooClose = false;
+
+            for (Enemy e : enemies) {
+                float ex = (float)e.getSprite().getX();
+                float ey = (float)e.getSprite().getY();
+
+                float distSq = (x - ex)*(x - ex) + (y - ey)*(y - ey);
+
+                if (distSq < minDistance * minDistance) {
+                    tooClose = true;
+                    break;
+                }
+            }
+
+            if (tooClose) continue;
+
+            Enemy e = Enemy.EnemyFactory.buildPillar();
+            e.getSprite().setX(x);
+            e.getSprite().setY(y);
+            this.sprites.add(e.getSprite());
+            enemies.add(e);
+        }
+
+        return enemies;
+    }
+
+    private boolean isSpawnable(int x, int y, int[][] map, Door[][] doors) {
+        boolean ret = true;
+        if (map[x][y] != SoftwareRenderer.TILE_FLOOR) ret = false;
+        if (doors[x][y] != null) ret = false;
+        return ret;
+    }
+
 
     private void initSound() {
         this.song = new Audio("/Audio/1.wav", true);

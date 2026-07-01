@@ -3,7 +3,8 @@ package com.bsodsoftware.abraxas.engine.raycaster;
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
-import com.bsodsoftware.abraxas.engine.player.Player;
+import com.bsodsoftware.abraxas.engine.things.Enemy;
+import com.bsodsoftware.abraxas.engine.things.Player;
 import com.bsodsoftware.abraxas.engine.things.Door;
 
 import java.awt.event.KeyEvent;
@@ -30,7 +31,7 @@ public class Camera {
    private int lastMouseX;
    private CollisionEngine collisionEngine;
 
-   public Camera(float x, float y, float xd, float yd, float xp, float yp, Player player, CollisionEngine collisionEngine, List<SpriteRaycaster> sprites) {
+   public Camera(float x, float y, float xd, float yd, float xp, float yp, Player player, CollisionEngine collisionEngine) {
       this.xPos = x;
       this.yPos = y;
       this.xDir = xd;
