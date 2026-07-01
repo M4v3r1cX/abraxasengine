@@ -39,7 +39,9 @@ public class Raycast extends GameState {
     private int[][] map;
     private int[][] visibility;
     private Door[][] doors;
-    float[][] lightMap;
+    float[][] lightMapR;
+    float[][] lightMapG;
+    float[][] lightMapB;
     List<LightSource> lights;
     LightEngine lightEngine;
     Thread lightEngineThread;
@@ -102,8 +104,10 @@ public class Raycast extends GameState {
         this.textures = Texture.getAvailableTextures();
         this.sprites = getSprites();
         this.lights = getLights();
-        this.lightMap = new float[mapWidth][mapHeight];
-        this.lightEngine = new LightEngine(map, mapWidth, mapHeight, lights, lightMap);
+        this.lightMapR = new float[mapWidth][mapHeight];
+        this.lightMapG = new float[mapWidth][mapHeight];
+        this.lightMapB = new float[mapWidth][mapHeight];
+        this.lightEngine = new LightEngine(map, mapWidth, mapHeight, lights, lightMapR, lightMapG,lightMapB);
         this.lightEngineThread = new Thread(lightEngine);
         this.lightEngineThread.setName("LightEngineThread");
         this.lightEngineThread.start();
@@ -112,7 +116,7 @@ public class Raycast extends GameState {
         float startY = mapGenerator.getRooms().get(0).getCenterY() - 0.5f;
         this.camera = new Camera(startX, startY, 1.0f, 0.0f, 0.0f, -0.66f, this.player, this.collisionEngine);
         this.enemies = getEnemies(5);
-        this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, lightMap);
+        this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, lightMapR, lightMapG, lightMapB);
 
         sword = new Sprite("/Sprites/Weapons/sword.png", 1);
         sword.setPosition(initialPosX, initialPosY);
@@ -125,13 +129,16 @@ public class Raycast extends GameState {
             lights.add(new LightSource(
                     r.getCenterX(),
                     r.getCenterY(),
+                    1.0f, // red
+                    0.85f, // green
+                    0.65f, // blue
                     2.0f,
-                    10.0f
+                    5.0f
             ));
             sprites.add(new SpriteRaycaster(r.getCenterX(), r.getCenterY(), 7, false, 0.3));
         }
 
-        for (int x = 1; x < map.length - 1; x++) {
+        /*for (int x = 1; x < map.length - 1; x++) {
             for (int y = 1; y < map[0].length - 1; y++) {
                 if (map[x][y] != 3) continue;
                 boolean vertical = map[x][y - 1] == 2 && map[x][y + 1] == 2;
@@ -155,9 +162,13 @@ public class Raycast extends GameState {
                     }
                 }
 
-                lights.add(new LightSource(lightX, lightY, 2.0f, 2.0f));
+                lights.add(new LightSource(lightX, lightY,
+                        1.0f, // red
+                        0.85f, // green
+                        0.65f, // blue
+                        2.0f, 2.0f));
             }
-        }
+        }*/
 
         return lights;
     }

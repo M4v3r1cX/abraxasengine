@@ -19,18 +19,22 @@ public class SoftwareRenderer {
    public int width;
    public int height;
    public List<Texture> textures;
-   private float[][] lightMap;
+   private float[][] lightMapR;
+   private float[][] lightMapG;
+   private float[][] lightMapB;
    private float[] zBuffer;
 
    public SoftwareRenderer(int[][] map, List<Texture> textures, int mapWidth, int mapHeight, int width, int height,
-                           float[][] lightMap) {
+                           float[][] lightMapR, float[][] lightMapG, float[][] lightMapB) {
       this.map = map;
       this.textures = textures;
       this.mapWidth = mapWidth;
       this.mapHeight = mapHeight;
       this.width = width;
       this.height = height;
-      this.lightMap = lightMap;
+      this.lightMapR = lightMapR;
+      this.lightMapG = lightMapG;
+      this.lightMapB = lightMapB;
       this.zBuffer = new float[this.width];
    }
 
@@ -92,8 +96,11 @@ public class SoftwareRenderer {
             if (cellX2 >= mapWidth)  cellX2 = mapWidth - 1;
             if (cellY2 >= mapHeight) cellY2 = mapHeight - 1;
 
-            float brightnessFactor = sampleLight(cellX2, cellY2);
-            color = applyBrightness(color, brightnessFactor);
+            float r = sampleLight(lightMapR, cellX2, cellY2);
+            float g = sampleLight(lightMapG, cellX2, cellY2);
+            float b = sampleLight(lightMapB, cellX2, cellY2);
+
+            color = applyColoredLighting(color, r, g, b);
             pixels[z + y * this.width] = color;
             if (y + 1 < this.height) {
                pixels[z + (y + 1) * this.width] = color;
@@ -274,7 +281,9 @@ public class SoftwareRenderer {
          if (cellX >= mapWidth)  cellX = mapWidth - 1;
          if (cellY >= mapHeight) cellY = mapHeight - 1;
 
-         float brightnessFactor = sampleLight(cellX, cellY);
+         float lightR = sampleLight(lightMapR, worldX, worldY);
+         float lightG = sampleLight(lightMapG, worldX, worldY);
+         float lightB = sampleLight(lightMapB, worldX, worldY);
          for(int y = drawStart; y < drawEnd; ++y) {
             int d = y * 256 - height * 128 + lineHeight * 128;
             int texY = (d * textureSize) / lineHeight / 256;
@@ -288,8 +297,8 @@ public class SoftwareRenderer {
             } else {
                color = texturePixels[texX + texY * textureSize] >> 1 & 8355711;
             }
+            color = applyColoredLighting(color, lightR, lightG, lightB);
 
-            color = applyBrightness(color,brightnessFactor);
             pixels[x + y * this.width] = color;
          }
       }
@@ -314,7 +323,9 @@ public class SoftwareRenderer {
          if (worldX >= mapWidth)  worldX = mapWidth - 1;
          if (worldY >= mapHeight) worldY = mapHeight - 1;
 
-         float brightness = sampleLight(worldX, worldY);
+         float lightR = sampleLight(lightMapR, worldX, worldY);
+         float lightG = sampleLight(lightMapG, worldX, worldY);
+         float lightB = sampleLight(lightMapB, worldX, worldY);
 
          int spriteScreenX = (int)(((float) this.width / 2) * (1 + transformX / transformY));
 
@@ -344,7 +355,8 @@ public class SoftwareRenderer {
                   int texY = ((d * texture.getSize()) / spriteHeight) / 256;
                   int color = texture.getPixels()[texX + texY * texture.getSize()];
                   if ((color & 0x00FFFFFF) != 0) {
-                     color = applyBrightness(color, brightness);
+                     color = applyColoredLighting(color, lightR, lightG, lightB);
+
                      pixels[stripe + y * this.width] = color;
 
                      if (stripe + 1 < width) {
@@ -369,14 +381,17 @@ public class SoftwareRenderer {
       return (r << 16) | (g << 8) | b;
    }
 
-   private int applyBrightness(int color, float brightness) {
-      int r = (int)(((color >> 16) & 0xFF) * brightness);
-      int g = (int)(((color >> 8) & 0xFF) * brightness);
-      int b = (int)((color & 0xFF) * brightness);
+   private int applyColoredLighting(int color, float rLight, float gLight, float bLight) {
+      int r = (color >> 16) & 0xFF;
+      int g = (color >> 8) & 0xFF;
+      int b = color & 0xFF;
+
+      r = Math.min(255, (int)(r * rLight));
+      g = Math.min(255, (int)(g * gLight));
+      b = Math.min(255, (int)(b * bLight));
 
       return (r << 16) | (g << 8) | b;
    }
-
 
    private int getTextureIndex(int mapX, int mapY) {
       if (mapX < 0 || mapY < 0 || mapX >= mapWidth || mapY >= mapHeight) {
@@ -388,8 +403,7 @@ public class SoftwareRenderer {
       return tile - 1;
    }
 
-
-   private float sampleLight(float worldX, float worldY) {
+   private float sampleLight(float[][] map, float worldX, float worldY) {
       int x0 = (int)worldX;
       int y0 = (int)worldY;
 
@@ -402,15 +416,14 @@ public class SoftwareRenderer {
       x0 = Math.max(0, Math.min(x0, mapWidth - 1));
       y0 = Math.max(0, Math.min(y0, mapHeight - 1));
 
-      float l00 = lightMap[x0][y0];
-      float l10 = lightMap[x1][y0];
-      float l01 = lightMap[x0][y1];
-      float l11 = lightMap[x1][y1];
+      float l00 = map[x0][y0];
+      float l10 = map[x1][y0];
+      float l01 = map[x0][y1];
+      float l11 = map[x1][y1];
 
       float lx0 = l00 + fx * (l10 - l00);
       float lx1 = l01 + fx * (l11 - l01);
 
       return lx0 + fy * (lx1 - lx0);
    }
-
 }
