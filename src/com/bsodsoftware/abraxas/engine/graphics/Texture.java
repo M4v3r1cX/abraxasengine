@@ -17,6 +17,7 @@ public class Texture {
     public static Texture gray = new Texture("/Sprites/Textures/gray.png", 64);
     public static Texture nightsky = new Texture("/Sprites/Textures/gray.png", 480);
     public static Texture pillar = new Texture("/Sprites/Textures/wolfenstein/pillar.png", 64);
+    public static Texture imp = new Texture("/Sprites/Textures/imp.png", 64);
 
    private int[] pixels;
    private final String location;
@@ -70,6 +71,7 @@ public class Texture {
        ret.add(gray);
        ret.add(nightsky);
        ret.add(pillar);
+       ret.add(imp);
        return ret;
    }
 }

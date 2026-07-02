@@ -91,7 +91,7 @@ public class Enemy {
 
     public static class EnemyFactory {
         public static Enemy buildPillar() {
-            SpriteRaycaster sprite = new SpriteRaycaster(5.5, 4.5, 10, true, 0.3);
+            SpriteRaycaster sprite = new SpriteRaycaster(5.5, 4.5, 11, true, 0.3);
             List<EnemyAttack> attacks = new ArrayList<>();
             attacks.add(new EnemyAttack("Attack", EnemyAttackTypes.ATTACK, 10, 10));
             return new Enemy("Pilar", 10, attacks, sprite, 1);
