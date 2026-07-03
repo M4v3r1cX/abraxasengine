@@ -1,12 +1,9 @@
-package com.bsodsoftware.abraxas.engine.raycaster;
+package com.bsodsoftware.abraxas.engine.graphics.renderer;
 
-import com.bsodsoftware.abraxas.engine.graphics.Texture;
-import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
-import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
-import com.bsodsoftware.abraxas.engine.things.Door;
+import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
+import com.bsodsoftware.abraxas.engine.graphics.textures.Texture;
+import com.bsodsoftware.abraxas.engine.world.Door;
 
-import java.awt.Color;
-import java.util.ArrayList;
 import java.util.List;
 
 public class SoftwareRenderer {

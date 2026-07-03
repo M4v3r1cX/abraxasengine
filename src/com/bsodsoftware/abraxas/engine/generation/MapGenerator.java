@@ -1,7 +1,7 @@
-package com.bsodsoftware.abraxas.engine.raycaster.maps;
+package com.bsodsoftware.abraxas.engine.generation;
 
-import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
-import com.bsodsoftware.abraxas.engine.things.Door;
+import com.bsodsoftware.abraxas.engine.world.Door;
+import com.bsodsoftware.abraxas.engine.world.Room;
 
 import java.util.*;
 

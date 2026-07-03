@@ -1,6 +1,6 @@
 package com.bsodsoftware.abraxas.engine.events;
 
-import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
+import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
 
 import java.util.List;
 
@@ -29,7 +29,7 @@ public class CollisionEngine {
     public boolean collidesWithSprite(double x, double y, List<SpriteRaycaster> sprites, double playerRadius) {
         boolean ret = false;
         for (SpriteRaycaster sprite : sprites) {
-            if (!sprite.isSolid()) continue;
+            if (!sprite.isSolid()) continue;        // Colisión con sprite, se puede usar pa disparar combate si es monstruo
 
             double dx = x - sprite.getX();
             double dy = y - sprite.getY();

@@ -1,11 +1,10 @@
-package com.bsodsoftware.abraxas.engine.raycaster;
+package com.bsodsoftware.abraxas.engine.graphics.renderer;
 
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
-import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
-import com.bsodsoftware.abraxas.engine.things.Enemy;
-import com.bsodsoftware.abraxas.engine.things.Player;
-import com.bsodsoftware.abraxas.engine.things.Door;
+import com.bsodsoftware.abraxas.engine.entities.Player;
+import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
+import com.bsodsoftware.abraxas.engine.world.Door;
 
 import java.awt.event.KeyEvent;
 import java.util.List;

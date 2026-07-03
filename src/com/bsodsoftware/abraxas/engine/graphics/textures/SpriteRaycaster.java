@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine.graphics.raycaster;
+package com.bsodsoftware.abraxas.engine.graphics.textures;
 
 public class SpriteRaycaster {
     private double x;

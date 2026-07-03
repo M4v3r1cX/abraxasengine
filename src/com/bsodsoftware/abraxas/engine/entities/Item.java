@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine.things;
+package com.bsodsoftware.abraxas.engine.entities;
 
 public class Item {
     private Long id;

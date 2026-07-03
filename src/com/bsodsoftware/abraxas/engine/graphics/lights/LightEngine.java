@@ -1,6 +1,5 @@
-package com.bsodsoftware.abraxas.engine.graphics.raycaster;
+package com.bsodsoftware.abraxas.engine.graphics.lights;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 

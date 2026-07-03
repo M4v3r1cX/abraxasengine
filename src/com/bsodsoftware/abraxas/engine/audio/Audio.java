@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine.sound;
+package com.bsodsoftware.abraxas.engine.audio;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;

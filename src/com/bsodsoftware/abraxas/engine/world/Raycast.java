@@ -1,23 +1,21 @@
-package com.bsodsoftware.abraxas.screens.levels.shooter;
+package com.bsodsoftware.abraxas.engine.world;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.events.Event;
-import com.bsodsoftware.abraxas.engine.graphics.Sprite;
-import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightEngine;
-import com.bsodsoftware.abraxas.engine.graphics.raycaster.LightSource;
-import com.bsodsoftware.abraxas.engine.graphics.raycaster.SpriteRaycaster;
-import com.bsodsoftware.abraxas.engine.things.Enemy;
-import com.bsodsoftware.abraxas.engine.things.Player;
-import com.bsodsoftware.abraxas.engine.raycaster.Camera;
-import com.bsodsoftware.abraxas.engine.raycaster.maps.MapGenerator;
-import com.bsodsoftware.abraxas.engine.raycaster.maps.Maps;
-import com.bsodsoftware.abraxas.engine.raycaster.SoftwareRenderer;
-import com.bsodsoftware.abraxas.engine.graphics.Texture;
-import com.bsodsoftware.abraxas.engine.raycaster.maps.Room;
-import com.bsodsoftware.abraxas.engine.sound.Audio;
-import com.bsodsoftware.abraxas.engine.things.Door;
+import com.bsodsoftware.abraxas.engine.graphics.textures.Sprite;
+import com.bsodsoftware.abraxas.engine.graphics.lights.LightEngine;
+import com.bsodsoftware.abraxas.engine.graphics.lights.LightSource;
+import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
+import com.bsodsoftware.abraxas.engine.entities.Enemy;
+import com.bsodsoftware.abraxas.engine.entities.Player;
+import com.bsodsoftware.abraxas.engine.graphics.renderer.Camera;
+import com.bsodsoftware.abraxas.engine.generation.MapGenerator;
+import com.bsodsoftware.abraxas.engine.graphics.renderer.SoftwareRenderer;
+import com.bsodsoftware.abraxas.engine.graphics.textures.Texture;
+import com.bsodsoftware.abraxas.engine.audio.Audio;
+import com.bsodsoftware.abraxas.engine.util.EnemyFactory;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
@@ -221,7 +219,7 @@ public class Raycast extends GameState {
 
             if (tooClose) continue;
 
-            Enemy e = Enemy.EnemyFactory.buildPillar();
+            Enemy e = EnemyFactory.buildPillar();
             e.getSprite().setX(x);
             e.getSprite().setY(y);
             this.sprites.add(e.getSprite());
@@ -395,7 +393,7 @@ public class Raycast extends GameState {
         }
     }
 
-    private void checkForEvents() {
+    /*private void checkForEvents() {
         for (Event e : events) {
             if (e.isActive()) {
                 //eventInProgress = true;
@@ -408,9 +406,9 @@ public class Raycast extends GameState {
                 }
             }
         }
-    }
+    }*/
 
-    private void executeEvent(Long id) {
+    /*private void executeEvent(Long id) {
         this.camera.stopPlayerMovement(Player.STATE.IN_EVENT);
         switch (id.intValue()) {
             case 1:
@@ -423,7 +421,7 @@ public class Raycast extends GameState {
             default:
                 break;
         }
-    }
+    }*/
 
     private void renderRaycast(Graphics2D graphics) {
         graphics.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), (ImageObserver) null);

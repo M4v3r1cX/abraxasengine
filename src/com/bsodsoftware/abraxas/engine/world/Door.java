@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine.things;
+package com.bsodsoftware.abraxas.engine.world;
 
 public class Door {
     private float x;

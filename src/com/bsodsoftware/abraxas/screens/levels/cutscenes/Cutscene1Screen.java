@@ -2,12 +2,10 @@ package com.bsodsoftware.abraxas.screens.levels.cutscenes;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
-import com.bsodsoftware.abraxas.engine.graphics.Sprite;
+import com.bsodsoftware.abraxas.engine.graphics.textures.Sprite;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 

@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine.raycaster.maps;
+package com.bsodsoftware.abraxas.engine.world;
 
 public class Room {
     private int x;

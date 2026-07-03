@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas.engine.graphics;
+package com.bsodsoftware.abraxas.engine.graphics.textures;
 
 import java.awt.image.BufferedImage;
 import java.io.IOException;
