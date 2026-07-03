@@ -4,7 +4,7 @@ import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.sound.sampled.Clip;
 
-public class Audio {
+public class AudioEngine {
 
     private final boolean MUTE = true;
 
@@ -18,7 +18,7 @@ public class Audio {
     private String location;
     private boolean loop;
 
-    public Audio(String location, boolean loop) {
+    public AudioEngine(String location, boolean loop) {
         if (!MUTE) {
             this.location = location;
             this.loop = loop;

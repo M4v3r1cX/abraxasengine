@@ -2,7 +2,7 @@ package com.bsodsoftware.abraxas.screens;
 
 import com.bsodsoftware.abraxas.engine.graphics.textures.Sprite;
 import com.bsodsoftware.abraxas.engine.GameStateManager;
-import com.bsodsoftware.abraxas.engine.audio.Audio;
+import com.bsodsoftware.abraxas.engine.audio.AudioEngine;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
@@ -19,8 +19,8 @@ public class MenuScreen extends GameState {
     private Font titleFont;
     private Font font;
 
-    private Audio bgm;
-    private Audio cursor;
+    private AudioEngine bgm;
+    private AudioEngine cursor;
 
     public MenuScreen(GameStateManager gameStateManager) {
         this.gameStateManager = gameStateManager;
@@ -32,9 +32,9 @@ public class MenuScreen extends GameState {
             titleFont = new Font("Century Gothic", Font.PLAIN, 28);
             font = new Font("Arial", Font.PLAIN, 12);
 
-            bgm = new Audio("/Audio/title.wav", true);
-            cursor = new Audio("/Audio/smw_coin.wav", false);
-            if (this.bgm.getStatus().equals(Audio.STATUS.STOPPED)) {
+            bgm = new AudioEngine("/Audio/title.wav", true);
+            cursor = new AudioEngine("/Audio/smw_coin.wav", false);
+            if (this.bgm.getStatus().equals(AudioEngine.STATUS.STOPPED)) {
                 this.bgm.play();
             }
         } catch(Exception e) {

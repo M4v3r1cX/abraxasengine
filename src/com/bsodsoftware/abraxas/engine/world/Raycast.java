@@ -14,7 +14,7 @@ import com.bsodsoftware.abraxas.engine.graphics.renderer.Camera;
 import com.bsodsoftware.abraxas.engine.generation.MapGenerator;
 import com.bsodsoftware.abraxas.engine.graphics.renderer.SoftwareRenderer;
 import com.bsodsoftware.abraxas.engine.graphics.textures.Texture;
-import com.bsodsoftware.abraxas.engine.audio.Audio;
+import com.bsodsoftware.abraxas.engine.audio.AudioEngine;
 import com.bsodsoftware.abraxas.engine.util.EnemyFactory;
 import com.bsodsoftware.abraxas.states.GameState;
 
@@ -54,7 +54,7 @@ public class Raycast extends GameState {
 
     private final int WINDOW_WIDTH = 1280;
     private final int WINDOW_HEIGHT = 800;
-    private Audio song;
+    private AudioEngine song;
     private Sprite sprite;
     private Sprite sword;
     private int currentFrame = 0;
@@ -238,8 +238,8 @@ public class Raycast extends GameState {
 
 
     private void initSound() {
-        this.song = new Audio("/Audio/1.wav", true);
-        if (this.song.getStatus().equals(Audio.STATUS.STOPPED)) {
+        this.song = new AudioEngine("/Audio/1.wav", true);
+        if (this.song.getStatus().equals(AudioEngine.STATUS.STOPPED)) {
             this.song.play();
         }
     }
@@ -739,7 +739,7 @@ public class Raycast extends GameState {
         return WINDOW_HEIGHT;
     }
 
-    public Audio getSong() {
+    public AudioEngine getSong() {
         return song;
     }
 
