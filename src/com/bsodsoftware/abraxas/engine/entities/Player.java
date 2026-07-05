@@ -1,6 +1,8 @@
 package com.bsodsoftware.abraxas.engine.entities;
 
-public class Player {
+import com.bsodsoftware.abraxas.engine.combat.Combatant;
+
+public class Player implements Combatant {
 
     public enum STATE {
         IN_COMBAT, WALKING, ROTATING, PAUSE, STANDING,    // ON THE EDGE OF THE CRATER WHERE THE PROFETS ONCE SAID
@@ -8,44 +10,29 @@ public class Player {
     }
 
     private int health;
-    private int armor;
-    private int attack;
-    private int stamina;
     private final double radius = 0.3;
     private String name;
     private STATE state;
     private Inventory inventory;
+    private Equipment equipment;
+    private Backstory backstory;
 
     public int getHealth() {
         return health;
     }
 
+    @Override
+    public void takeDamage(int damage) {
+        this.health -= damage;
+    }
+
+    @Override
+    public boolean isAlive() {
+        return health > 0;
+    }
+
     public void setHealth(int health) {
         this.health = health;
-    }
-
-    public int getArmor() {
-        return armor;
-    }
-
-    public void setArmor(int armor) {
-        this.armor = armor;
-    }
-
-    public int getAttack() {
-        return attack;
-    }
-
-    public void setAttack(int attack) {
-        this.attack = attack;
-    }
-
-    public int getStamina() {
-        return stamina;
-    }
-
-    public void setStamina(int stamina) {
-        this.stamina = stamina;
     }
 
     public String getName() {
@@ -78,5 +65,21 @@ public class Player {
 
     public boolean isWalking() {
         return getState().equals(STATE.WALKING);
+    }
+
+    public Equipment getEquipment() {
+        return equipment;
+    }
+
+    public void setEquipment(Equipment equipment) {
+        this.equipment = equipment;
+    }
+
+    public Backstory getBackstory() {
+        return backstory;
+    }
+
+    public void setBackstory(Backstory backstory) {
+        this.backstory = backstory;
     }
 }

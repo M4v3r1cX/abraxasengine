@@ -133,40 +133,8 @@ public class Raycast extends GameState {
                     2.0f,
                     5.0f
             ));
-            sprites.add(new SpriteRaycaster(r.getCenterX(), r.getCenterY(), 7, false, 0.3));
+            sprites.add(new SpriteRaycaster(r.getCenterX(), r.getCenterY(), 12, true, 0.3));
         }
-
-        /*for (int x = 1; x < map.length - 1; x++) {
-            for (int y = 1; y < map[0].length - 1; y++) {
-                if (map[x][y] != 3) continue;
-                boolean vertical = map[x][y - 1] == 2 && map[x][y + 1] == 2;
-                boolean horizontal = map[x - 1][y] == 2 && map[x + 1][y] == 2;
-
-                float lightX = x + 0.5f;
-                float lightY = y + 0.5f;
-
-                if (vertical) {
-                    if (map[x - 1][y] == 0) {
-                        lightX = x - 0.3f;
-                    } else if (map[x + 1][y] == 0) {
-                        lightX = x + 0.3f;
-                    }
-                }
-                else if (horizontal) {
-                    if (map[x][y - 1] == 0) {
-                        lightY = y - 0.3f;
-                    } else if (map[x][y + 1] == 0) {
-                        lightY = y + 0.3f;
-                    }
-                }
-
-                lights.add(new LightSource(lightX, lightY,
-                        1.0f, // red
-                        0.85f, // green
-                        0.65f, // blue
-                        2.0f, 2.0f));
-            }
-        }*/
 
         return lights;
     }
@@ -219,7 +187,7 @@ public class Raycast extends GameState {
 
             if (tooClose) continue;
 
-            Enemy e = EnemyFactory.buildPillar();
+            Enemy e = EnemyFactory.buildImp();
             e.getSprite().setX(x);
             e.getSprite().setY(y);
             this.sprites.add(e.getSprite());

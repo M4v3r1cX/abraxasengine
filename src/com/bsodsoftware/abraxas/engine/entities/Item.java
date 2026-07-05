@@ -1,18 +1,11 @@
 package com.bsodsoftware.abraxas.engine.entities;
 
 public class Item {
-    private Long id;
     private String name;
-    private int attack;
-    private int defense;
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
+    private int minValue;
+    private int maxValue;
+    private int type;
+    private boolean equiped;
 
     public String getName() {
         return name;
@@ -22,19 +15,35 @@ public class Item {
         this.name = name;
     }
 
-    public int getAttack() {
-        return attack;
+    public int getMinValue() {
+        return minValue;
     }
 
-    public void setAttack(int attack) {
-        this.attack = attack;
+    public void setMinValue(int minValue) {
+        this.minValue = minValue;
     }
 
-    public int getDefense() {
-        return defense;
+    public int getMaxValue() {
+        return maxValue;
     }
 
-    public void setDefense(int defense) {
-        this.defense = defense;
+    public void setMaxValue(int maxValue) {
+        this.maxValue = maxValue;
+    }
+
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
+
+    public boolean isEquiped() {
+        return equiped;
+    }
+
+    public void setEquiped(boolean equiped) {
+        this.equiped = equiped;
     }
 }
