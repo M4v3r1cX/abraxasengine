@@ -3,7 +3,6 @@ package com.bsodsoftware.abraxas.engine.entities;
 import com.bsodsoftware.abraxas.engine.combat.Combatant;
 
 public class Player implements Combatant {
-
     public enum STATE {
         IN_COMBAT, WALKING, ROTATING, PAUSE, STANDING,    // ON THE EDGE OF THE CRATER WHERE THE PROFETS ONCE SAID
         IN_EVENT

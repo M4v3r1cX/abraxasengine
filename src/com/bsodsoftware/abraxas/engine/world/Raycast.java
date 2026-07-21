@@ -214,11 +214,8 @@ public class Raycast extends GameState {
 
     private void initPlayer() {
         player = new Player();
-        player.setArmor(100);
-        player.setStamina(3);
         player.setHealth(100);
         player.setName("Maverick");
-        player.setAttack(10);
         player.setState(Player.STATE.STANDING);
     }
 
@@ -412,9 +409,6 @@ public class Raycast extends GameState {
         hudColor = new Color(128, 0,0);
         graphics.setColor(hudColor);
         graphics.drawString("HEALTH: " + player.getHealth(), 80, 70);
-        hudColor = new Color(0, 128,0);
-        graphics.setColor(hudColor);
-        graphics.drawString("Stamina: " + player.getStamina(), 80, 110);
         if (player.getState().equals(Player.STATE.PAUSE)) {
             drawPause(graphics);
         }

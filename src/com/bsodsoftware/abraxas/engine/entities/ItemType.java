@@ -10,4 +10,5 @@ public class ItemType {
     public final static int ACCESORY_HEALTH = 6;
     public final static int ACCESORY_SPEED = 7;
     public final static int ACCESORY_ARMOUR = 8;
+    public final static int ACCESORY_ATTACK = 9;
 }

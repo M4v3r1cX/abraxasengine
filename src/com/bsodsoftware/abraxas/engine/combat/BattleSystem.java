@@ -39,7 +39,12 @@ public class BattleSystem {
     }
 
     private void playerActs(PlayerAttack playerAttack) {
+        Item accessory1 = player.getEquipment().getAccesory1();
+        Item accessory2 = player.getEquipment().getAccesory2();
         int damage = player.getBackstory().getAttack() + (random.nextInt(playerAttack.getMaxDamage() - playerAttack.getMinDamage()) + playerAttack.getMinDamage());
+        damage += accessory1 != null && accessory1.getType() == ItemType.ACCESORY_ATTACK ? accessory1.getMaxValue() : 0;
+        damage += accessory2 != null && accessory2.getType() == ItemType.ACCESORY_ATTACK ? accessory2.getMaxValue() : 0;
+
         enemy.takeDamage(damage);
     }
 
