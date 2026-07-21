@@ -2,6 +2,8 @@ package com.bsodsoftware.abraxas.engine.world;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
+import com.bsodsoftware.abraxas.engine.entities.Equipment;
+import com.bsodsoftware.abraxas.engine.entities.Inventory;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.events.Event;
 import com.bsodsoftware.abraxas.engine.graphics.textures.Sprite;
@@ -56,7 +58,7 @@ public class Raycast extends GameState {
     private final int WINDOW_HEIGHT = 800;
     private AudioEngine song;
     private Sprite sprite;
-    private Sprite sword;
+    private Sprite weaponSprite;
     private int currentFrame = 0;
     private final int initialPosX = 1000;
     private final int initialPosY = 250;
@@ -116,8 +118,8 @@ public class Raycast extends GameState {
         this.enemies = getEnemies(5);
         this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, lightMapR, lightMapG, lightMapB);
 
-        sword = new Sprite("/Sprites/Weapons/sword.png", 1);
-        sword.setPosition(initialPosX, initialPosY);
+        weaponSprite = new Sprite("/Sprites/Weapons/sword.png", 1);
+        weaponSprite.setPosition(initialPosX, initialPosY);
     }
 
     private List<LightSource> getLights() {
@@ -214,9 +216,6 @@ public class Raycast extends GameState {
 
     private void initPlayer() {
         player = new Player();
-        player.setHealth(100);
-        player.setName("Maverick");
-        player.setState(Player.STATE.STANDING);
     }
 
     private void initHud() {
@@ -394,7 +393,7 @@ public class Raycast extends GameState {
 
     private void drawWeapon(Graphics2D graphics) {
         weaponBob();
-        sword.draw(graphics);
+        weaponSprite.draw(graphics);
     }
 
     private void showLoadingScreen(Graphics2D graphics) {
@@ -654,7 +653,7 @@ public class Raycast extends GameState {
                 }
             }
         }
-        sword.setPosition(currentPosX, currentPosY);
+        weaponSprite.setPosition(currentPosX, currentPosY);
     }
 
     public GameStateManager getGameStateManager() {
@@ -713,8 +712,8 @@ public class Raycast extends GameState {
         return sprite;
     }
 
-    public Sprite getSword() {
-        return sword;
+    public Sprite getWeaponSprite() {
+        return weaponSprite;
     }
 
     public int getCurrentFrame() {

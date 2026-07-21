@@ -1,6 +1,7 @@
 package com.bsodsoftware.abraxas.engine.entities;
 
 import com.bsodsoftware.abraxas.engine.combat.Combatant;
+import com.bsodsoftware.abraxas.engine.util.BackstoryFactory;
 
 public class Player implements Combatant {
     public enum STATE {
@@ -15,6 +16,15 @@ public class Player implements Combatant {
     private Inventory inventory;
     private Equipment equipment;
     private Backstory backstory;
+
+    public Player() {
+        setName("Maverick");
+        setState(Player.STATE.STANDING);
+        setBackstory(BackstoryFactory.getBackstories().get(0));
+        setInventory(new Inventory());
+        setEquipment(new Equipment());
+        setHealth(backstory.getHealth());
+    }
 
     public int getHealth() {
         return health;
