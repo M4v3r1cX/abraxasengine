@@ -3,6 +3,7 @@ package com.bsodsoftware.abraxas.engine.world;
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
+import com.bsodsoftware.abraxas.engine.events.CollisionNotification;
 import com.bsodsoftware.abraxas.engine.events.Event;
 import com.bsodsoftware.abraxas.engine.graphics.textures.Sprite;
 import com.bsodsoftware.abraxas.engine.graphics.lights.LightEngine;
@@ -17,6 +18,7 @@ import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycasterType;
 import com.bsodsoftware.abraxas.engine.graphics.textures.Texture;
 import com.bsodsoftware.abraxas.engine.audio.AudioEngine;
 import com.bsodsoftware.abraxas.engine.util.EnemyFactory;
+import com.bsodsoftware.abraxas.engine.util.IdGenerator;
 import com.bsodsoftware.abraxas.states.GameState;
 
 import java.awt.*;
@@ -26,9 +28,10 @@ import java.awt.image.DataBufferInt;
 import java.awt.image.ImageObserver;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
-public class Raycast extends GameState {
+public class Raycast extends GameState implements CollisionNotification {
     private GameStateManager gameStateManager;
     private int mapWidth = 35;
     private int mapHeight = 35;
@@ -48,6 +51,7 @@ public class Raycast extends GameState {
     private MapGenerator mapGenerator;
     private List<Texture> textures;
     private List<SpriteRaycaster> sprites;
+    private HashMap<Integer, Enemy> enemies;
 
     private Camera camera;
     private SoftwareRenderer screen;
@@ -112,7 +116,7 @@ public class Raycast extends GameState {
 
         float startX = mapGenerator.getRooms().get(0).getCenterX() - 0.5f;
         float startY = mapGenerator.getRooms().get(0).getCenterY() - 0.5f;
-        this.camera = new Camera(startX, startY, 1.0f, 0.0f, 0.0f, -0.66f, this.player, this.collisionEngine);
+        this.camera = new Camera(startX, startY, 1.0f, 0.0f, 0.0f, -0.66f, this.player, this.collisionEngine, this);
         getEnemies(5);
         this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, lightMapR, lightMapG, lightMapB);
 
@@ -150,7 +154,6 @@ public class Raycast extends GameState {
     private void getEnemies(int count) {
         float playerX = camera.getxPos();
         float playerY = camera.getyPos();
-        List<Enemy> enemies = new ArrayList<>();
         List<int[]> candidates = new ArrayList<>();
         for (int x = 1; x < mapWidth - 1; x++) {
             for (int y = 1; y < mapHeight - 1; y++) {
@@ -172,7 +175,7 @@ public class Raycast extends GameState {
             if (dx*dx + dy*dy < 9.0f) continue;
             boolean tooClose = false;
 
-            for (Enemy e : enemies) {
+            for (Enemy e : enemies.values()) {
                 float ex = (float)e.getSprite().getX();
                 float ey = (float)e.getSprite().getY();
 
@@ -186,11 +189,13 @@ public class Raycast extends GameState {
 
             if (tooClose) continue;
 
+            int id = IdGenerator.getId();
             Enemy e = EnemyFactory.buildImp();
             e.getSprite().setX(x);
             e.getSprite().setY(y);
+            e.getSprite().setId(id);
             this.sprites.add(e.getSprite());
-            enemies.add(e);
+            enemies.put(id, e);
         }
     }
 
@@ -247,7 +252,6 @@ public class Raycast extends GameState {
             this.camera.update(map, doors, sprites);
             markVisited();
             updateDoors();
-            checkForBattle();
             //this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
             //this.checkForEvents();
             if (this.player.getState().equals(Player.STATE.STANDING)) {
@@ -343,6 +347,13 @@ public class Raycast extends GameState {
         }
     }
 
+    @Override
+    public void collisionWithMonster(int id) {
+        if (this.player.getState().equals(Player.STATE.IN_COMBAT)) {
+            Enemy e = enemies.get(id);
+
+        }
+    }
 
     @Override
     public void draw(Graphics2D graphics) {

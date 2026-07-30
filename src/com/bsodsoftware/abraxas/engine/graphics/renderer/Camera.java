@@ -3,6 +3,7 @@ package com.bsodsoftware.abraxas.engine.graphics.renderer;
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.entities.Player;
+import com.bsodsoftware.abraxas.engine.events.CollisionNotification;
 import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycasterType;
 import com.bsodsoftware.abraxas.engine.world.Door;
@@ -30,8 +31,9 @@ public class Camera {
    private float mouseDeltaX;
    private int lastMouseX;
    private CollisionEngine collisionEngine;
+   private CollisionNotification collisionNotification;
 
-   public Camera(float x, float y, float xd, float yd, float xp, float yp, Player player, CollisionEngine collisionEngine) {
+   public Camera(float x, float y, float xd, float yd, float xp, float yp, Player player, CollisionEngine collisionEngine, CollisionNotification collisionNotification) {
       this.xPos = x;
       this.yPos = y;
       this.xDir = xd;
@@ -42,6 +44,7 @@ public class Camera {
       this.mouseDeltaX = 0;
       this.lastMouseX = 0;
       this.collisionEngine = collisionEngine;
+      this.collisionNotification = collisionNotification;
    }
 
    public void update(int[][] map, Door[][] doors, List<SpriteRaycaster> sprites) {
@@ -88,8 +91,10 @@ public class Camera {
       boolean spriteBlockY = spriteY != null;
 
       if (spriteX != null && spriteX.getSpriteType() == SpriteRaycasterType.MONSTER || spriteY != null && spriteY.getSpriteType() == SpriteRaycasterType.MONSTER) {
-         this.player.setState(Player.STATE.IN_COMBAT);
-         //this.player.setCurrentEnemy();
+         if (!player.getState().equals(Player.STATE.IN_COMBAT)) {
+            player.setState(Player.STATE.IN_COMBAT);
+            collisionNotification.collisionWithMonster(spriteX.getId());
+         }
       }
 
       if (canMoveX && !spriteBlockX) {

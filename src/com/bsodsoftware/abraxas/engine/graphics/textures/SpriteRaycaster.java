@@ -1,6 +1,7 @@
 package com.bsodsoftware.abraxas.engine.graphics.textures;
 
 public class SpriteRaycaster {
+    private int id;
     private double x;
     private double y;
     private int texture;
@@ -64,5 +65,13 @@ public class SpriteRaycaster {
 
     public void setSpriteType(int spriteType) {
         this.spriteType = spriteType;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

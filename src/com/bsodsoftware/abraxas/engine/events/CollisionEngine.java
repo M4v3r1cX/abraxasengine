@@ -51,6 +51,7 @@ public class CollisionEngine {
 
     public boolean collidesWithMonster(double x, double y, List<SpriteRaycaster> sprites, double playerRadius) {
         SpriteRaycaster sprite = getCollidingSprite(x, y, sprites, playerRadius);   // Cuando intenta moverse hacia adelante, no puede porque ve que collidea, asique no se mueve. Pero al no moverse, no se registra el combate acá. Hay que ver como hacer la wea en el update de la cámara quizá xD
+        // EDIT OH WOEN HAGAMOS UNA INTERFAZ EN LA CÁMARA QUE CUANDO SE ACTIVE LA WEA PORQUE COLISIONA CON MONSTRUO MANDE PA ACÁ HOLY DUCK SOY MEGA INTELIGENTE
         return sprite != null && sprite.getSpriteType() == SpriteRaycasterType.MONSTER;
     }
 }
