@@ -1,7 +1,9 @@
 package com.bsodsoftware.abraxas.engine.entities;
 
 import com.bsodsoftware.abraxas.engine.combat.Combatant;
+import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.util.BackstoryFactory;
+import com.bsodsoftware.abraxas.engine.util.WeaponFactory;
 
 public class Player implements Combatant {
     public enum STATE {
@@ -16,6 +18,7 @@ public class Player implements Combatant {
     private Inventory inventory;
     private Equipment equipment;
     private Backstory backstory;
+    private SpriteRaycaster currentEnemy;
 
     public Player() {
         setName("Maverick");
@@ -24,6 +27,8 @@ public class Player implements Combatant {
         setInventory(new Inventory());
         setEquipment(new Equipment());
         setHealth(backstory.getHealth());
+
+        getEquipment().setWeapon(WeaponFactory.getSword());
     }
 
     public int getHealth() {
@@ -90,5 +95,13 @@ public class Player implements Combatant {
 
     public void setBackstory(Backstory backstory) {
         this.backstory = backstory;
+    }
+
+    public SpriteRaycaster getCurrentEnemy() {
+        return currentEnemy;
+    }
+
+    public void setCurrentEnemy(SpriteRaycaster currentEnemy) {
+        this.currentEnemy = currentEnemy;
     }
 }

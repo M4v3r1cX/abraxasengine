@@ -4,6 +4,7 @@ import com.bsodsoftware.abraxas.engine.combat.EnemyAttack;
 import com.bsodsoftware.abraxas.engine.combat.EnemyAttackType;
 import com.bsodsoftware.abraxas.engine.entities.Enemy;
 import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
+import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycasterType;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +13,7 @@ import java.util.Stack;
 
 public class EnemyFactory {
     public static Enemy buildImp() {
-        SpriteRaycaster sprite = new SpriteRaycaster(5.5, 4.5, 11, true, 0.3);
+        SpriteRaycaster sprite = new SpriteRaycaster(5.5, 4.5, 11, true, 1, SpriteRaycasterType.MONSTER);
         return new Enemy("Imp", 10, getAttacks(), sprite, 1);
     }
 

@@ -4,6 +4,7 @@ import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.entities.Player;
 import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
+import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycasterType;
 import com.bsodsoftware.abraxas.engine.world.Door;
 
 import java.awt.event.KeyEvent;
@@ -81,8 +82,15 @@ public class Camera {
       checkY = (int)(newY + Math.signum(moveY) * player.getRadius());
       boolean canMoveY = isWalkable(checkX, checkY, doors, map);
 
-      boolean spriteBlockX = collisionEngine.collidesWithSprite(newX, this.yPos, sprites, player.getRadius());
-      boolean spriteBlockY = collisionEngine.collidesWithSprite(this.xPos, newY, sprites, player.getRadius());
+      SpriteRaycaster spriteX = collisionEngine.getCollidingSprite(newX, this.yPos, sprites, player.getRadius());
+      SpriteRaycaster spriteY = collisionEngine.getCollidingSprite(this.xPos, newY, sprites, player.getRadius());
+      boolean spriteBlockX = spriteX != null;
+      boolean spriteBlockY = spriteY != null;
+
+      if (spriteX != null && spriteX.getSpriteType() == SpriteRaycasterType.MONSTER || spriteY != null && spriteY.getSpriteType() == SpriteRaycasterType.MONSTER) {
+         this.player.setState(Player.STATE.IN_COMBAT);
+         //this.player.setCurrentEnemy();
+      }
 
       if (canMoveX && !spriteBlockX) {
          this.xPos = newX;

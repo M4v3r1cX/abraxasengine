@@ -2,8 +2,6 @@ package com.bsodsoftware.abraxas.engine.world;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
-import com.bsodsoftware.abraxas.engine.entities.Equipment;
-import com.bsodsoftware.abraxas.engine.entities.Inventory;
 import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
 import com.bsodsoftware.abraxas.engine.events.Event;
 import com.bsodsoftware.abraxas.engine.graphics.textures.Sprite;
@@ -15,6 +13,7 @@ import com.bsodsoftware.abraxas.engine.entities.Player;
 import com.bsodsoftware.abraxas.engine.graphics.renderer.Camera;
 import com.bsodsoftware.abraxas.engine.generation.MapGenerator;
 import com.bsodsoftware.abraxas.engine.graphics.renderer.SoftwareRenderer;
+import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycasterType;
 import com.bsodsoftware.abraxas.engine.graphics.textures.Texture;
 import com.bsodsoftware.abraxas.engine.audio.AudioEngine;
 import com.bsodsoftware.abraxas.engine.util.EnemyFactory;
@@ -49,7 +48,6 @@ public class Raycast extends GameState {
     private MapGenerator mapGenerator;
     private List<Texture> textures;
     private List<SpriteRaycaster> sprites;
-    private List<Enemy> enemies;
 
     private Camera camera;
     private SoftwareRenderer screen;
@@ -115,11 +113,10 @@ public class Raycast extends GameState {
         float startX = mapGenerator.getRooms().get(0).getCenterX() - 0.5f;
         float startY = mapGenerator.getRooms().get(0).getCenterY() - 0.5f;
         this.camera = new Camera(startX, startY, 1.0f, 0.0f, 0.0f, -0.66f, this.player, this.collisionEngine);
-        this.enemies = getEnemies(5);
+        getEnemies(5);
         this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, lightMapR, lightMapG, lightMapB);
 
-        weaponSprite = new Sprite("/Sprites/Weapons/sword.png", 1);
-        weaponSprite.setPosition(initialPosX, initialPosY);
+        if (this.player.getEquipment().getWeapon() != null) weaponSprite = this.player.getEquipment().getWeapon().getItemSprite();
     }
 
     private List<LightSource> getLights() {
@@ -135,7 +132,7 @@ public class Raycast extends GameState {
                     2.0f,
                     5.0f
             ));
-            sprites.add(new SpriteRaycaster(r.getCenterX(), r.getCenterY(), 12, true, 0.3));
+            sprites.add(new SpriteRaycaster(r.getCenterX(), r.getCenterY(), 12, true, 0.3, SpriteRaycasterType.LIGHT));
         }
 
         return lights;
@@ -144,13 +141,13 @@ public class Raycast extends GameState {
     private List<SpriteRaycaster> getSprites() {
         List<SpriteRaycaster> sprites = new ArrayList<>();
 
-        sprites.add(new SpriteRaycaster(5.5, 4.5, 5, true, 0.3));
-        sprites.add(new SpriteRaycaster(6.5, 7.5, 5, true, 0.3));
+        sprites.add(new SpriteRaycaster(5.5, 4.5, 5, true, 0.3, SpriteRaycasterType.DECORATION));
+        sprites.add(new SpriteRaycaster(6.5, 7.5, 5, true, 0.3, SpriteRaycasterType.DECORATION));
 
         return sprites;
     }
 
-    private List<Enemy> getEnemies(int count) {
+    private void getEnemies(int count) {
         float playerX = camera.getxPos();
         float playerY = camera.getyPos();
         List<Enemy> enemies = new ArrayList<>();
@@ -195,8 +192,6 @@ public class Raycast extends GameState {
             this.sprites.add(e.getSprite());
             enemies.add(e);
         }
-
-        return enemies;
     }
 
     private boolean isSpawnable(int x, int y, int[][] map, Door[][] doors) {
@@ -252,7 +247,8 @@ public class Raycast extends GameState {
             this.camera.update(map, doors, sprites);
             markVisited();
             updateDoors();
-            this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
+            checkForBattle();
+            //this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
             //this.checkForEvents();
             if (this.player.getState().equals(Player.STATE.STANDING)) {
                 this.camera.setVieneDePausa(false);
@@ -340,6 +336,13 @@ public class Raycast extends GameState {
         }
     }
 
+    private void checkForBattle() {
+        System.out.println("Checking battle");
+        if (collisionEngine.collidesWithMonster(camera.getxPos(), camera.getyPos(), sprites, player.getRadius())) {
+            System.out.println("EN BATALLA CON MONSTRUO");
+        }
+    }
+
 
     @Override
     public void draw(Graphics2D graphics) {
@@ -392,8 +395,10 @@ public class Raycast extends GameState {
     }
 
     private void drawWeapon(Graphics2D graphics) {
-        weaponBob();
-        weaponSprite.draw(graphics);
+        if (weaponSprite != null) {
+            weaponBob();
+            weaponSprite.draw(graphics);
+        }
     }
 
     private void showLoadingScreen(Graphics2D graphics) {

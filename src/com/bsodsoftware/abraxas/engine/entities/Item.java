@@ -1,7 +1,6 @@
 package com.bsodsoftware.abraxas.engine.entities;
 
 import com.bsodsoftware.abraxas.engine.graphics.textures.Sprite;
-import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
 
 public class Item {
     private String name;
@@ -9,8 +8,8 @@ public class Item {
     private int maxValue;
     private int type;
     private boolean equiped;
-    private SpriteRaycaster itemSprite;
-    private SpriteRaycaster icon;
+    private Sprite itemSprite;
+    private Sprite icon;
 
     public String getName() {
         return name;
@@ -52,19 +51,19 @@ public class Item {
         this.equiped = equiped;
     }
 
-    public SpriteRaycaster getItemSprite() {
-        return itemSprite;
-    }
-
-    public void setItemSprite(SpriteRaycaster itemSprite) {
-        this.itemSprite = itemSprite;
-    }
-
-    public SpriteRaycaster getIcon() {
+    public Sprite getIcon() {
         return icon;
     }
 
-    public void setIcon(SpriteRaycaster icon) {
+    public void setIcon(Sprite icon) {
         this.icon = icon;
+    }
+
+    public Sprite getItemSprite() {
+        return itemSprite;
+    }
+
+    public void setItemSprite(Sprite itemSprite) {
+        this.itemSprite = itemSprite;
     }
 }
