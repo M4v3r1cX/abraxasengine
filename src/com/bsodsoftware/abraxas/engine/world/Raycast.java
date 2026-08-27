@@ -51,7 +51,7 @@ public class Raycast extends GameState implements CollisionNotification {
     private MapGenerator mapGenerator;
     private List<Texture> textures;
     private List<SpriteRaycaster> sprites;
-    private HashMap<Integer, Enemy> enemies;
+    private HashMap<Integer, Enemy> enemies = new HashMap<>();
 
     private Camera camera;
     private SoftwareRenderer screen;
