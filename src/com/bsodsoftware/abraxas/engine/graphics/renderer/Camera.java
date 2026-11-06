@@ -8,10 +8,26 @@ import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
 import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycasterType;
 import com.bsodsoftware.abraxas.engine.world.Door;
 
-import java.awt.event.KeyEvent;
 import java.util.List;
 
 public class Camera {
+
+   public enum Direction {
+      NORTH,
+      EAST,
+      SOUTH,
+      WEST
+   }
+
+   private Direction direction = Direction.NORTH;
+
+   private boolean moving = false;
+
+   private float targetX;
+   private float targetY;
+
+   private static final float MOVE_ANIMATION_SPEED = 0.15f;
+
    private float xPos;
    private float yPos;
    private float xDir;
@@ -24,12 +40,14 @@ public class Camera {
    private boolean back;
    private boolean strafeRight;
    private boolean strafeLeft;
+   private boolean rotating = false;
+   private float currentAngle = 0f;
+   private float targetAngle = 0f;
+   private static final float ROTATION_ANIMATION_SPEED = 8f;
    private final float MOVE_SPEED = 0.07f;
    private final float ROTATION_SPEED = 0.06f;
    private Player player;
    private boolean vieneDePausa;
-   private float mouseDeltaX;
-   private int lastMouseX;
    private CollisionEngine collisionEngine;
    private CollisionNotification collisionNotification;
 
@@ -41,89 +59,15 @@ public class Camera {
       this.xPlane = xp;
       this.yPlane = yp;
       this.player = player;
-      this.mouseDeltaX = 0;
-      this.lastMouseX = 0;
+      this.currentAngle = 0f;
+      this.targetAngle = 0f;
       this.collisionEngine = collisionEngine;
       this.collisionNotification = collisionNotification;
    }
 
-   public void update(int[][] map, Door[][] doors, List<SpriteRaycaster> sprites) {
-      float moveX = 0, moveY = 0;
-      if (this.forward) {
-         moveX += this.xDir;
-         moveY += this.yDir;
-      }
-      if (this.back) {
-         moveX -= this.xDir;
-         moveY -= this.yDir;
-      }
-
-      if (this.strafeLeft) {
-         moveX += -this.yDir;
-         moveY += this.xDir;
-      }
-
-      if (this.strafeRight) {
-         moveX += this.yDir;
-         moveY += -this.xDir;
-      }
-
-      float length = (float) Math.sqrt(moveX * moveX + moveY * moveY);
-      if (length > 0) {
-         moveX /= length;
-         moveY /= length;
-      }
-
-      float newX = this.xPos + moveX * MOVE_SPEED;
-      float newY = this.yPos + moveY * MOVE_SPEED;
-
-      int checkX = (int)(newX + Math.signum(moveX) * player.getRadius());
-      int checkY = (int)this.yPos;
-      boolean canMoveX = isWalkable(checkX, checkY, doors, map);
-
-      checkX = (int)this.xPos;
-      checkY = (int)(newY + Math.signum(moveY) * player.getRadius());
-      boolean canMoveY = isWalkable(checkX, checkY, doors, map);
-
-      SpriteRaycaster spriteX = collisionEngine.getCollidingSprite(newX, this.yPos, sprites, player.getRadius());
-      SpriteRaycaster spriteY = collisionEngine.getCollidingSprite(this.xPos, newY, sprites, player.getRadius());
-      boolean spriteBlockX = spriteX != null;
-      boolean spriteBlockY = spriteY != null;
-
-      if (spriteX != null && spriteX.getSpriteType() == SpriteRaycasterType.MONSTER || spriteY != null && spriteY.getSpriteType() == SpriteRaycasterType.MONSTER) {
-         if (!player.getState().equals(Player.STATE.IN_COMBAT)) {
-            player.setState(Player.STATE.IN_COMBAT);
-            collisionNotification.collisionWithMonster(spriteX.getId());
-         }
-      }
-
-      if (canMoveX && !spriteBlockX) {
-         this.xPos = newX;
-      }
-
-      if (canMoveY && !spriteBlockY) {
-         this.yPos = newY;
-      }
-
-      float oldxDir;
-      float oldxPlane;
-      if (this.right) {
-         oldxDir = this.xDir;
-         this.xDir = (float) (this.xDir * Math.cos(-ROTATION_SPEED) - this.yDir * Math.sin(-ROTATION_SPEED));
-         this.yDir = (float) (oldxDir * Math.sin(-ROTATION_SPEED) + this.yDir * Math.cos(-ROTATION_SPEED));
-         oldxPlane = this.xPlane;
-         this.xPlane = (float) (this.xPlane * Math.cos(-ROTATION_SPEED) - this.yPlane * Math.sin(-ROTATION_SPEED));
-         this.yPlane = (float) (oldxPlane * Math.sin(-ROTATION_SPEED) + this.yPlane * Math.cos(-ROTATION_SPEED));
-      }
-
-      if (this.left) {
-         oldxDir = this.xDir;
-         this.xDir = (float) (this.xDir * Math.cos(ROTATION_SPEED) - this.yDir * Math.sin(ROTATION_SPEED));
-         this.yDir = (float) (oldxDir * Math.sin(ROTATION_SPEED) + this.yDir * Math.cos(ROTATION_SPEED));
-         oldxPlane = this.xPlane;
-         this.xPlane = (float) (this.xPlane * Math.cos(ROTATION_SPEED) - this.yPlane * Math.sin(ROTATION_SPEED));
-         this.yPlane = (float) (oldxPlane * Math.sin(ROTATION_SPEED) + this.yPlane * Math.cos(ROTATION_SPEED));
-      }
+   public void update() {
+      updateGridMovement();
+      updateRotation();
    }
 
 
@@ -162,7 +106,7 @@ public class Camera {
    }
 
 
-   public void keyPressed(int key) {
+   public void keyPressed(int key, int[][] map, Door[][] doors, List<SpriteRaycaster> sprites) {
       System.out.println("tecla apretada: " + key);
       if (this.player.getState().equals(Player.STATE.PAUSE)) {
          // Moverse por menú de pausa
@@ -176,22 +120,22 @@ public class Camera {
       if (!this.player.getState().equals(Player.STATE.PAUSE) && !this.player.getState().equals(Player.STATE.IN_EVENT)) {
          System.out.println("Ni en pausa ni en evento");
          if (key == KeyInputEnum.LEFT_ARROW.getValue() || key == KeyInputEnum.Q.getValue()) {
-            this.left = true;
+            turnLeft();
             this.player.setState(Player.STATE.WALKING);
          }
 
          if (key == KeyInputEnum.RIGHT_ARROW.getValue() || key == KeyInputEnum.E.getValue()) {
-            this.right = true;
+            turnRight();
             this.player.setState(Player.STATE.WALKING);
          }
 
          if (key == KeyInputEnum.UP_ARROW.getValue() || key == KeyInputEnum.W.getValue()) {
-            this.forward = true;
+            attemptMoveForward(map, doors, sprites);
             this.player.setState(Player.STATE.WALKING);
          }
 
          if (key == KeyInputEnum.DOWN_ARROW.getValue() || key == KeyInputEnum.S.getValue()) {
-            this.back = true;
+            attemptMoveBackward(map, doors, sprites);
             this.player.setState(Player.STATE.WALKING);
          }
 
@@ -215,51 +159,169 @@ public class Camera {
    }
 
    public void keyReleased(int key) {
-      if (key == KeyInputEnum.LEFT_ARROW.getValue() || key == KeyInputEnum.Q.getValue()) {
-         this.left = false;
-      }
 
-      if (key == KeyInputEnum.RIGHT_ARROW.getValue() || key == KeyInputEnum.E.getValue()) {
-         this.right = false;
-      }
-
-      if (key == KeyInputEnum.UP_ARROW.getValue() || key == KeyInputEnum.W.getValue()) {
-         this.forward = false;
-      }
-
-      if (key == KeyInputEnum.DOWN_ARROW.getValue() || key == KeyInputEnum.S.getValue()) {
-         this.back = false;
-      }
-
-      if (key == KeyInputEnum.A.getValue()) {
-         this.strafeLeft = false;
-      }
-
-      if (key == KeyInputEnum.D.getValue()) {
-         this.strafeRight = false;
-      }
-
-      if (!isRight() && !isLeft() && !isForward() && !isBack() && !this.player.getState().equals(Player.STATE.PAUSE)) {
-         this.player.setState(Player.STATE.STANDING);
-      }
 
    }
 
-   public void stopPlayerMovement(Player.STATE state){
-      this.forward = false;
-      this.back = false;
-      this.left = false;
-      this.right = false;
-      this.strafeLeft = false;
-      this.strafeRight = false;
-      this.player.setState(state);
+   /* Grid Movement */
+
+   private void updateGridMovement() {
+      if (!moving) {
+         return;
+      }
+
+      float dx = targetX - xPos;
+      float dy = targetY - yPos;
+      float dist = (float)Math.sqrt(dx * dx + dy * dy);
+
+      if (dist < 0.05f) {
+         xPos = targetX;
+         yPos = targetY;
+         moving = false;
+      } else {
+         xPos += dx * MOVE_ANIMATION_SPEED;
+         yPos += dy * MOVE_ANIMATION_SPEED;
+      }
    }
 
-   public void keyTyped(KeyEvent key) {
+   private void attemptMoveForward(int[][] map, Door[][] doors, List<SpriteRaycaster> sprites) {
+      if (moving) {
+         return;
+      }
+
+      int currentX = (int)xPos;
+      int currentY = (int)yPos;
+      int nextX = currentX;
+      int nextY = currentY;
+
+      switch (direction) {
+         case NORTH:
+            nextY--;
+            break;
+         case SOUTH:
+            nextY++;
+            break;
+         case EAST:
+            nextX++;
+            break;
+         case WEST:
+            nextX--;
+            break;
+      }
+
+      if (!isWalkable(nextX, nextY, doors, map)) {
+         return;
+      }
+
+      SpriteRaycaster sprite = collisionEngine.getCollidingSprite(nextX + 0.5, nextY + 0.5, sprites, player.getRadius());
+
+      if (sprite != null) {
+         if (sprite.getSpriteType() == SpriteRaycasterType.MONSTER) {
+            if (player.getState() != Player.STATE.IN_COMBAT) {
+               player.setState(Player.STATE.IN_COMBAT);
+               collisionNotification.collisionWithMonster(sprite.getId());
+            }
+         }
+
+         return;
+      }
+
+      targetX = nextX + 0.5f;
+      targetY = nextY + 0.5f;
+
+      moving = true;
    }
 
-   public void setMouseDeltaX(float deltaX) {
-      this.mouseDeltaX = deltaX;
+   private void attemptMoveBackward(int[][] map, Door[][] doors, List<SpriteRaycaster> sprites) {
+      //if (moving) return;
+
+      int currentX = (int)xPos;
+      int currentY = (int)yPos;
+      int nextX = currentX;
+      int nextY = currentY;
+
+      switch (direction) {
+         case NORTH:
+            nextY++;
+            break;
+         case SOUTH:
+            nextY--;
+            break;
+         case EAST:
+            nextX--;
+            break;
+         case WEST:
+            nextX++;
+            break;
+      }
+
+      if (!isWalkable(nextX, nextY, doors, map)) return;
+
+      targetX = nextX + 0.5f;
+      targetY = nextY + 0.5f;
+
+      moving = true;
+   }
+
+   private void turnLeft() {
+      if (rotating || moving)
+         return;
+
+      targetAngle -= 90f;
+      rotating = true;
+   }
+
+   private void turnRight() {
+      if (rotating || moving)
+         return;
+
+      targetAngle += 90f;
+      rotating = true;
+   }
+
+   private void updateRotation() {
+      if (!rotating)
+         return;
+
+      float diff = targetAngle - currentAngle;
+
+      if (Math.abs(diff) <= ROTATION_ANIMATION_SPEED) {
+         currentAngle = targetAngle;
+         rotating = false;
+         updateDirectionEnum();
+      } else {
+         currentAngle += Math.signum(diff) * ROTATION_ANIMATION_SPEED;
+      }
+
+      updateDirectionFromAngle();
+   }
+
+   private void updateDirectionFromAngle() {
+      double radians = Math.toRadians(currentAngle);
+
+      xDir = (float)Math.sin(radians);
+      yDir = (float)-Math.cos(radians);
+
+      xPlane = -yDir * 0.66f;
+      yPlane = xDir * 0.66f;
+   }
+
+   private void updateDirectionEnum() {
+      int angle = ((int)Math.round(currentAngle) % 360 + 360) % 360;
+      switch(angle) {
+         case 0:
+            direction = Direction.NORTH;
+            break;
+         case 90:
+            direction = Direction.EAST;
+            break;
+         case 180:
+            direction = Direction.SOUTH;
+            break;
+         case 270:
+            direction = Direction.WEST;
+            break;
+      }
    }
 
    public float getxPos() {

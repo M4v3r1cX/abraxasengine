@@ -249,7 +249,7 @@ public class Raycast extends GameState implements CollisionNotification {
         if (loaded) {
             this.sortSprites();
             this.screen.update(this.camera, this.pixels, this.sprites, this.doors);
-            this.camera.update(map, doors, sprites);
+            this.camera.update();
             markVisited();
             updateDoors();
             //this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
@@ -545,7 +545,7 @@ public class Raycast extends GameState implements CollisionNotification {
     @Override
     public void onKeyPressed(int key) {
         if (!player.getState().equals(Player.STATE.IN_EVENT)) {
-            this.camera.keyPressed(key);
+            this.camera.keyPressed(key, map, doors, sprites);
             System.out.println("Key " + key + " pressed");
         }
 
@@ -581,7 +581,7 @@ public class Raycast extends GameState implements CollisionNotification {
             if (currentChoice == 1) {
                 System.exit(0);
             } else {
-                this.camera.keyPressed(KeyInputEnum.ESC.getValue());
+                this.camera.keyPressed(KeyInputEnum.ESC.getValue(), map, doors, sprites);
             }
         }
     }
