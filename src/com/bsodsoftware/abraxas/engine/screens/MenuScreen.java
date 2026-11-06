@@ -1,9 +1,9 @@
-package com.bsodsoftware.abraxas.screens;
+package com.bsodsoftware.abraxas.engine.screens;
 
 import com.bsodsoftware.abraxas.engine.graphics.textures.Sprite;
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.audio.AudioEngine;
-import com.bsodsoftware.abraxas.states.GameState;
+import com.bsodsoftware.abraxas.engine.states.GameState;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;

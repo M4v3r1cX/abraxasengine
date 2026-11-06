@@ -1,9 +1,9 @@
 package com.bsodsoftware.abraxas.engine;
 
-import com.bsodsoftware.abraxas.screens.MenuScreen;
-import com.bsodsoftware.abraxas.screens.levels.cutscenes.Cutscene1Screen;
+import com.bsodsoftware.abraxas.engine.screens.MenuScreen;
+import com.bsodsoftware.abraxas.engine.screens.levels.cutscenes.Cutscene1Screen;
 import com.bsodsoftware.abraxas.engine.world.Raycast;
-import com.bsodsoftware.abraxas.states.GameState;
+import com.bsodsoftware.abraxas.engine.states.GameState;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

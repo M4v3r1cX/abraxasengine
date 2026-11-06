@@ -1,6 +1,6 @@
 package com.bsodsoftware.abraxas.engine.graphics.textures;
 
-import com.bsodsoftware.abraxas.GamePanel;
+import com.bsodsoftware.abraxas.platform.desktop.GamePanel;
 
 import javax.imageio.ImageIO;
 import java.awt.*;

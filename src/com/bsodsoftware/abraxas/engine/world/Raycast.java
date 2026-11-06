@@ -19,7 +19,7 @@ import com.bsodsoftware.abraxas.engine.graphics.textures.Texture;
 import com.bsodsoftware.abraxas.engine.audio.AudioEngine;
 import com.bsodsoftware.abraxas.engine.util.EnemyFactory;
 import com.bsodsoftware.abraxas.engine.util.IdGenerator;
-import com.bsodsoftware.abraxas.states.GameState;
+import com.bsodsoftware.abraxas.engine.states.GameState;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;

@@ -1,4 +1,4 @@
-package com.bsodsoftware.abraxas;
+package com.bsodsoftware.abraxas.platform.desktop;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 

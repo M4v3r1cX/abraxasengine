@@ -1,9 +1,8 @@
-package com.bsodsoftware.abraxas.states;
+package com.bsodsoftware.abraxas.engine.states;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
 import java.awt.event.MouseEvent;
 
 public abstract class GameState {

@@ -1,9 +1,9 @@
-package com.bsodsoftware.abraxas.screens.levels.cutscenes;
+package com.bsodsoftware.abraxas.engine.screens.levels.cutscenes;
 
 import com.bsodsoftware.abraxas.engine.GameStateManager;
 import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
 import com.bsodsoftware.abraxas.engine.graphics.textures.Sprite;
-import com.bsodsoftware.abraxas.states.GameState;
+import com.bsodsoftware.abraxas.engine.states.GameState;
 
 import java.awt.*;
 import java.awt.event.MouseEvent;
