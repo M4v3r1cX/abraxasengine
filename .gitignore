@@ -1,3 +1,28 @@
 out/
 /out/
 .DS_Store
+core/build
+
+# Gradle
+.gradle/
+build/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# Generated build directories in all modules
+**/build/
+
+# Gradle caches
+**/.gradle/
+
+# Compiled Java/Kotlin classes
+*.class
+
+# Logs
+*.log
+
+# OS files
+Thumbs.db

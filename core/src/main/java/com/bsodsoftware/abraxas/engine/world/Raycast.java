@@ -1,0 +1,766 @@
+package com.bsodsoftware.abraxas.engine.world;
+
+import com.bsodsoftware.abraxas.engine.GameStateManager;
+import com.bsodsoftware.abraxas.engine.control.KeyInputEnum;
+import com.bsodsoftware.abraxas.engine.events.CollisionEngine;
+import com.bsodsoftware.abraxas.engine.events.CollisionNotification;
+import com.bsodsoftware.abraxas.engine.events.Event;
+import com.bsodsoftware.abraxas.engine.graphics.textures.Sprite;
+import com.bsodsoftware.abraxas.engine.graphics.lights.LightEngine;
+import com.bsodsoftware.abraxas.engine.graphics.lights.LightSource;
+import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycaster;
+import com.bsodsoftware.abraxas.engine.entities.Enemy;
+import com.bsodsoftware.abraxas.engine.entities.Player;
+import com.bsodsoftware.abraxas.engine.graphics.renderer.Camera;
+import com.bsodsoftware.abraxas.engine.generation.MapGenerator;
+import com.bsodsoftware.abraxas.engine.graphics.renderer.SoftwareRenderer;
+import com.bsodsoftware.abraxas.engine.graphics.textures.SpriteRaycasterType;
+import com.bsodsoftware.abraxas.engine.graphics.textures.Texture;
+import com.bsodsoftware.abraxas.engine.audio.AudioEngine;
+import com.bsodsoftware.abraxas.engine.util.EnemyFactory;
+import com.bsodsoftware.abraxas.engine.util.IdGenerator;
+import com.bsodsoftware.abraxas.engine.states.GameState;
+
+import java.awt.*;
+import java.awt.event.MouseEvent;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.awt.image.ImageObserver;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+
+public class Raycast extends GameState implements CollisionNotification {
+    private GameStateManager gameStateManager;
+    private int mapWidth = 35;
+    private int mapHeight = 35;
+    private BufferedImage image;
+
+    private int[] pixels;
+    private int[][] map;
+    private int[][] visibility;
+    private Door[][] doors;
+    float[][] lightMapR;
+    float[][] lightMapG;
+    float[][] lightMapB;
+    List<LightSource> lights;
+    LightEngine lightEngine;
+    Thread lightEngineThread;
+
+    private MapGenerator mapGenerator;
+    private List<Texture> textures;
+    private List<SpriteRaycaster> sprites;
+    private HashMap<Integer, Enemy> enemies = new HashMap<>();
+
+    private Camera camera;
+    private SoftwareRenderer screen;
+
+    private final int WINDOW_WIDTH = 1280;
+    private final int WINDOW_HEIGHT = 800;
+    private AudioEngine song;
+    private Sprite sprite;
+    private Sprite weaponSprite;
+    private int currentFrame = 0;
+    private final int initialPosX = 1000;
+    private final int initialPosY = 250;
+    private int currentPosX = initialPosX;
+    private int currentPosY = initialPosY;
+
+    private Color hudColor;
+    private Font hudFont;
+    private Font pauseFont;
+    private Font pauseMenuFont;
+    private Color maskColor;
+
+    private Player player;
+    ArrayList<Event> events;
+    private CollisionEngine collisionEngine;
+
+    private boolean loaded = false;
+    private boolean autoMap = false;
+
+    private int currentChoice = 0;
+    private String[] options = {"Continuar", "Salir"};
+
+    public Raycast(GameStateManager gameStateManager) {
+        this.gameStateManager = gameStateManager;
+    }
+
+    @Override
+    public void init() {
+        initMap();
+        initCollisionEngine();
+        initPlayer();
+        initScreen();
+        initSound();
+        initHud();
+        initEvents();
+
+        this.loaded = true;
+    }
+
+    private void initScreen() {
+        this.image = new BufferedImage(this.WINDOW_WIDTH, this.WINDOW_HEIGHT, 1);
+        this.pixels = ((DataBufferInt)this.image.getRaster().getDataBuffer()).getData();
+        this.textures = Texture.getAvailableTextures();
+        this.sprites = getSprites();
+        this.lights = getLights();
+        this.lightMapR = new float[mapWidth][mapHeight];
+        this.lightMapG = new float[mapWidth][mapHeight];
+        this.lightMapB = new float[mapWidth][mapHeight];
+        this.lightEngine = new LightEngine(map, mapWidth, mapHeight, lights, lightMapR, lightMapG,lightMapB);
+        this.lightEngineThread = new Thread(lightEngine);
+        this.lightEngineThread.setName("LightEngineThread");
+        this.lightEngineThread.start();
+
+        float startX = mapGenerator.getRooms().get(0).getCenterX() - 0.5f;
+        float startY = mapGenerator.getRooms().get(0).getCenterY() - 0.5f;
+        this.camera = new Camera(startX, startY, 1.0f, 0.0f, 0.0f, -0.66f, this.player, this.collisionEngine, this);
+        getEnemies(5);
+        this.screen = new SoftwareRenderer(map, this.textures, this.mapWidth, this.mapHeight, this.WINDOW_WIDTH, this.WINDOW_HEIGHT, lightMapR, lightMapG, lightMapB);
+
+        if (this.player.getEquipment().getWeapon() != null) weaponSprite = this.player.getEquipment().getWeapon().getItemSprite();
+    }
+
+    private List<LightSource> getLights() {
+        List<LightSource> lights = new ArrayList<>();
+
+        for (Room r : mapGenerator.getRooms()) {
+            lights.add(new LightSource(
+                    r.getCenterX(),
+                    r.getCenterY(),
+                    1.0f, // red
+                    0.85f, // green
+                    0.65f, // blue
+                    2.0f,
+                    5.0f
+            ));
+            sprites.add(new SpriteRaycaster(r.getCenterX(), r.getCenterY(), 12, true, 0.3, SpriteRaycasterType.LIGHT));
+        }
+
+        return lights;
+    }
+
+    private List<SpriteRaycaster> getSprites() {
+        List<SpriteRaycaster> sprites = new ArrayList<>();
+
+        sprites.add(new SpriteRaycaster(5.5, 4.5, 5, true, 0.3, SpriteRaycasterType.DECORATION));
+        sprites.add(new SpriteRaycaster(6.5, 7.5, 5, true, 0.3, SpriteRaycasterType.DECORATION));
+
+        return sprites;
+    }
+
+    private void getEnemies(int count) {
+        float playerX = camera.getxPos();
+        float playerY = camera.getyPos();
+        List<int[]> candidates = new ArrayList<>();
+        for (int x = 1; x < mapWidth - 1; x++) {
+            for (int y = 1; y < mapHeight - 1; y++) {
+                if (isSpawnable(x, y, map, doors)) {
+                    candidates.add(new int[]{x, y});
+                }
+            }
+        }
+
+        Collections.shuffle(candidates);
+        float minDistance = 4.0f;
+        for (int[] pos : candidates) {
+            if (enemies.size() >= count) break;
+            float x = pos[0] + 0.5f;
+            float y = pos[1] + 0.5f;
+
+            float dx = x - playerX;
+            float dy = y - playerY;
+            if (dx*dx + dy*dy < 9.0f) continue;
+            boolean tooClose = false;
+
+            for (Enemy e : enemies.values()) {
+                float ex = (float)e.getSprite().getX();
+                float ey = (float)e.getSprite().getY();
+
+                float distSq = (x - ex)*(x - ex) + (y - ey)*(y - ey);
+
+                if (distSq < minDistance * minDistance) {
+                    tooClose = true;
+                    break;
+                }
+            }
+
+            if (tooClose) continue;
+
+            int id = IdGenerator.getId();
+            Enemy e = EnemyFactory.buildImp();
+            e.getSprite().setX(x);
+            e.getSprite().setY(y);
+            e.getSprite().setId(id);
+            this.sprites.add(e.getSprite());
+            enemies.put(id, e);
+        }
+    }
+
+    private boolean isSpawnable(int x, int y, int[][] map, Door[][] doors) {
+        boolean ret = true;
+        if (map[x][y] != SoftwareRenderer.TILE_FLOOR) ret = false;
+        if (doors[x][y] != null) ret = false;
+        return ret;
+    }
+
+
+    private void initSound() {
+        this.song = new AudioEngine("/Audio/1.wav", true);
+        if (this.song.getStatus().equals(AudioEngine.STATUS.STOPPED)) {
+            this.song.play();
+        }
+    }
+
+    private void initPlayer() {
+        player = new Player();
+    }
+
+    private void initHud() {
+        hudColor = new Color(128, 0,0);
+        hudFont = new Font("Century Gothic", Font.BOLD, 35);
+
+        pauseFont = new Font("Century Gothic", Font.BOLD, 40);
+        maskColor = new Color(0,0,0,150);
+        pauseMenuFont = new Font("Arial", Font.PLAIN, 25);
+    }
+
+    private void initEvents() {
+        events = new ArrayList<>();
+        Event e = new Event(1L, 3.0D, 4.0D, 4.0D, 5.0D, false);
+        events.add(e);
+    }
+
+    private void initCollisionEngine() {
+        this.collisionEngine = new CollisionEngine(events);
+    }
+
+    private void initMap() {
+        mapGenerator = new MapGenerator(this.mapWidth, this.mapHeight);
+        this.map = mapGenerator.generateFloor();
+        this.doors = mapGenerator.buildDoors(map, mapWidth, mapHeight);
+        this.visibility = new int[this.mapWidth][this.mapHeight];
+    }
+
+    @Override
+    public void update() {
+        if (loaded) {
+            this.sortSprites();
+            this.screen.update(this.camera, this.pixels, this.sprites, this.doors);
+            this.camera.update();
+            markVisited();
+            updateDoors();
+            //this.collisionEngine.checkForCollission(this.camera.getxPos(), this.camera.getyPos());
+            //this.checkForEvents();
+            if (this.player.getState().equals(Player.STATE.STANDING)) {
+                this.camera.setVieneDePausa(false);
+            }
+        }
+    }
+
+    private void markVisited() {
+        int px = (int) camera.getxPos();
+        int py = (int) camera.getyPos();
+
+        for (int x = 0; x < mapWidth; x++) {
+            for (int y = 0; y < mapHeight; y++) {
+                if (visibility[x][y] == 2) {
+                    visibility[x][y] = 1;
+                }
+            }
+        }
+
+        int radius = 5;
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                int nx = px + dx;
+                int ny = py + dy;
+                if (nx >= 0 && ny >= 0 && nx < mapWidth && ny < mapHeight) {
+                    if (dx*dx + dy*dy <= radius*radius) {
+                        visibility[nx][ny] = 2; // currently visible
+                    }
+                }
+            }
+        }
+    }
+
+
+    public void updateDoors() {
+        if (doors != null && doors.length > 0) {
+            for (int x = 0; x < mapWidth; x++) {
+                for (int y = 0; y < mapHeight; y++) {
+                    Door door = doors[x][y];
+                    if (door == null) continue;
+
+                    // Opening
+                    if (door.isOpening()) {
+                        door.openAmount += 0.05f;
+
+                        if (door.openAmount >= 1.0f) {
+                            door.openAmount = 1.0f;
+                            door.setOpening(false);
+
+                            door.setOpenTimer(0); // start timer
+                        }
+                    }
+
+                    // FULLY OPEN → COUNT TIME
+                    if (door.openAmount == 1.0f) {
+                        door.setOpenTimer(door.getOpenTimer() + 1);
+
+                        if (door.getOpenTimer() > 180) { // ~3 seconds at 60 fps
+                            door.setClosing(true);
+                        }
+                    }
+
+                    // CLOSING
+                    if (door.isClosing()) {
+                        float dx = camera.getxPos() - x;
+                        float dy = camera.getyPos() - y;
+
+                        float distSq = dx * dx + dy * dy;
+
+                        if (distSq < 0.5f) {
+                            door.setClosing(false);
+                            door.openAmount = 1.0f;
+                        }
+
+                        door.openAmount -= 0.05f;
+
+                        if (door.openAmount <= 0.0f) {
+                            door.openAmount = 0.0f;
+                            door.setClosing(false);
+                        }
+                    }
+
+                }
+            }
+        }
+    }
+
+    private void checkForBattle() {
+        System.out.println("Checking battle");
+        if (collisionEngine.collidesWithMonster(camera.getxPos(), camera.getyPos(), sprites, player.getRadius())) {
+            System.out.println("EN BATALLA CON MONSTRUO");
+        }
+    }
+
+    @Override
+    public void collisionWithMonster(int id) {
+        if (this.player.getState().equals(Player.STATE.IN_COMBAT)) {
+            Enemy e = enemies.get(id);
+
+        }
+    }
+
+    @Override
+    public void draw(Graphics2D graphics) {
+        if (loaded) {
+            if (!autoMap) {
+                renderRaycast(graphics);
+                drawWeapon(graphics);
+            }
+            if (autoMap){
+                renderAutomap(graphics);
+            }
+            drawHud(graphics);
+        }  else {
+            showLoadingScreen(graphics);
+        }
+    }
+
+    /*private void checkForEvents() {
+        for (Event e : events) {
+            if (e.isActive()) {
+                //eventInProgress = true;
+                player.setState(Player.STATE.IN_EVENT);
+                executeEvent(e.getId());
+            } else {
+                if (player.getState().equals(Player.STATE.IN_EVENT)) {
+                    //player.setState(Player.STATE.STANDING);
+                    //eventInProgress = false;
+                }
+            }
+        }
+    }*/
+
+    /*private void executeEvent(Long id) {
+        this.camera.stopPlayerMovement(Player.STATE.IN_EVENT);
+        switch (id.intValue()) {
+            case 1:
+                System.out.println("Evento 1 en proceso");
+                this.map = Maps.getE1M2();
+                initScreen();
+                this.events.get(0).setActive(false);
+                this.player.setState(Player.STATE.STANDING);
+                break;
+            default:
+                break;
+        }
+    }*/
+
+    private void renderRaycast(Graphics2D graphics) {
+        graphics.drawImage(this.image, 0, 0, this.image.getWidth(), this.image.getHeight(), (ImageObserver) null);
+    }
+
+    private void drawWeapon(Graphics2D graphics) {
+        if (weaponSprite != null) {
+            weaponBob();
+            //weaponSprite.draw(graphics);
+        }
+    }
+
+    private void showLoadingScreen(Graphics2D graphics) {
+        if (sprite == null) {
+            //sprite = new Sprite("/Background/loading.jpg", 1);
+        }
+        //sprite.draw(graphics);
+    }
+
+    private void drawHud(Graphics2D graphics) {
+        graphics.setFont(hudFont);
+        hudColor = new Color(128, 0,0);
+        graphics.setColor(hudColor);
+        graphics.drawString("HEALTH: " + player.getHealth(), 80, 70);
+        if (player.getState().equals(Player.STATE.PAUSE)) {
+            drawPause(graphics);
+        }
+    }
+
+    private void drawPause(Graphics2D graphics) {
+        graphics.setColor(maskColor);
+        graphics.fillRect(0,0,this.WINDOW_WIDTH,this.WINDOW_HEIGHT);
+        graphics.setColor(Color.WHITE);
+        graphics.setFont(pauseFont);
+        graphics.drawString("Pausa", getCenteredXString("Pausa", graphics, pauseFont), 200);
+
+
+        graphics.setFont(pauseMenuFont);
+
+        if (currentChoice == 0) {
+            graphics.setColor(Color.RED);
+        } else {
+            graphics.setColor(Color.WHITE);
+        }
+        graphics.drawString(options[0], getCenteredXString(options[0], graphics, pauseMenuFont), 280);
+        if (currentChoice == 1) {
+            graphics.setColor(Color.RED);
+        } else {
+            graphics.setColor(Color.white);
+        }
+        graphics.drawString(options[1], getCenteredXString(options[1], graphics, pauseMenuFont), 310);
+    }
+
+    private void sortSprites() {
+        sprites.sort((a, b) -> {
+            double distA = (camera.getxPos() - a.getX())*(camera.getxPos() - a.getX()) + (camera.getyPos() - a.getY())*(camera.getyPos() - a.getY());
+            double distB = (camera.getxPos() - b.getX())*(camera.getxPos() - b.getX()) + (camera.getyPos() - b.getY())*(camera.getyPos() - b.getY());
+            return Double.compare(distB, distA);
+        });
+    }
+
+    public void renderAutomap(Graphics2D graphics) {
+        int centerX = screen.width / 2;
+        int centerY = screen.height / 2;
+
+        double camX = camera.getxPos();
+        double camY = camera.getyPos();
+
+        graphics.setColor(maskColor);
+        graphics.fillRect(0,0, getWINDOW_WIDTH(), getWINDOW_HEIGHT());
+
+        int scale = 21;
+        for (int x = 0; x < map.length; x++) {
+            for (int y = 0; y < map[0].length; y++) {
+                double dx = x - camX;
+                double dy = y - camY;
+
+                int drawX = (int)(dx * scale) + centerX;
+                int drawY = (int)(dy * scale) + centerY;
+
+                if (visibility[x][y] == 0) continue;
+
+                if (map[x][y] == SoftwareRenderer.TILE_WALL) {
+                    int sx = drawX;
+                    int sy = drawY;
+
+                    if (visibility[x][y] == 2) {
+                        graphics.setColor(Color.WHITE);
+                    } else {
+                        graphics.setColor(Color.GRAY);
+                    }
+
+                    if (x == 0 || map[x-1][y] == 0) {
+                        graphics.drawLine(sx, sy, sx, sy + scale);
+                    }
+
+                    if (x == map.length-1 || map[x+1][y] == 0) {
+                        graphics.drawLine(sx + scale, sy, sx + scale, sy + scale);
+                    }
+
+
+                    if (y == 0 || map[x][y-1] == 0) {
+                        graphics.drawLine(sx, sy, sx + scale, sy);
+                    }
+
+                    if (y == map[0].length-1 || map[x][y+1] == 0) {
+                        graphics.drawLine(sx, sy + scale, sx + scale, sy + scale);
+                    }
+
+                    graphics.setColor(Color.RED);
+                    graphics.fillOval(centerX - 3, centerY - 3, 6, 6);
+
+                    int dx2 = (int)(camera.getxDir() * 10);
+                    int dy2 = (int)(camera.getyDir() * 10);
+
+                    graphics.drawLine(centerX, centerY, centerX + dx2, centerY + dy2);
+                } else if (map[x][y] == SoftwareRenderer.TILE_DOOR) {
+                    int sx = drawX;
+                    int sy = drawY;
+
+                    boolean vertical = (y > 0 && y < map[0].length - 1 && map[x][y - 1] == SoftwareRenderer.TILE_WALL && map[x][y + 1] == SoftwareRenderer.TILE_WALL);
+
+                    boolean horizontal = (x > 0 && x < map.length - 1 && map[x - 1][y] == SoftwareRenderer.TILE_WALL && map[x + 1][y] == SoftwareRenderer.TILE_WALL);
+
+                    if (visibility[x][y] == 2) {
+                        graphics.setColor(Color.YELLOW);
+                    } else {
+                        graphics.setColor(Color.ORANGE);
+                    }
+
+                    if (horizontal) {
+                        graphics.drawLine(sx, sy + scale / 2, sx + scale, sy + scale / 2);
+                    } else if (vertical) {
+                        graphics.drawLine(sx + scale / 2, sy, sx + scale / 2, sy + scale);
+                    } else {
+                        graphics.drawRect(sx, sy, scale, scale);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onKeyPressed(int key) {
+        if (!player.getState().equals(Player.STATE.IN_EVENT)) {
+            this.camera.keyPressed(key, map, doors, sprites);
+            System.out.println("Key " + key + " pressed");
+        }
+
+        if (key == KeyInputEnum.M.getValue()) {
+            //gameStateManager.setState(GameStateManager.MENU);
+            this.autoMap = !autoMap;
+        }
+
+        if (key == KeyInputEnum.SPACE.getValue()) {
+            camera.tryOpenDoor(map, doors);
+        }
+
+        // Voy a ser bien honesto, voy a poner el código pa manejar el menú de pausa desde acá porque no se como más
+        // hacerlo y tengo mucho sueño pa inventar algo más
+
+        if (key == KeyInputEnum.UP_ARROW.getValue() || key == KeyInputEnum.W.getValue()) {
+            currentChoice++;
+            // this.cursor.play(); efecto de sonido
+            if (currentChoice > 1) {
+                currentChoice = 0;
+            }
+        }
+
+        if (key == KeyInputEnum.DOWN_ARROW.getValue() || key == KeyInputEnum.S.getValue()) {
+            // this.cursor.play(); efecto de sonido
+            currentChoice--;
+            if (currentChoice < 0) {
+                currentChoice = 1;
+            }
+        }
+
+        if (key == KeyInputEnum.ENTER.getValue()) {
+            if (currentChoice == 1) {
+                System.exit(0);
+            } else {
+                this.camera.keyPressed(KeyInputEnum.ESC.getValue(), map, doors, sprites);
+            }
+        }
+    }
+
+    private int getCenteredXString(String s, Graphics2D graphics, Font f) {
+        int pos = 0;
+
+        FontMetrics metrics = graphics.getFontMetrics(f);
+        int width = metrics.stringWidth(s);
+        pos = (this.WINDOW_WIDTH / 2) - (width / 2);
+
+        return pos;
+    }
+
+    @Override
+    public void onKeyReleased(int key) {
+        this.camera.keyReleased(key);
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        //int deltaX = e.getX() - centerX;
+
+    }
+
+
+
+    // intento de animación pa hacer la wea tipo Doom
+    // TODO hacer un engine de animaciones porque lo vamos a usar pa todo
+    private void weaponBob() {
+        if (this.player.isWalking()) {
+            if (currentFrame < 20) {
+                currentPosX-= 1;
+                currentPosY+= 1;
+            } else if (currentFrame < 40) {
+                currentPosX -= 1;
+                currentPosY -= 1;
+            } else if (currentFrame < 60) {
+                currentPosX+= 1;
+                currentPosY+= 1;
+            } else if (currentFrame < 80) {
+                currentPosX += 1;
+                currentPosY -= 1;
+            } else {
+                currentFrame = 0;
+            }
+
+            currentFrame = currentFrame + 1;
+        } else {
+            if (currentFrame > 0) {
+                if (currentPosX > initialPosX) {
+                    currentPosX-= 1;
+                } else {
+                    currentPosX+= 1;
+                }
+                if (currentPosY > initialPosY) {
+                    currentPosY-= 1;
+                } else {
+                    currentPosY+= 1;
+                }
+            }
+        }
+        //weaponSprite.setPosition(currentPosX, currentPosY);
+    }
+
+    public GameStateManager getGameStateManager() {
+        return gameStateManager;
+    }
+
+    public int getMapWidth() {
+        return mapWidth;
+    }
+
+    public int getMapHeight() {
+        return mapHeight;
+    }
+
+    public BufferedImage getImage() {
+        return image;
+    }
+
+    public int[] getPixels() {
+        return pixels;
+    }
+
+    public int[][] getMap() {
+        return map;
+    }
+
+    public List<Texture> getTextures() {
+        return textures;
+    }
+
+    public Camera getCamera() {
+        return camera;
+    }
+
+    public SoftwareRenderer getScreen() {
+        return screen;
+    }
+
+    public int getWINDOW_WIDTH() {
+        return WINDOW_WIDTH;
+    }
+
+    public int getWINDOW_HEIGHT() {
+        return WINDOW_HEIGHT;
+    }
+
+    public AudioEngine getSong() {
+        return song;
+    }
+
+    public boolean isLoaded() {
+        return loaded;
+    }
+
+    public Sprite getSprite() {
+        return sprite;
+    }
+
+    public Sprite getWeaponSprite() {
+        return weaponSprite;
+    }
+
+    public int getCurrentFrame() {
+        return currentFrame;
+    }
+
+    public int getInitialPosX() {
+        return initialPosX;
+    }
+
+    public int getInitialPosY() {
+        return initialPosY;
+    }
+
+    public int getCurrentPosX() {
+        return currentPosX;
+    }
+
+    public int getCurrentPosY() {
+        return currentPosY;
+    }
+
+    public Color getHudColor() {
+        return hudColor;
+    }
+
+    public Font getHudFont() {
+        return hudFont;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+}
